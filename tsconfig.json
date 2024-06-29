@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "declaration": true,
+        "removeComments": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "target": "ES6",
+        "sourceMap": true,                           /* Specify how TypeScript looks up a file from a given module specifier. */
+        "baseUrl": ".",                                  /* Specify an output folder for all emitted files. */
+        "incremental": true,
+        "skipLibCheck": true,
+        "strictNullChecks": false,
+        "noImplicitAny": false,
+        "strictBindCallApply": false,
+        "forceConsistentCasingInFileNames": false,
+        "noFallthroughCasesInSwitch": false,                               /* Skip type checking all .d.ts files. */
+        "esModuleInterop": true,
+        "strict": true,
+    }
+}
