@@ -4,7 +4,7 @@
   "description": "Api server for izy task app ",
   "main": "App.ts",
   "scripts": {
-    "start:dev": "cross-env NODE_ENV=development ts-node-dev App.ts",
+    "start:dev": "cross-env NODE_ENV=development ts-node-dev --respawn App.ts",
     "build": "tsc",
     "studio": "dotenv -e .env.development -- npx prisma studio"
   },

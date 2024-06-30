@@ -19,3 +19,21 @@ model User {
   role        String?
   isAdmin     Boolean   @default(false)
 }
+
+model Tasks {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  body            String
+  status          String
+  statusColor     String
+  statusName      String
+  author          String
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  isExpiration    Boolean     @default(false)
+  expirationDate  DateTime
+  images          String[]
+  tags            String[]
+  project         String      @default("None")
+  team            String      @default("None")
+}
