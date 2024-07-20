@@ -34,6 +34,7 @@ model Tasks {
   expirationDate  DateTime
   images          String[]
   tags            String[]
-  project         String      @default("None")
-  team            String      @default("None")
+  project         String?      
+  team            String?      
+  employee        String?
 }

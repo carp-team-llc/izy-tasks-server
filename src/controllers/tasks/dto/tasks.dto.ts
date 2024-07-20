@@ -1,18 +1,18 @@
 export class tasks {
+    id?: string
     name: string
     body: string
     status: string
     statusColor: string
     statusName: string
     author: string
-    createdAt: Date
-    updatedAt: Date
     expirationDate: Date
     isExpiration: boolean
     images: string[]
     tags: string[]
     project: string
     team: string
+    employee: string
 }
 
 export class tasksVariables {
