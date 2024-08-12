@@ -31,7 +31,7 @@ const CreateTask = async (
         if (tags.length === 0) errors.push("tags");
 
         if (errors.length > 0) {
-            return { statusCode: 400, message: `Các trường sau đang rỗng: ${errors.join(", ")}` };
+            return { statusCode: 400, message: `The following fields are empty: ${errors.join(", ")}` };
         }
 
         const newTask = await prisma.tasks.create({
@@ -94,7 +94,7 @@ const UpdateTask = async (
         if (tags.length === 0) errors.push("tags");
 
         if (errors.length > 0) {
-            return { statusCode: 400, message: `Các trường sau đang rỗng: ${errors.join(", ")}` };
+            return { statusCode: 400, message: `The following fields are empty: ${errors.join(", ")}` };
         }
 
         const updatedTask = await prisma.tasks.update({
@@ -123,4 +123,19 @@ const UpdateTask = async (
     }
 }
 
-export { CreateTask, UpdateTask }
+const DeleteTask = async ({ id }: tasks) => {
+    try {
+        if (!id) {
+            return { statusCode: 400, message: "Task ID is required for delete"}
+        }
+        const deleteTask = await prisma.tasks.delete({
+            where: {id}
+        })
+        return { statusCode: 200, message: "Task has been delete"}
+    } catch (error) {
+        console.error('Error in UpdateTask:', error);
+        return { statusCode: 500, message: "Internal Server Error" };
+    }
+}
+
+export { CreateTask, UpdateTask, DeleteTask }
