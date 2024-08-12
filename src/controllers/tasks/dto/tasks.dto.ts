@@ -9,10 +9,10 @@ export class tasks {
     expirationDate: Date
     isExpiration: boolean
     images: string[]
-    tags: string[]
-    project: string
-    team: string
-    employee: string
+    tags?: string[]
+    project?: string
+    team?: string
+    employee?: string
 }
 
 export class tasksVariables {
