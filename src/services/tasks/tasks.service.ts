@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { tasks, tasksVariables } from "../../controllers/tasks/dto";
 import tasksPanigation from "../../controllers/tasks/taskPanigation";
-import { CreateTask, UpdateTask } from "../../controllers/tasks/taskManager";
+import { CreateTask, DeleteTask, UpdateTask } from "../../controllers/tasks/taskManager";
 
 export class TasksService {
 
@@ -81,10 +81,6 @@ export class TasksService {
                 team,
                 employee
             }: tasks = req.body;
-            
-            if (!id) {
-                return res.status(400).json({ message: "Task ID is required for update" });
-            }
 
             const result = await UpdateTask({
                 id,
@@ -104,6 +100,16 @@ export class TasksService {
             })
             res.status(result.statusCode).json(result.message)
 
+        } catch (err) {
+            res.status(500).json({message: "Internal Server Error!"})
+        }
+    }
+
+    async DeleteTask (req: Request, res: Response) {
+        try {
+            const { id } = req.body;
+            const result = await DeleteTask({ id })
+            res.status(result.statusCode).json(result.message)
         } catch (err) {
             res.status(500).json({message: "Internal Server Error!"})
         }
