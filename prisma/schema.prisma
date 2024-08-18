@@ -37,6 +37,7 @@ model Tasks {
   project         String?      
   team            String?      
   employee        String?
+  type            String?
 }
 
 model TaskHistory {

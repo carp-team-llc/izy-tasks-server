@@ -1,13 +1,24 @@
 import { tasks } from "./dto";
-import prisma from "../../utils/connection/connection";
+import prisma from '../../utils/connection/connection';
+import { EnumData } from "../../constant/enumData";
+
+const HandleStatus = ({status}) => {
+    const statusInfo = EnumData.StatusType[status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()];
+
+    if (statusInfo) {
+        return {
+            name: statusInfo.name,
+            color: statusInfo.color
+        };
+    }
+
+    return null;
+};
 
 const CreateTask = async (
     {
         name,
         body,
-        status,
-        statusColor,
-        statusName,
         author,
         expirationDate,
         isExpiration,
@@ -22,9 +33,6 @@ const CreateTask = async (
         const errors: string[] = [];
         if (!name) errors.push("name");
         if (!body) errors.push("body");
-        if (!status) errors.push("status");
-        if (!statusColor) errors.push("statusColor");
-        if (!statusName) errors.push("statusName");
         if (!author) errors.push("author");
         if (!expirationDate) errors.push("expirationDate");
         if (images.length === 0) errors.push("images");
@@ -38,9 +46,9 @@ const CreateTask = async (
             data: {
                 name,
                 body,
-                status,
-                statusColor,
-                statusName,
+                status: EnumData.StatusType.New.code,
+                statusColor: EnumData.StatusType.New.color,
+                statusName: EnumData.StatusType.New.name,
                 author,
                 expirationDate,
                 isExpiration,
@@ -65,8 +73,6 @@ const UpdateTask = async (
         name,
         body,
         status,
-        statusColor,
-        statusName,
         author,
         expirationDate,
         isExpiration,
@@ -86,8 +92,6 @@ const UpdateTask = async (
         if (!name) errors.push("name");
         if (!body) errors.push("body");
         if (!status) errors.push("status");
-        if (!statusColor) errors.push("statusColor");
-        if (!statusName) errors.push("statusName");
         if (!author) errors.push("author");
         if (!expirationDate) errors.push("expirationDate");
         if (images.length === 0) errors.push("images");
@@ -103,8 +107,8 @@ const UpdateTask = async (
                 name,
                 body,
                 status,
-                statusColor,
-                statusName,
+                statusColor: HandleStatus({status}).color,
+                statusName: HandleStatus({status}).name,
                 author,
                 expirationDate,
                 isExpiration,
@@ -123,7 +127,7 @@ const UpdateTask = async (
     }
 }
 
-const DeleteTask = async ({ id }: tasks) => {
+const DeleteTask = async ({ id }) => {
     try {
         if (!id) {
             return { statusCode: 400, message: "Task ID is required for delete"}
