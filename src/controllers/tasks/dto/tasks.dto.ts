@@ -20,3 +20,11 @@ export class tasksVariables {
     skip: number
     take: number
 }
+
+export class History {
+    taskId: string;
+    action: string;
+    changes: object;
+    createdAt: Date;
+    task: any;
+}

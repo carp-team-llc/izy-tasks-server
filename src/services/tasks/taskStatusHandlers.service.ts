@@ -1,7 +1,6 @@
 
 import { Request, Response } from "express";
-import { tasks } from "../../controllers/tasks/dto";
-import { CompletedTask, CancelTask, NewTask, PendingTask, LateTask } from "../../controllers/tasks/taskStatusHandlers";
+import { CancelTask, CompletedTask, LateTask, NewTask, PendingTask } from "../../controllers/tasks/taskStatusHandlers";
 
 export class TaskStatusHandlers {
   

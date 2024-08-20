@@ -38,23 +38,26 @@ model Tasks {
   team            String?      
   employee        String?
   type            String?
+  history         TaskHistory[]
 }
 
 model TaskHistory {
   id              String      @id @default(auto()) @map("_id") @db.ObjectId
-  name            String       
-  body            String
-  status          String
-  statusColor     String
-  statusName      String
-  author          String
-  createAt        DateTime    @default(now())
-  updateAt        DateTime    @updatedAt
-  isExpiration    Boolean     @default(false)
-  expirationDate  DateTime
-  images          String[]
-  tags            String[]
-  project         String?
-  team            String?
-  employee        String?
+  taskId          String      @db.ObjectId
+  action          String
+  changes         Json
+  createdAt       DateTime    @default(now())
+  task            Tasks       @relation(fields: [taskId], references: [id])
 }
+
+model Project {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  description     String
+  createdAt       DateTime    @default(now())
+  member          String[]
+  task            String[]
+  avatar          String      @default("../assets/images/avatars/cat.jpg")
+  deadline        DateTime    @default(now())
+}
+
