@@ -1,15 +1,11 @@
 import { EnumData } from "../../constant/enumData";
 import prisma from "../../utils/connection/connection";
 
-const CheckTaskId = ({ id }) => {
+const UpdateTaskStatus = async ({ id, statusKey }) => {
+
   if (!id) {
     return { statusCode: 400, message: "Task ID is required for Completed!"}
   }
-}
-
-const UpdateTaskStatus = async ({ id, statusKey }) => {
-
-  CheckTaskId(id);
 
   const statusInfo = EnumData.StatusType[statusKey];
   if (!statusInfo) {

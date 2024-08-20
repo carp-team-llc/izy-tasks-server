@@ -59,7 +59,31 @@ const CreateTask = async (
                 employee
             },
         });
-        return { statusCode: 200, message: "Create new task successfully" };
+
+        if (newTask) {
+            await prisma.taskHistory.create({
+                data: {
+                    taskId: newTask.id,
+                    action: `Creat new task with name: '${name}'`,
+                    changes: {
+                        title: newTask.name,
+                        body: newTask.body,
+                        status: newTask.status,
+                        statusColor: newTask.statusColor,
+                        statusName: newTask.statusName,
+                        author: newTask.author,
+                        expirationDate: newTask.expirationDate,
+                        images: newTask.images,
+                        tags: newTask.tags,
+                        project: newTask.project,
+                        team: newTask.team,
+                        employee: newTask.employee,
+                    }
+                }
+            })
+        }
+
+        return { statusCode: 200, message: "Create new task successfully", task: newTask };
 
     } catch (error) {
         console.error('Error in CreateTask:', error);
@@ -120,7 +144,31 @@ const UpdateTask = async (
             },
         });
 
-        return { statusCode: 200, message: "Task updated successfully" };
+        // create history
+        if (updatedTask) {
+            await prisma.taskHistory.create({
+                data: {
+                    taskId: updatedTask.id,
+                    action: `Update task with ID: '${id}'`,
+                    changes: {
+                        title: updatedTask.name,
+                        body: updatedTask.body,
+                        status: updatedTask.status,
+                        statusColor: updatedTask.statusColor,
+                        statusName: updatedTask.statusName,
+                        author: updatedTask.author,
+                        expirationDate: updatedTask.expirationDate,
+                        images: updatedTask.images,
+                        tags: updatedTask.tags,
+                        project: updatedTask.project,
+                        team: updatedTask.team,
+                        employee: updatedTask.employee,
+                    }
+                }
+            })
+        }
+
+        return { statusCode: 200, message: "Task updated successfully", task: updatedTask };
     } catch (error) {
         console.error('Error in UpdateTask:', error);
         return { statusCode: 500, message: "Internal Server Error" };
@@ -135,7 +183,19 @@ const DeleteTask = async ({ id }) => {
         const deleteTask = await prisma.tasks.delete({
             where: {id}
         })
-        return { statusCode: 200, message: "Task has been delete"}
+
+        // create history
+        if (deleteTask) {
+            await prisma.taskHistory.create({
+                data: {
+                    taskId: deleteTask.id,
+                    action: `Delete task with id: '${id}'`,
+                    changes: {}
+                }
+            })
+        }
+
+        return { statusCode: 200, message: `Task '${deleteTask}' has been delete!`}
     } catch (error) {
         console.error('Error in UpdateTask:', error);
         return { statusCode: 500, message: "Internal Server Error" };
