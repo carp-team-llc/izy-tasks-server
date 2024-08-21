@@ -18,6 +18,8 @@ const UpdateTaskStatus = async ({ id, statusKey }) => {
       const task = await prisma.tasks.findUnique({
         where: { id },
       });
+
+      var logStatus = task.statusName
   
       if (task.status === statusInfo.code) {
         return { statusCode: 400, message: `Task is already in the '${statusInfo.code}' state and cannot be changed.` };
@@ -35,7 +37,30 @@ const UpdateTaskStatus = async ({ id, statusKey }) => {
       },
     });
 
-    return { statusCode: 200, message: `${statusInfo.name} Task!`, task: updatedTask };
+    if (updatedTask) {
+      await prisma.taskHistory.create({
+        data: {
+          taskId: updatedTask.id,
+          action: `Update status from: '${logStatus}' to: '${updatedTask.statusName}' from task: '${id}'`,
+          changes: {
+              title: updatedTask.name,
+              body: updatedTask.body,
+              status: updatedTask.status,
+              statusColor: updatedTask.statusColor,
+              statusName: updatedTask.statusName,
+              author: updatedTask.author,
+              expirationDate: updatedTask.expirationDate,
+              images: updatedTask.images,
+              tags: updatedTask.tags,
+              project: updatedTask.projectId,
+              team: updatedTask.team,
+              employee: updatedTask.employee,
+          }
+      }
+      })
+    }
+
+    return { statusCode: 200, message: `Update status to: ${statusInfo.name}`, task: updatedTask };
   } catch (error) {
     console.error(`Error updating task status to ${statusInfo.name}`, error);
     return { statusCode: 500, message: "Internal Server Error!" };

@@ -8,7 +8,7 @@ export class TaskStatusHandlers {
     try {
       const { id } = req.body;
       const result = await CancelTask({ id });
-      res.status(result.statusCode).json(result.message)
+      res.json(result);
     } catch (error) {
       console.error("Error: ", error);
       res.status(500).json({message: "Internal Server Error!"})
@@ -19,7 +19,7 @@ export class TaskStatusHandlers {
     try {
       const { id } = req.body;
       const result = await CompletedTask({ id });
-      res.status(result.statusCode).json(result.message);
+      res.json(result);
     } catch (error) {
       console.error("Error: ", error);
       res.status(500).json({message: "Internal Server Error!"})
@@ -30,7 +30,7 @@ export class TaskStatusHandlers {
     try {
       const { id } = req.body;
       const result = await LateTask({ id });
-      res.status(result.statusCode).json(result.message);
+      res.json(result);
     } catch (error) {
       console.error("Error: ", error);
       res.status(500).json({message: "Internal Server Error!"})
@@ -41,7 +41,7 @@ export class TaskStatusHandlers {
     try{
       const { id } = req.body;
       const result = await NewTask({ id });
-      res.status(result.statusCode).json(result.message);
+      res.json(result);
     } catch (error) {
       console.error("Error: ", error);
       res.status(500).json({message: "Internal Server Error!"})
@@ -52,7 +52,7 @@ export class TaskStatusHandlers {
     try {
       const { id } = req.body;
       const result = await PendingTask({ id });
-      res.status(result.statusCode).json(result.statusCode);
+      res.json(result);
     } catch (error) {
       console.error("Error: ", error);
       res.status(500).json({message: "Internal Server Error!"})

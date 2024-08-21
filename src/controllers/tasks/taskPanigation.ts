@@ -3,7 +3,7 @@ import prisma from "../../utils/connection/connection";
 import { tasksVariables } from "./dto";
 
 const tasksPanigation = async (variales: tasksVariables) => {
-    const { where = {}, skip = 0, take = 10} = variales;
+    const { where, skip, take } = variales;
     try {
         const tasks = await prisma.tasks.findMany({
             where,
