@@ -24,7 +24,7 @@ const CreateTask = async (
         isExpiration,
         images,
         tags,
-        project,
+        projectId,
         team,
         employee
     }: tasks
@@ -54,7 +54,7 @@ const CreateTask = async (
                 isExpiration,
                 images,
                 tags,
-                project,
+                projectId,
                 team,
                 employee
             },
@@ -75,7 +75,7 @@ const CreateTask = async (
                         expirationDate: newTask.expirationDate,
                         images: newTask.images,
                         tags: newTask.tags,
-                        project: newTask.project,
+                        projectId: newTask.projectId,
                         team: newTask.team,
                         employee: newTask.employee,
                     }
@@ -102,7 +102,7 @@ const UpdateTask = async (
         isExpiration,
         images,
         tags,
-        project,
+        projectId,
         team,
         employee
     }: tasks
@@ -138,7 +138,7 @@ const UpdateTask = async (
                 isExpiration,
                 images,
                 tags,
-                project,
+                projectId,
                 team,
                 employee
             },
@@ -160,7 +160,7 @@ const UpdateTask = async (
                         expirationDate: updatedTask.expirationDate,
                         images: updatedTask.images,
                         tags: updatedTask.tags,
-                        project: updatedTask.project,
+                        project: updatedTask.projectId,
                         team: updatedTask.team,
                         employee: updatedTask.employee,
                     }
@@ -180,22 +180,27 @@ const DeleteTask = async ({ id }) => {
         if (!id) {
             return { statusCode: 400, message: "Task ID is required for delete"}
         }
+
+        await prisma.taskHistory.deleteMany({
+            where: { taskId: id }
+        });
+
         const deleteTask = await prisma.tasks.delete({
-            where: {id}
+            where: {id: id}
         })
 
         // create history
         if (deleteTask) {
             await prisma.taskHistory.create({
                 data: {
-                    taskId: deleteTask.id,
+                    taskId: id,
                     action: `Delete task with id: '${id}'`,
                     changes: {}
                 }
             })
         }
 
-        return { statusCode: 200, message: `Task '${deleteTask}' has been delete!`}
+        return { statusCode: 200, message: `Task '${id}' has been delete!`}
     } catch (error) {
         console.error('Error in UpdateTask:', error);
         return { statusCode: 500, message: "Internal Server Error" };

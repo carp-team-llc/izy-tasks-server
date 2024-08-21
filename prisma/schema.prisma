@@ -34,20 +34,12 @@ model Tasks {
   expirationDate  DateTime
   images          String[]
   tags            String[]
-  project         String?      
+  projectId       String?     @db.ObjectId
+  project         Project?    @relation(fields: [projectId], references: [id], onDelete: Cascade)
   team            String?      
   employee        String?
   type            String?
   history         TaskHistory[]
-}
-
-model TaskHistory {
-  id              String      @id @default(auto()) @map("_id") @db.ObjectId
-  taskId          String      @db.ObjectId
-  action          String
-  changes         Json
-  createdAt       DateTime    @default(now())
-  task            Tasks       @relation(fields: [taskId], references: [id])
 }
 
 model Project {
@@ -56,8 +48,17 @@ model Project {
   description     String
   createdAt       DateTime    @default(now())
   member          String[]
-  task            String[]
+  tasks           Tasks[]     
   avatar          String      @default("../assets/images/avatars/cat.jpg")
   deadline        DateTime    @default(now())
+}
+
+model TaskHistory {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  taskId          String      @db.ObjectId
+  action          String
+  changes         Json
+  createdAt       DateTime    @default(now())
+  task            Tasks?      @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
 

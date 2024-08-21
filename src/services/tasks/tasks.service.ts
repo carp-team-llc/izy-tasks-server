@@ -9,13 +9,13 @@ export class TasksService {
         try {
             const {
                 where,
-                skip = 0,
-                take = 10,
+                skip,
+                take,
             }: tasksVariables = req.body;
             const tasksList = await tasksPanigation({
-                where,
-                skip,
-                take
+                where: where,
+                skip: skip,
+                take: take
             });
             res.status(tasksList.statusCode).json(tasksList.data)
 
@@ -56,7 +56,7 @@ export class TasksService {
                 team,
                 employee
             });
-            res.status(result.statusCode).json(result.message)
+            res.json(result)
 
         } catch (err) {
             res.status(500).json({message: "Internal Server Error!"})
@@ -98,7 +98,7 @@ export class TasksService {
                 team,
                 employee
             })
-            res.status(result.statusCode).json(result.message)
+            res.json(result)
 
         } catch (err) {
             res.status(500).json({message: "Internal Server Error!"})
@@ -109,7 +109,7 @@ export class TasksService {
         try {
             const { id } = req.body;
             const result = await DeleteTask({ id })
-            res.status(result.statusCode).json(result.message)
+            res.json(result)
         } catch (err) {
             res.status(500).json({message: "Internal Server Error!"})
         }
