@@ -47,9 +47,9 @@ model Project {
   name            String
   description     String
   createdAt       DateTime    @default(now())
-  member          String[]
+  member          Json
   tasks           Tasks[]     
-  avatar          String      @default("../assets/images/avatars/cat.jpg")
+  avatar          String?      @default("../assets/images/avatars/cat.jpg")
   deadline        DateTime    @default(now())
 }
 
