@@ -7,11 +7,11 @@ export interface Variables {
 }
 
 export interface ProjectDto {
-  id: string;
+  id?: string;
   name: string;
   description?: string;
-  createdAt: Date;
-  member: string[];
+  createdAt?: Date;
+  member?: string[];
   tasks?: string[];
   avatar?: string;
   deadline: Date;

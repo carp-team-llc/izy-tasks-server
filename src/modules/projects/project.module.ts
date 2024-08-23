@@ -8,6 +8,15 @@ const projectServices = new ProjectService();
 router.post("/project_list", async (req, res) => {
   await projectServices.ProjectList(req, res);
 })
+router.post("/create_project", async (req, res) => {
+  await projectServices.CreateProjectService(req, res);
+})
+router.post("/update_project", async (req, res) => {
+  await projectServices.UpdateProjectServices(req, res);
+})
+router.post("/delete_project", async (req, res) => {
+  await projectServices.DeleteProjectServices(req, res);
+})
 // #endregion
 
 export default router;
