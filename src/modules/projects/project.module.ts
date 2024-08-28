@@ -19,4 +19,12 @@ router.post("/delete_project", async (req, res) => {
 })
 // #endregion
 
+// #region project management
+
+router.post("/add_task_project", async (req, res) => {
+  await projectServices.AddTaskServices(req, res);
+})
+
+// #endregion
+
 export default router;

@@ -37,7 +37,6 @@ const CreateProject = async ({
   try {
     const errors: string[] = [];
     if (!name) errors.push("name");
-    // if (!member) errors.push("member");
     if (!deadline) errors.push("deadline");
 
     if (errors.length > 0) {
@@ -52,7 +51,6 @@ const CreateProject = async ({
         name: name,
         description: description,
         createdAt,
-        member,
         tasks: tasks
           ? { connect: tasks.map((taskId) => ({ id: taskId })) }
           : undefined,
@@ -63,7 +61,8 @@ const CreateProject = async ({
 
     return {
       statusCode: 200,
-      message: `Create new project with name: '${name}'`,
+      message: `Project "${name}" created successfully`,
+      data: newProject
     };
   } catch (error) {
     console.error("Error in UpdateTask:", error);
@@ -82,17 +81,6 @@ const UpdateProject = async ({
   deadline,
 }: ProjectDto) => {
   try {
-    const errors: string[] = [];
-    if (!name) errors.push("name");
-    if (!member) errors.push("member");
-    if (!deadline) errors.push("deadline");
-
-    if (errors.length > 0) {
-      return {
-        statusCode: 400,
-        message: `The following fields are empty: ${errors.join(", ")}`,
-      };
-    }
 
     const updateProject = await prisma.project.update({
       where: { id: id },
@@ -100,7 +88,6 @@ const UpdateProject = async ({
         name: name,
         description: description,
         createdAt,
-        member: member,
         tasks: tasks
           ? { connect: tasks.map((taskId) => ({ id: taskId })) }
           : undefined,
@@ -109,15 +96,20 @@ const UpdateProject = async ({
       },
     });
 
-    return { statusCode: 200, message: `Update project: '${name}'` };
+    return { 
+      statusCode: 200, 
+      message: `Update project: '${name}'` ,
+      data: updateProject
+    };
   } catch (error) {
     console.error("Error in UpdateTask:", error);
     return { statusCode: 500, message: "Internal Server Error" };
   }
 };
 
-const DeleteProject = async ({ id }) => {
+const DeleteProject = async (id) => {
   try {
+
     if (!id) {
       return { statusCode: 400, message: "Project ID is required for delete" };
     }
@@ -126,7 +118,11 @@ const DeleteProject = async ({ id }) => {
       where: { id: id },
     });
 
-    return { statusCode: 200, message: `Project '${id}' has been delete!` };
+    return { 
+      statusCode: 200, 
+      message: `Project '${id}' has been delete!`,
+      data: deleteProject
+    };
   } catch (error) {
     console.error("Error in UpdateTask:", error);
     return { statusCode: 500, message: "Internal Server Error" };
