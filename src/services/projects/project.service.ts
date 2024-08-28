@@ -9,8 +9,11 @@ import {
   ProjectPanigation,
   UpdateProject,
 } from "../../controllers/projects/ProjectManager";
+import { AddTask } from "../../controllers/projects/ProjectManagement";
 
 export class ProjectService {
+  // #region project manager
+
   async ProjectList(req: Request, res: Response) {
     try {
       const { where, skip, take }: Variables = req.body;
@@ -63,19 +66,35 @@ export class ProjectService {
         avatar,
         deadline,
       });
-      res.json(updateProject)
+      res.json(updateProject);
     } catch {
       res.status(500).json({ message: "Internal Server Error!" });
     }
   }
-  
+
   async DeleteProjectServices(req: Request, res: Response) {
     try {
       const { id } = req.body;
       const deleteProject = await DeleteProject(id);
-      res.json(deleteProject)
+      res.json(deleteProject);
     } catch {
       res.status(500).json({ message: "Internal Server Error!" });
     }
   }
+
+  // #endregion
+
+  // #region project manageent
+
+  async AddTaskServices(req: Request, res: Response) {
+    try {
+      const { projectId, taskId } = req.body;
+      const addTask = await AddTask({ projectId, taskId });
+      res.json(addTask);
+    } catch {
+      res.status(500).json({ message: "Internal Server Error!" });
+    }
+  }
+
+  // #endregion
 }

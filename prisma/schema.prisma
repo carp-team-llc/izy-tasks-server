@@ -18,6 +18,41 @@ model User {
   updatedAt       DateTime  @updatedAt
   role            String?
   isAdmin         Boolean   @default(false)
+  profile         Profile?
+  team            TeamMember[]
+  project         ProjectMember[]
+}
+
+model Profile {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  fullName        String
+  bio             String?
+  dateOfBirth     DateTime?
+  avatar          String?     @default("../assets/images/avatars/cat.jpg")
+  user            User        @relation(fields: [id], references: [id], onDelete: Cascade)
+}
+
+model Team {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  name            String      
+  bio             String?
+  address         String?
+  phonenumber     String?
+  email           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  avatar          String?     @default("../assets/images/avatars/cat.jpg")
+  member          TeamMember[]       
+}
+
+model TeamMember {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String      @db.ObjectId
+  team            Team        @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId          String      @db.ObjectId
+  joinedAt        DateTime    @default(now())
+  role            String?
 }
 
 model Tasks {
@@ -40,6 +75,9 @@ model Tasks {
   employee        String?
   type            String?
   history         TaskHistory[]
+  priority        String?
+  priorityName    String?
+  progress        Float?
 }
 
 model Project {
@@ -47,10 +85,20 @@ model Project {
   name            String
   description     String
   createdAt       DateTime    @default(now())
-  member          Json
+  member          ProjectMember[]
   tasks           Tasks[]     
-  avatar          String?      @default("../assets/images/avatars/cat.jpg")
+  avatar          String?     @default("../assets/images/avatars/cat.jpg")
   deadline        DateTime    @default(now())
+}
+
+model ProjectMember {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String      @db.ObjectId
+  project         Project     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId          String      @db.ObjectId
+  joinedAt        DateTime    @default(now())
+  role            String?
 }
 
 model TaskHistory {
