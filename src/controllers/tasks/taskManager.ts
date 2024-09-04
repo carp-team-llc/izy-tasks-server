@@ -15,6 +15,23 @@ const HandleStatus = ({status}) => {
     return null;
 };
 
+const HandlePriority = ({ priority }) => {
+    if (typeof priority !== 'string' || priority.length === 0) {
+        return EnumData.PriorityType.Low;
+    }
+
+    const priorityInfo = EnumData.PriorityType[priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase()];
+
+    if (priorityInfo) {
+        return {
+            name: priorityInfo.name,
+            color: priorityInfo.color
+        };
+    }
+
+    return EnumData.PriorityType.Low;
+};
+
 const CreateTask = async (
     {
         name,
@@ -26,7 +43,9 @@ const CreateTask = async (
         tags,
         projectId,
         team,
-        employee
+        employee,
+        priority,
+        progress,
     }: tasks
 ) => {
     try {
@@ -36,7 +55,6 @@ const CreateTask = async (
         if (!author) errors.push("author");
         if (!expirationDate) errors.push("expirationDate");
         if (images.length === 0) errors.push("images");
-        if (tags.length === 0) errors.push("tags");
 
         if (errors.length > 0) {
             return { statusCode: 400, message: `The following fields are empty: ${errors.join(", ")}` };
@@ -49,14 +67,21 @@ const CreateTask = async (
                 status: EnumData.StatusType.New.code,
                 statusColor: EnumData.StatusType.New.color,
                 statusName: EnumData.StatusType.New.name,
-                author,
+                author:  {
+                    connect: { id: author }
+                },
                 expirationDate,
                 isExpiration,
                 images,
                 tags,
-                projectId,
-                team,
-                employee
+                project: projectId ? { connect: { id: projectId } } : undefined,
+                team: team || null,
+                employee: {
+                    connect: { id: employee }
+                },
+                priority: priority || EnumData.PriorityType.Low.code,
+                priorityName: HandlePriority({ priority: priority || EnumData.PriorityType.Low.code }).name,
+                progress,
             },
         });
 
@@ -71,13 +96,13 @@ const CreateTask = async (
                         status: newTask.status,
                         statusColor: newTask.statusColor,
                         statusName: newTask.statusName,
-                        author: newTask.author,
+                        author: newTask.authorId,
                         expirationDate: newTask.expirationDate,
                         images: newTask.images,
                         tags: newTask.tags,
                         projectId: newTask.projectId,
                         team: newTask.team,
-                        employee: newTask.employee,
+                        employee: newTask.employeeId,
                     }
                 }
             })
@@ -104,14 +129,16 @@ const UpdateTask = async (
         tags,
         projectId,
         team,
-        employee
+        employee,
+        priority,
+        progress,
     }: tasks
 ) => {
     try {
         if (!id) {
             return { statusCode: 400, message: "Task ID is required for update" };
         }
-
+        const priorityData = HandlePriority({ priority: priority || EnumData.PriorityType.Low.code });
         const errors: string[] = [];
         if (!name) errors.push("name");
         if (!body) errors.push("body");
@@ -138,9 +165,12 @@ const UpdateTask = async (
                 isExpiration,
                 images,
                 tags,
-                projectId,
+                project: projectId ? { connect: { id: projectId } } : undefined,
                 team,
-                employee
+                employee,
+                priority: priority || EnumData.PriorityType.Low.code,
+                priorityName: priorityData.name,
+                progress,
             },
         });
 
@@ -156,13 +186,13 @@ const UpdateTask = async (
                         status: updatedTask.status,
                         statusColor: updatedTask.statusColor,
                         statusName: updatedTask.statusName,
-                        author: updatedTask.author,
+                        author: updatedTask.authorId,
                         expirationDate: updatedTask.expirationDate,
                         images: updatedTask.images,
                         tags: updatedTask.tags,
                         project: updatedTask.projectId,
                         team: updatedTask.team,
-                        employee: updatedTask.employee,
+                        employee: updatedTask.employeeId,
                     }
                 }
             })

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { tasks, tasksVariables } from "../../controllers/tasks/dto";
-import tasksPanigation from "../../controllers/tasks/taskPanigation";
-import { CreateTask, DeleteTask, UpdateTask } from "../../controllers/tasks/taskManager";
+import tasksPanigation from "../../controllers/tasks/TaskPanigation";
+import { CreateTask, DeleteTask, UpdateTask } from "../../controllers/tasks/TaskManager";
 
 export class TasksService {
 
@@ -37,7 +37,7 @@ export class TasksService {
                 isExpiration,
                 images,
                 tags,
-                project,
+                projectId,
                 team,
                 employee
             }: tasks = req.body;
@@ -52,7 +52,7 @@ export class TasksService {
                 isExpiration,
                 images,
                 tags,
-                project,
+                projectId,
                 team,
                 employee
             });
@@ -77,7 +77,7 @@ export class TasksService {
                 isExpiration,
                 images,
                 tags,
-                project,
+                projectId,
                 team,
                 employee
             }: tasks = req.body;
@@ -94,7 +94,7 @@ export class TasksService {
                 isExpiration,
                 images,
                 tags,
-                project,
+                projectId,
                 team,
                 employee
             })

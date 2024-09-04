@@ -4,7 +4,7 @@ import prisma from "../../utils/connection/connection";
 const ProjectPanigation = async (variable: Variables) => {
   const { where, skip, take } = variable;
   try {
-    const tasks = await prisma.project.findMany({
+    const project = await prisma.project.findMany({
       where,
       skip,
       take,
@@ -12,15 +12,16 @@ const ProjectPanigation = async (variable: Variables) => {
     const totalTasks = await prisma.project.count({ where });
     const totalPages = Math.ceil(totalTasks / take);
     return {
-      statusCode: 500,
+      statusCode: 201,
       data: {
-        tasks,
+        project: project,
         currentPage: Math.ceil(skip / take) + 1,
         totalTasks,
         totalPages,
       },
     };
-  } catch {
+  } catch (err) {
+    console.log(err)
     return { statusCode: 500, message: "Bad request!" };
   }
 };
