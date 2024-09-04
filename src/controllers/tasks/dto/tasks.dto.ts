@@ -7,15 +7,17 @@ export interface tasks {
     status: string;
     statusColor: string;
     statusName: string;
-    author: string;
     expirationDate: Date;
     isExpiration: boolean;
     images: string[];
     tags?: string[];
     projectId?: string;
-    project?: ProjectDto;
     team?: string;
-    employee?: string;
+    priority?: string;
+    priorityName?: string;
+    progress?: number;
+    employee?: any;
+    author?: any;
 }
 
 export class tasksVariables {

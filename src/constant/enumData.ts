@@ -12,6 +12,6 @@ export const EnumData = {
     Low: { code: "LOW", name: "Thấp", color: color.low },
     Normal: { code: "NORMAL", name: "Bình thường", color: color.normal},
     Medium: { code: "MEDIUM", name: "Trung bình", color: color.medium },
-    High: { code: "HIGH", name: "Cao", color: color.highest},
-  }
+    High: { code: "HIGH", name: "Cao", color: color.highest},                                                                                                                                                                                                              
+  },
 }

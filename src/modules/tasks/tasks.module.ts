@@ -2,10 +2,12 @@
 import express from "express";
 import { TasksService } from "../../services/tasks/tasks.service";
 import { TaskStatusHandlers } from "../../services/tasks/taskStatusHandlers.service";
+import { ChartService } from "../../services/tasks/chart.service";
 
 const router = express.Router();
 const taskServices = new TasksService();
 const taskStatusHandlers = new TaskStatusHandlers();
+const chartServices = new ChartService();
 
 // #region Task Manager
 
@@ -48,6 +50,12 @@ router.post("/pending_task", async (req, res) => {
     await taskStatusHandlers.PendingTask(req, res)
 })
 
+// #endregion
+
+// #region Task Chart
+router.post("/daily_chart", async (req, res) => {
+    await chartServices.DailyChart(req, res)
+})
 // #endregion
 
 export default router;

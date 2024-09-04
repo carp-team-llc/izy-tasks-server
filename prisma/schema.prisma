@@ -21,6 +21,8 @@ model User {
   profile         Profile?
   team            TeamMember[]
   project         ProjectMember[]
+  assignedTasks   Tasks[]    @relation("AssignedTasks")
+  authoredTasks   Tasks[]    @relation("AuthoredTasks")
 }
 
 model Profile {
@@ -62,7 +64,6 @@ model Tasks {
   status          String
   statusColor     String
   statusName      String
-  author          String
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   isExpiration    Boolean     @default(false)
@@ -71,13 +72,16 @@ model Tasks {
   tags            String[]
   projectId       String?     @db.ObjectId
   project         Project?    @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  team            String?      
-  employee        String?
+  team            String?
   type            String?
   history         TaskHistory[]
   priority        String?
   priorityName    String?
   progress        Float?
+  employeeId      String?     @db.ObjectId
+  employee        User?       @relation("AssignedTasks", fields: [employeeId], references: [id])
+  authorId        String?     @db.ObjectId
+  author          User?       @relation("AuthoredTasks", fields: [authorId], references: [id])
 }
 
 model Project {
