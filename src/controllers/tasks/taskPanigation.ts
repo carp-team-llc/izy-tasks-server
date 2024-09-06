@@ -13,7 +13,7 @@ const tasksPanigation = async (variales: tasksVariables) => {
         const totalTasks = await prisma.tasks.count({ where });
         const totalPages = Math.ceil(totalTasks / take);
         return {
-            statusCode: 500,
+            statusCode: 200,
             data: {
                 tasks,
                 currentPage: Math.ceil(skip / take) + 1,

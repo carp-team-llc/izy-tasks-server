@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DailyChart, WeeklyChart } from "../../controllers/tasks/TaskChart";
+import { DailyChart, WeeklyChart, MonthlyChart } from "../../controllers/tasks/TaskChart";
 
 export class ChartService {
   async DailyChart(req: Request, res: Response) {
@@ -19,6 +19,7 @@ export class ChartService {
       res.status(500).json({ message: "Internal Server Error!" });
     }
   }
+
   async WeeklyChart(req: Request, res: Response) {
     try {
       const { fromDate, toDate, status } = req.body;
@@ -31,6 +32,24 @@ export class ChartService {
         message: weeklyChart.message,
         data: weeklyChart.data,
         total: weeklyChart.total
+      })
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Internal Server Error!" });
+    }
+  }
+
+  async MonthlyChart(req: Request, res: Response) {
+    try {
+      const { status, month, } = req.body;
+      const monthlyChart = await MonthlyChart({
+        month,
+        status
+      });
+      res.status(monthlyChart.statusCode).json({
+        message: monthlyChart.message,
+        data: monthlyChart.data,
+        total: monthlyChart.total
       })
     } catch (err) {
       console.error(err);

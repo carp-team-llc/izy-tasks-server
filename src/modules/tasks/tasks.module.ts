@@ -59,6 +59,9 @@ router.post("/daily_chart", async (req, res) => {
 router.post("/weekly_chart", async (req, res) => {
     await chartServices.WeeklyChart(req, res)
 })
+router.post("/monthly_chart", async (req, res) => {
+    await chartServices.MonthlyChart(req, res)
+})
 // #endregion
 
 export default router;
