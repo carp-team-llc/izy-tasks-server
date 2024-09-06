@@ -48,13 +48,13 @@ const UpdateTaskStatus = async ({ id, statusKey }) => {
               status: updatedTask.status,
               statusColor: updatedTask.statusColor,
               statusName: updatedTask.statusName,
-              author: updatedTask.author,
+              author: updatedTask.authorId,
               expirationDate: updatedTask.expirationDate,
               images: updatedTask.images,
               tags: updatedTask.tags,
               project: updatedTask.projectId,
               team: updatedTask.team,
-              employee: updatedTask.employee,
+              employee: updatedTask.employeeId,
           }
       }
       })

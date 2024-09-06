@@ -1,3 +1,4 @@
+import { startOfMonth, endOfMonth } from 'date-fns';
 import prisma from "../../utils/connection/connection";
 
 interface GetTasksByStatusAndDateParams {
@@ -9,6 +10,11 @@ interface WeeklyTaskParams {
   fromDate: string;
   toDate: string;
   status: string[];
+}
+
+interface MonthlyTaskParams {
+  status: string[];
+  month: string;
 }
 
 const DailyChart = async ({
@@ -32,7 +38,7 @@ const DailyChart = async ({
         ]
       };
     }
-    const dailyTask = await prisma.Tasks.findMany({
+    const dailyTask = await prisma.tasks.findMany({
       where: {
         status: {
           in: status
@@ -45,7 +51,7 @@ const DailyChart = async ({
         createdAt: 'desc',
       },
     })
-    const totalTask = await prisma.Tasks.groupBy({
+    const totalTask = await prisma.tasks.groupBy({
       by: ['status'],
       where: {
         status: {
@@ -94,7 +100,7 @@ const WeeklyChart = async ({
         ]
       };
     }
-    const weeklyTask = await prisma.Tasks.findMany({
+    const weeklyTask = await prisma.tasks.findMany({
       where: {
         status: {
           in: status
@@ -109,7 +115,7 @@ const WeeklyChart = async ({
       },
     })
 
-    const weeklyTotal = await prisma.Tasks.groupBy({
+    const weeklyTotal = await prisma.tasks.groupBy({
       by: ['status'],
       where: {
         status: {
@@ -135,4 +141,57 @@ const WeeklyChart = async ({
   }
 }
 
-export { DailyChart, WeeklyChart };
+const MonthlyChart = async ({
+  status,
+  month,
+}: MonthlyTaskParams) => {
+  try {
+
+    const date = new Date(month);
+
+    const startDate = startOfMonth(new Date(date));
+    const endDate = endOfMonth(new Date(date));
+
+    const monthlyTask = await prisma.tasks.findMany({
+      where: {
+        status: {
+          in: status
+        },
+        createdAt: {
+          gte: startDate,
+          lt: endDate
+        },
+      },
+      orderBy: {
+        createdAt: "desc"
+      }
+    })
+
+    const totalMonthlyTask = await prisma.tasks.groupBy({
+      by: ["status"],
+      where: {
+        status: {
+          in: status
+        },
+        createdAt: {
+          gte: startDate,
+          lt: endDate
+        },
+      },
+      _count: {
+        status: true,
+      },
+    })
+    return {
+      statusCode: 200,
+      message: "Success!",
+      data: monthlyTask,
+      total: totalMonthlyTask
+    };
+  } catch (err) {
+    console.error(err);
+    return { statusCode: 500, message: "Bad request!" };
+  }
+}
+
+export { DailyChart, WeeklyChart, MonthlyChart };
