@@ -34,7 +34,15 @@ const userRegister = async ({ username, email, password, phone }: UserAuth) => {
             },
         });
 
-        return { statusCode: 201, message: 'User created successfully', user: username};
+        return { 
+            statusCode: 201, 
+            message: 'User created successfully', 
+            userData: {
+                username: newUser.username,
+                email: newUser.email,
+                phone: newUser.phone,
+            }
+        };
 
     } catch (error) {
 
