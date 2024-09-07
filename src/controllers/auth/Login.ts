@@ -29,7 +29,16 @@ const userLogin = async ({email, password}: UserLogin) => {
             isAdmin: user.isAdmin,
         }, process.env.ACCESS_TOKEN, { expiresIn: '1m' }); 
 
-        return { statusCode: 200, message: "Login successful", token };
+        return { 
+            statusCode: 200, 
+            message: "Login successful", 
+            accessToken: token,
+            userData: {
+                email: user.email,
+                isAdmin: user.isAdmin,
+                createdAt: user.createdAt,
+            }
+        };
 
     } catch (error) {
 
