@@ -25,7 +25,7 @@ const NotificationList = async ({ skip, take }: Variable) => {
     if (changesToday.length === 0) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ message: 'No changes today' }),
+        message: 'No changes today',
         data: []
       }
     }
@@ -39,7 +39,7 @@ const NotificationList = async ({ skip, take }: Variable) => {
     return {
       statusCode: 200,
       message: "Load notification",
-      data: JSON.stringify(changes),
+      data: changes,
     }
   } catch (err) {
     console.error(err);
