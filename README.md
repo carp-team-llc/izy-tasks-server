@@ -4,7 +4,6 @@ API Server of the task management mobile and web application
 
 ## Technologies used:
 
-- Frontend: ReactJs and Tailwind.
 - Backend: Node.js with Express library.
 - Database: MongoDB | SQL Server | Prisma
 ## Installation Guide
