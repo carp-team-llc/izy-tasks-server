@@ -34,11 +34,43 @@ const CreateTeam = async ({
       },
     });
 
+    let addedMembers = [];
+    if (member && member.length > 0) {
+      const teamMembersData = member.map((teamMember) => ({
+        userId: teamMember.userId,
+        teamId: newTeam.id,
+        role: teamMember.role,
+      }));
+
+      await prisma.teamMember.createMany({
+        data: teamMembersData,
+      });
+
+      const userIds = member.map((m) => m.userId);
+      const foundMembers = await prisma.user.findMany({
+        where: {
+          id: {
+            in: userIds,
+          },
+        },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+        },
+      });
+
+      addedMembers = foundMembers;
+    }
+
     return {
       statusCode: 201,
       message: "Team created successfully",
-      data: newTeam
-    }
+      data: {
+        ...newTeam,
+        members: addedMembers,
+      }
+    };
   } catch (err) {
     console.error("Error in Create Team with err: \n", err);
     return {
@@ -79,21 +111,53 @@ const UpdateTeam = async ({
         phonenumber,
         email,
         avatar,
-      }
-    })
+      },
+    });
+
+    let addedMembers = [];
+    if (member && member.length > 0) {
+      const teamMembersData = member.map((teamMember) => ({
+        userId: teamMember.userId,
+        teamId: updateTeam.id,
+        role: teamMember.role,
+      }));
+
+      await prisma.teamMember.createMany({
+        data: teamMembersData,
+      });
+
+      const userIds = member.map((m) => m.userId);
+      const foundMembers = await prisma.user.findMany({
+        where: {
+          id: {
+            in: userIds,
+          },
+        },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+        },
+      });
+
+      addedMembers = foundMembers;
+    }
 
     return {
       statusCode: 200,
       message: "Team updated successfully",
-      data: updateTeam
-    }
+      data: {
+        ...updateTeam,
+        members: addedMembers,
+      }
+    };
   } catch {
     return {
       statusCode: 500,
       message: "Internal Server Error",
-    }
+    };
   }
-}
+};
 
 const DeleteTeam = async ({ id }) => {
   try {
@@ -106,19 +170,19 @@ const DeleteTeam = async ({ id }) => {
       };
     }
     const deleteTeam = await prisma.team.delete({
-      where: { id }
-    })
+      where: { id },
+    });
     return {
       statusCode: 200,
       messge: "Delete team successfully",
-      data: deleteTeam
-    }
+      data: deleteTeam,
+    };
   } catch {
     return {
       statusCode: 500,
       message: "Internal Server Error",
-    }
+    };
   }
-}
+};
 
-export { CreateTeam, UpdateTeam, DeleteTeam }
+export { CreateTeam, UpdateTeam, DeleteTeam };

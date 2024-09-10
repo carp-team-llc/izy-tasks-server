@@ -1,4 +1,10 @@
 
+export interface TeamMemberDTO {
+  userId?: string;
+  teamId?: string;
+  role?: string;
+  team?: TeamDTO;
+}
 export interface TeamDTO {
   id?: string;
   name?: string;
@@ -7,5 +13,5 @@ export interface TeamDTO {
   phonenumber?: string;
   email?: string;
   avatar?: string;
-  member?: string[];
+  member?: TeamMemberDTO[];
 }
