@@ -1,4 +1,3 @@
-import type { tasks } from "src/controllers/tasks/dto";
 
 export interface Variables {
   where: {};
@@ -6,12 +5,18 @@ export interface Variables {
   take: number;
 }
 
+export interface ProjectMemberDTO {
+  userId?: string;
+  projectId?: string;
+  role?: string;
+}
+
 export interface ProjectDto {
   id?: string;
   name: string;
   description?: string;
   createdAt?: Date;
-  member?: string[];
+  member?: ProjectMemberDTO[];
   tasks?: string[];
   avatar?: string;
   deadline: Date;
