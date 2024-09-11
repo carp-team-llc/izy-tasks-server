@@ -21,8 +21,8 @@ git clone https://github.com/carp-calangthang/izy-tasks-server.git
 
 #### Installing packages manager:
 
-- Install <a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm">npm</a>
-- Install <a href="https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable">yarn</a>
+- Install npm <a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm">Install</a>
+- Install yarn <a href="https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable">Install</a>
 
 #### Installing MongoDB:
 
