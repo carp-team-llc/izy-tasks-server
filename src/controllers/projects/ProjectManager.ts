@@ -60,10 +60,42 @@ const CreateProject = async ({
       },
     });
 
+    let addedMembers = [];
+    if (member && member.length > 0) {
+      const projectMemberData = member.map((projectMember) => ({
+        userId: projectMember.userId,
+        teamId: newProject.id,
+        role: projectMember.role,
+      }));
+
+      await prisma.projectMember.createMany({
+        data: projectMemberData,
+      });
+
+      const userIds = member.map((m) => m.userId);
+      const foundMembers = await prisma.user.findMany({
+        where: {
+          id: {
+            in: userIds,
+          },
+        },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+        },
+      });
+
+      addedMembers = foundMembers;
+    }
+
     return {
       statusCode: 200,
       message: `Project "${name}" created successfully`,
-      data: newProject
+      data: {
+        ...newProject,
+        member: addedMembers,
+      }
     };
   } catch (error) {
     console.error("Error in UpdateTask:", error);
