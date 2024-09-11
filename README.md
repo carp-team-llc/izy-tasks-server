@@ -5,7 +5,7 @@ API Server of the task management mobile and web application
 ## Technologies used:
 
 - Backend: Node.js with Express library.
-- Database: MongoDB | SQL Server | Prisma
+- Database: MongoDB | Prisma
 ## Installation Guide
 
 #### Installing Server:
@@ -18,6 +18,11 @@ git clone https://github.com/carp-calangthang/izy-tasks-server.git
 
 - Install Node.js (Application version: 20.11.0) - <a href="https://nodejs.org/en/download/current">Install</a>
 - Install required packages: <b>yarn</b> and <b>npm</b>
+
+#### Installing packages manager:
+
+- Install <a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm">npm</a>
+- Install <a href="https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable">yarn</a>
 
 #### Installing MongoDB:
 
