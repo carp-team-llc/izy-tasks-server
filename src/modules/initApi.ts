@@ -1,10 +1,11 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import authRouter from '../modules/auth/auth.module'
-import taskService from "../modules/tasks/tasks.module"
+import authRouter from '../modules/auth/auth.module';
+import taskService from "../modules/tasks/tasks.module";
 import projectServices from '../modules/projects/project.module';
-import teamServices from '../modules/teams/team.module'
+import teamServices from '../modules/teams/team.module';
+import userServices from '../modules/users/user.module';
 
 const api = express.Router();
 
@@ -17,6 +18,7 @@ const initApi = (app) => {
     api.use("/task", taskService);
     api.use("/project", projectServices);
     api.use("/team", teamServices)
+    api.use("/user", userServices)
 };
 
 export default initApi;
