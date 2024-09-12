@@ -58,6 +58,7 @@ model TeamMember {
   roleCode        String?
   roleName        String?
   roleEngName     String?
+  permission      String?
 }
 
 model Project {
@@ -82,6 +83,7 @@ model ProjectMember {
   roleCode        String?
   roleName        String?
   roleEngName     String?
+  permission      String?
 }
 
 model Tasks {
