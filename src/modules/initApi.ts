@@ -6,6 +6,7 @@ import taskService from "../modules/tasks/tasks.module";
 import projectServices from '../modules/projects/project.module';
 import teamServices from '../modules/teams/team.module';
 import userServices from '../modules/users/user.module';
+import authMiddleware from '../utils/middleware/authentication/authMiddleware';
 
 const api = express.Router();
 
@@ -15,10 +16,10 @@ const initApi = (app) => {
     app.use(bodyParser.json());
     app.use("/api/v1", api);
     api.use('/auth', authRouter);
-    api.use("/task", taskService);
-    api.use("/project", projectServices);
-    api.use("/team", teamServices)
-    api.use("/user", userServices)
+    api.use("/task", authMiddleware, taskService);
+    api.use("/project", authMiddleware, projectServices);
+    api.use("/team", authMiddleware, teamServices)
+    api.use("/user", authMiddleware, userServices)
 };
 
 export default initApi;
