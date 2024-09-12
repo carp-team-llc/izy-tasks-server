@@ -55,6 +55,10 @@ model TeamMember {
   teamId          String      @db.ObjectId
   joinedAt        DateTime    @default(now())
   role            String?
+  roleCode        String?
+  roleName        String?
+  roleEngName     String?
+  permission      String?
 }
 
 model Project {
@@ -76,6 +80,10 @@ model ProjectMember {
   teamId          String      @db.ObjectId
   joinedAt        DateTime    @default(now())
   role            String?
+  roleCode        String?
+  roleName        String?
+  roleEngName     String?
+  permission      String?
 }
 
 model Tasks {

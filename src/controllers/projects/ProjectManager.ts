@@ -1,5 +1,20 @@
 import { ProjectDto, type Variables } from "./dto/Project.dto";
 import prisma from "../../utils/connection/connection";
+import { EnumData } from "../../constant/enumData";
+
+const getRoleInfo = (role: string) => {
+  const projectRole = EnumData.ProjectRole[role];
+  
+  if (!projectRole) {
+    throw new Error(`Role ${role} not found`);
+  }
+
+  return {
+    roleName: projectRole.name,
+    engName: projectRole.engName,
+    permission: projectRole.PERMISSION,
+  };
+};
 
 const ProjectPanigation = async (variable: Variables) => {
   const { where, skip, take } = variable;
@@ -62,11 +77,17 @@ const CreateProject = async ({
 
     let addedMembers = [];
     if (member && member.length > 0) {
-      const projectMemberData = member.map((projectMember) => ({
-        userId: projectMember.userId,
-        teamId: newProject.id,
-        role: projectMember.role,
-      }));
+      const projectMemberData = member.map((projectMember) => {
+        const { roleName, engName, permission } = getRoleInfo(projectMember.role);
+        return {
+          userId: projectMember.userId,
+          teamId: newProject.id,
+          role: projectMember.role,
+          roleName,
+          roleEngName: engName,
+          permission,
+        }
+      });
 
       await prisma.projectMember.createMany({
         data: projectMemberData,
@@ -128,11 +149,49 @@ const UpdateProject = async ({
         deadline: deadline,
       },
     });
+    
+    let addedMembers = [];
+    if (member && member.length > 0) {
+      const projectMemberData = member.map((projectMember) => {
+        const { roleName, engName, permission } = getRoleInfo(projectMember.role);
+        return {
+          userId: projectMember.userId,
+          teamId: updateProject.id,
+          role: projectMember.role,
+          roleName,
+          roleEngName: engName,
+          permission,
+        }
+      });
+
+      await prisma.projectMember.createMany({
+        data: projectMemberData,
+      });
+
+      const userIds = member.map((m) => m.userId);
+      const foundMembers = await prisma.user.findMany({
+        where: {
+          id: {
+            in: userIds,
+          },
+        },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+        },
+      });
+
+      addedMembers = foundMembers;
+    }
 
     return { 
       statusCode: 200, 
       message: `Update project: '${name}'` ,
-      data: updateProject
+      data: {
+        ...updateProject,
+        member: addedMembers
+      }
     };
   } catch (error) {
     console.error("Error in UpdateTask:", error);
