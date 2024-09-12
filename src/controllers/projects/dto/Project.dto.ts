@@ -9,6 +9,9 @@ export interface ProjectMemberDTO {
   userId?: string;
   projectId?: string;
   role?: string;
+  roleName?: string;
+  roleEngName?: string;
+  permission?: string;
 }
 
 export interface ProjectDto {
