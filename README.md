@@ -212,6 +212,21 @@ yarn studio
 | :-------- | :------- | :------------------------- |
 | `id` | `string` | **Required**. Task's id |
 
+### Profile
+
+#### Create profile
+```http
+  POST /api/v1/user/create_profile
+```
+
+| Body | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `fullName` | `string` | **Required**. Full Name |
+| `bio` | `string` | **Required**. bio |
+| `dateOfBirth` | `Date` | **Required**. Date of birth |
+| `avatar` | `string` | **Required**. Avatar url |
+| `user` | `string` | **Required**. current user's id |
+
 ## Authors
 
 - [@carpthecalangthang](https://github.com/carp-calangthang)
