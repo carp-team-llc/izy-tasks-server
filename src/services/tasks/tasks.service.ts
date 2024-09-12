@@ -17,10 +17,10 @@ export class TasksService {
                 skip: skip,
                 take: take
             });
-            res.status(tasksList.statusCode).json(tasksList.data)
+            return res.status(tasksList.statusCode).json(tasksList.data)
 
         } catch (err) {
-            res.status(500).json({message: "Internal Server Error!"})
+            return res.status(500).json({message: "Internal Server Error!"})
         }
     }
 
@@ -56,10 +56,10 @@ export class TasksService {
                 team,
                 employee
             });
-            res.json(result)
+            return res.json(result)
 
         } catch (err) {
-            res.status(500).json({message: "Internal Server Error!"})
+            return res.status(500).json({message: "Internal Server Error!"})
         }
     }
 
@@ -98,10 +98,10 @@ export class TasksService {
                 team,
                 employee
             })
-            res.json(result)
+            return res.json(result)
 
         } catch (err) {
-            res.status(500).json({message: "Internal Server Error!"})
+            return res.status(500).json({message: "Internal Server Error!"})
         }
     }
 
@@ -109,9 +109,9 @@ export class TasksService {
         try {
             const { id } = req.body;
             const result = await DeleteTask({ id })
-            res.json(result)
+            return res.json(result)
         } catch (err) {
-            res.status(500).json({message: "Internal Server Error!"})
+            return res.status(500).json({message: "Internal Server Error!"})
         }
     }
 

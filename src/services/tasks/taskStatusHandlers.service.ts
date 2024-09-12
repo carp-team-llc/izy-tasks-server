@@ -8,10 +8,10 @@ export class TaskStatusHandlers {
     try {
       const { id } = req.body;
       const result = await CancelTask({ id });
-      res.json(result);
+      return res.json(result);
     } catch (error) {
       console.error("Error: ", error);
-      res.status(500).json({message: "Internal Server Error!"})
+      return res.status(500).json({message: "Internal Server Error!"})
     }
   }
 
@@ -19,10 +19,10 @@ export class TaskStatusHandlers {
     try {
       const { id } = req.body;
       const result = await CompletedTask({ id });
-      res.json(result);
+      return res.json(result);
     } catch (error) {
       console.error("Error: ", error);
-      res.status(500).json({message: "Internal Server Error!"})
+      return res.status(500).json({message: "Internal Server Error!"})
     }
   }
 
@@ -30,10 +30,10 @@ export class TaskStatusHandlers {
     try {
       const { id } = req.body;
       const result = await LateTask({ id });
-      res.json(result);
+      return res.json(result);
     } catch (error) {
       console.error("Error: ", error);
-      res.status(500).json({message: "Internal Server Error!"})
+      return res.status(500).json({message: "Internal Server Error!"})
     }
   }
 
@@ -41,10 +41,10 @@ export class TaskStatusHandlers {
     try{
       const { id } = req.body;
       const result = await NewTask({ id });
-      res.json(result);
+      return res.json(result);
     } catch (error) {
       console.error("Error: ", error);
-      res.status(500).json({message: "Internal Server Error!"})
+      return res.status(500).json({message: "Internal Server Error!"})
     }
   }
   
@@ -52,10 +52,10 @@ export class TaskStatusHandlers {
     try {
       const { id } = req.body;
       const result = await PendingTask({ id });
-      res.json(result);
+      return res.json(result);
     } catch (error) {
       console.error("Error: ", error);
-      res.status(500).json({message: "Internal Server Error!"})
+      return res.status(500).json({message: "Internal Server Error!"})
     }
   }
 }

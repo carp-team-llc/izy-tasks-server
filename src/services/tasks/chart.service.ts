@@ -9,14 +9,14 @@ export class ChartService {
         createdAt,
         status,
       });
-      res.status(dailyChart.statusCode).json({
+      return res.status(dailyChart.statusCode).json({
         message: dailyChart.message,
         data: dailyChart.data,
         total: dailyChart.total,
       });
     } catch (err) {
       console.error(err);
-      res.status(500).json({ message: "Internal Server Error!" });
+      return res.status(500).json({ message: "Internal Server Error!" });
     }
   }
 
@@ -28,14 +28,14 @@ export class ChartService {
         toDate,
         status
       });
-      res.status(weeklyChart.statusCode).json({
+      return res.status(weeklyChart.statusCode).json({
         message: weeklyChart.message,
         data: weeklyChart.data,
         total: weeklyChart.total
       })
     } catch (err) {
       console.error(err);
-      res.status(500).json({ message: "Internal Server Error!" });
+      return res.status(500).json({ message: "Internal Server Error!" });
     }
   }
 
@@ -46,14 +46,14 @@ export class ChartService {
         month,
         status
       });
-      res.status(monthlyChart.statusCode).json({
+      return res.status(monthlyChart.statusCode).json({
         message: monthlyChart.message,
         data: monthlyChart.data,
         total: monthlyChart.total
       })
     } catch (err) {
       console.error(err);
-      res.status(500).json({ message: "Internal Server Error!" });
+      return res.status(500).json({ message: "Internal Server Error!" });
     }
   }
 }
