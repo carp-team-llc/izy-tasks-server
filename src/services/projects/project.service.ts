@@ -22,9 +22,9 @@ export class ProjectService {
         skip: skip,
         take: take,
       });
-      res.status(Projects.statusCode).json(Projects.data);
+      return res.status(Projects.statusCode).json(Projects.data);
     } catch {
-      res.status(500).json({ message: "Internal Server Error!" });
+      return res.status(500).json({ message: "Internal Server Error!" });
     }
   }
 
@@ -40,9 +40,9 @@ export class ProjectService {
         avatar: avatar,
         deadline: deadline,
       });
-      res.json(createProject);
+      return res.json(createProject);
     } catch {
-      res.status(500).json({ message: "Internal Server Error!" });
+      return res.status(500).json({ message: "Internal Server Error!" });
     }
   }
 
@@ -66,9 +66,9 @@ export class ProjectService {
         avatar,
         deadline,
       });
-      res.json(updateProject);
+      return res.json(updateProject);
     } catch {
-      res.status(500).json({ message: "Internal Server Error!" });
+      return res.status(500).json({ message: "Internal Server Error!" });
     }
   }
 
@@ -76,9 +76,9 @@ export class ProjectService {
     try {
       const { id } = req.body;
       const deleteProject = await DeleteProject(id);
-      res.json(deleteProject);
+      return res.json(deleteProject);
     } catch {
-      res.status(500).json({ message: "Internal Server Error!" });
+      return res.status(500).json({ message: "Internal Server Error!" });
     }
   }
 
@@ -90,9 +90,9 @@ export class ProjectService {
     try {
       const { projectId, taskId } = req.body;
       const addTask = await AddTask({ projectId, taskId });
-      res.json(addTask);
+      return res.json(addTask);
     } catch {
-      res.status(500).json({ message: "Internal Server Error!" });
+      return res.status(500).json({ message: "Internal Server Error!" });
     }
   }
 

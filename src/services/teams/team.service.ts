@@ -14,12 +14,12 @@ export class TeamManagerService {
         avatar,
         member,
       });
-      res.status(createTeam.statusCode).json({
+      return res.status(createTeam.statusCode).json({
         message: createTeam.message,
         data: createTeam.data,
       });
     } catch {
-      res.status(500).send({ message: "Error creating team" });
+      return res.status(500).send({ message: "Error creating team" });
     }
   }
   async UpdateTeamService(req: Request, res: Response) {
@@ -36,12 +36,12 @@ export class TeamManagerService {
         avatar,
         member,
       });
-      res.status(updateTeam.statusCode).json({
+      return res.status(updateTeam.statusCode).json({
         message: updateTeam.message,
         data: updateTeam.data,
       });
     } catch {
-      res.status(500).send({ message: "Error updating team" });
+      return res.status(500).send({ message: "Error updating team" });
     }
   }
 
@@ -51,12 +51,12 @@ export class TeamManagerService {
       const deleteTeam = await DeleteTeam({
         id
       })
-      res.status(deleteTeam.statusCode).json({
+      return res.status(deleteTeam.statusCode).json({
         message: deleteTeam.message,
         data: deleteTeam.data,
       });
     } catch {
-      res.status(500).send({ message: "Error delete team" });
+      return res.status(500).send({ message: "Error delete team" });
     }
   }
 }

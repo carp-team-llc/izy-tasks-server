@@ -11,10 +11,10 @@ export class AuthService{
         try {
             const {email, password}: UserLogin = req.body;
             const login = await userLogin({ email, password });
-            res.status(login.statusCode).json(login);
+            return res.status(login.statusCode).json(login);
         } catch (error) {
             console.error('Error in userLogin:', error);
-            res.status(500).json({ statusCode: 500, message: "Internal Server Error" });
+            return res.status(500).json({ statusCode: 500, message: "Internal Server Error" });
         }
     }
 
@@ -29,10 +29,13 @@ export class AuthService{
                 role: 'member',
                 isAdmin: false,
             });
-            res.status(register.statusCode).json(register.message);
+            return res.status(register.statusCode).json({
+                message: register.message,
+                data: register.data
+            });
         } catch (error) {
             console.error('Error in userLogin:', error);
-            res.status(500).json({ statusCode: 500, message: "Internal Server Error" });
+            return res.status(500).json({ statusCode: 500, message: "Internal Server Error" });
         }
     }
 
@@ -44,9 +47,9 @@ export class AuthService{
                 take,
                 skip
             });
-            res.status(usersList.statusCode).json(usersList.data)
+            return res.status(usersList.statusCode).json(usersList.data)
         } catch (err) {
-            res.status(500).json({message: "Internal Server Error!"})
+            return res.status(500).json({message: "Internal Server Error!"})
         }
     }
 
