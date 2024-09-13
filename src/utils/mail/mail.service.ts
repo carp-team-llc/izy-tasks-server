@@ -6,7 +6,8 @@ import type { MailDTO } from './mail.dto';
 export const SendMail = async ({
   to,
   subject,
-  text
+  text,
+  html
 }: MailDTO) => {
   const transporter = nodemailer.createTransport({
     host: MailConfig.host,
@@ -18,7 +19,8 @@ export const SendMail = async ({
     },
     tls: {
         ciphers: 'SSLv3'
-    }
+    },
+    from: MailConfig.auth.user
   });
 
   const mailOptions = {
@@ -26,6 +28,7 @@ export const SendMail = async ({
     to,
     subject,
     text,
+    html
   }
 
   const info = await transporter.sendMail(mailOptions);
