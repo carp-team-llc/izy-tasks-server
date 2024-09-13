@@ -4,6 +4,7 @@ import userLogin from '../../controllers/auth/Login';
 import { UserLogin, UserAuth, UserPagination } from '../../controllers/auth/dto/authInfo.dto';
 import userRegister from '../../controllers/auth/Register';
 import usersPanigaiton from '../../controllers/auth/UsersPanigation';
+import { SendMail } from '../../utils/mail/mail.service';
 
 export class AuthService{
 
@@ -49,6 +50,25 @@ export class AuthService{
             });
             return res.status(usersList.statusCode).json(usersList.data)
         } catch (err) {
+            return res.status(500).json({message: "Internal Server Error!"})
+        }
+    }
+
+    async testMailService(req: Request, res: Response) {
+        try {
+            const { to, subject, text } = req.body;
+            if (!to || !subject || !text) {
+                return res.status(400).json({ message: 'Thiếu thông tin gửi mail' });
+            }
+            const sendMail = await SendMail({
+                to,
+                subject,
+                text
+            })
+            return res.status(201).json({
+                message: `Send mail to ${to} success!`
+            })
+        } catch {
             return res.status(500).json({message: "Internal Server Error!"})
         }
     }
