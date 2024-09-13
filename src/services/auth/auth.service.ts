@@ -53,24 +53,4 @@ export class AuthService{
             return res.status(500).json({message: "Internal Server Error!"})
         }
     }
-
-    async testMailService(req: Request, res: Response) {
-        try {
-            const { to, subject, text } = req.body;
-            if (!to || !subject || !text) {
-                return res.status(400).json({ message: 'Thiếu thông tin gửi mail' });
-            }
-            const sendMail = await SendMail({
-                to,
-                subject,
-                text
-            })
-            return res.status(201).json({
-                message: `Send mail to ${to} success!`
-            })
-        } catch {
-            return res.status(500).json({message: "Internal Server Error!"})
-        }
-    }
-
 }
