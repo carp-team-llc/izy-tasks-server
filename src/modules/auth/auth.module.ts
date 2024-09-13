@@ -17,4 +17,8 @@ router.post("/users_panigation", async(req, res) => {
     await authService.userListPanigation(req, res);
 })
 
+router.post("/send_mail", async(req, res) => {
+    await authService.testMailService(req, res)
+})
+
 export default router;
