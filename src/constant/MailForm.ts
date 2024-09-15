@@ -54,7 +54,7 @@ function GeneratePasswordResetEmail(userName: string, content: string): string {
       <a href="${content}" class="reset-button">Reset Password</a>
       <p>If you did not request this password reset, please ignore this email.</p>
       <p>Thank you,</p>
-      <p>Carp Team SF</p>
+      <p>Carp Team SP</p>
       <div class="footer">
         <p>If you are having trouble clicking the "Reset Password" button, copy and paste the following link into your browser:</p>
         <p>${content}</p>

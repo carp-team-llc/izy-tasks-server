@@ -18,6 +18,7 @@ model User {
   updatedAt       DateTime  @updatedAt
   role            String?
   isAdmin         Boolean   @default(false)
+  isVerify        Boolean   @default(false)
   profile         Profile?
   team            TeamMember[]
   project         ProjectMember[]
