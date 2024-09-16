@@ -12,11 +12,12 @@ export class TasksService {
                 skip,
                 take,
             }: tasksVariables = req.body;
+            const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
             const tasksList = await tasksPanigation({
                 where: where,
                 skip: skip,
                 take: take
-            });
+            }, token);
             return res.status(tasksList.statusCode).json(tasksList.data)
 
         } catch (err) {
