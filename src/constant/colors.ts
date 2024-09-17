@@ -4,6 +4,7 @@ export const color = {
   pending: "#c99506",
   late: "#c9069c",
   new: "#06a2c9",
+  doing: "#ff5482",
 
   low: "#0eb53b",
   normal: "#06a2c9",

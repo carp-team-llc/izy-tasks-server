@@ -40,6 +40,10 @@ router.post("/completed_task", async (req, res) => {
     await taskStatusHandlers.CompletedTask(req, res)
 })
 
+router.post("/doing_task", async (req, res) => {
+    await taskStatusHandlers.DoingTask(req, res)
+})
+
 router.post("/late_task", async (req, res) => {
     await taskStatusHandlers.LateTask(req, res)
 })
@@ -70,5 +74,7 @@ router.post("/monthly_chart", async (req, res) => {
 router.post("/load_new_notification", async (req, res) => {
     await taskNotification.NotificationList(req, res)
 })
+
+// #endregion
 
 export default router;

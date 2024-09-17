@@ -123,8 +123,11 @@ const WeeklyChart = async ({
         },
         createdAt: {
           gte: fromDate,
-          lt: toDate
+          lte: toDate
         },
+      },
+      _count: {
+        status: true,
       },
     })
 
@@ -159,7 +162,7 @@ const MonthlyChart = async ({
         },
         createdAt: {
           gte: startDate,
-          lt: endDate
+          lte: endDate
         },
       },
       orderBy: {
@@ -175,7 +178,7 @@ const MonthlyChart = async ({
         },
         createdAt: {
           gte: startDate,
-          lt: endDate
+          lte: endDate
         },
       },
       _count: {
