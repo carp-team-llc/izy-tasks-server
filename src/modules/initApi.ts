@@ -9,6 +9,7 @@ import userServices from '../modules/users/user.module';
 import authMiddleware from '../utils/middleware/authentication/authMiddleware';
 import mailSystemServices from '../modules/mail/mail.module';
 import AccountMiddleware from '../utils/middleware/authentication/AccountMiddleware';
+import SetupService from "../modules/setup/setup.module"
 
 const api = express.Router();
 
@@ -23,6 +24,7 @@ const initApi = (app) => {
     api.use("/project", authMiddleware, AccountMiddleware, projectServices);
     api.use("/team", authMiddleware, AccountMiddleware, teamServices);
     api.use("/user", authMiddleware, AccountMiddleware, userServices);
+    api.use("/setup", authMiddleware, AccountMiddleware, SetupService);
 };
 
 export default initApi;

@@ -7,6 +7,7 @@ export const EnumData = {
     Pending: { code: "PENDING", name: "Chờ làm", engName: "Pending", color: color.pending},
     Late: { code: "LATE", name: "Trễ hạn", engName: "Late", color: color.late},
     New: { code: "NEW", name: "Mới", engName: "New", color: color.new},
+    Doing: { code: "DOING", name: "Đang làm", engName: "Doing", color: color.doing},
   },
   PriorityType: {
     Low: { code: "LOW", name: "Thấp", engName: "Low", color: color.low },
@@ -17,6 +18,6 @@ export const EnumData = {
   ProjectRole : {
     Member: { code: "MEMBER", name: "Thành viên", engName: "Member", PERMISSION: "LOW" },
     Moderator: { code: "MOD", name: "Kiểm duyệt viên", engName: "Moderator", PERMISSION: "MEDIUM" },
-    Administrator: { code: "ADMIN", name: "Quản trị viên", engName: "Administrator", PERMISSION: "HIGHT" }
+    Administrator: { code: "ADMIN", name: "Quản trị viên", engName: "Administrator", PERMISSION: "HIGH" }
   }
 }
