@@ -5,14 +5,14 @@ export class ChartService {
   async DailyChart(req: Request, res: Response) {
     try {
       const { createdAt, status } = req.body;
+      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
       const dailyChart = await DailyChart({
         createdAt,
         status,
-      });
+      }, token);
       return res.status(dailyChart.statusCode).json({
         message: dailyChart.message,
         data: dailyChart.data,
-        total: dailyChart.total,
       });
     } catch (err) {
       console.error(err);
