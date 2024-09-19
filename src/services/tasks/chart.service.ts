@@ -31,8 +31,7 @@ export class ChartService {
       }, token);
       return res.status(weeklyChart.statusCode).json({
         message: weeklyChart.message,
-        data: weeklyChart.data,
-        total: weeklyChart.total
+        data: weeklyChart.data
       })
     } catch (err) {
       console.error(err);
