@@ -1,6 +1,8 @@
 import { startOfMonth, endOfMonth } from "date-fns";
 import prisma from "../../utils/connection/connection";
 import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
+import Helper from "../../utils/helper";
+import { startOfDay, endOfDay } from 'date-fns';
 
 interface GetTasksByStatusAndDateParams {
   status: string[];
@@ -10,7 +12,7 @@ interface GetTasksByStatusAndDateParams {
 interface WeeklyTaskParams {
   fromDate: string;
   toDate: string;
-  status: string[];
+  status: any;
 }
 
 interface MonthlyTaskParams {
@@ -39,7 +41,10 @@ const DailyChart = async (
         ],
       };
     }
-    const userInfo = LoadUserInfo(token)
+
+    const startDate = startOfDay(new Date(Variables.createdAt));
+    const endDate = endOfDay(new Date(Variables.createdAt));
+    const userInfo = LoadUserInfo(token);
     const taskChart = await prisma.tasks.groupBy({
       by: ["status"],
       where: {
@@ -59,29 +64,50 @@ const DailyChart = async (
           in: Variables.status,
         },
         createdAt: {
-          gte: Variables.createdAt,
+          gte: startDate,
+          lte: endDate,
         },
       },
       _count: {
         status: true,
       },
     });
+
+    const getStatusInfo = taskChart?.map((task) => {
+      return {
+        total: task?._count?.status,
+        name: task?.status,
+      };
+    });
+
+    const processedTaskChart = getStatusInfo.map((task) => {
+      const statusInfo = Helper.HandleStatus({ status: task.name });
+
+      return {
+        ...task,
+        statusInfo,
+      };
+    });
+
     const totalTask = taskChart.length;
     return {
       statusCode: 200,
       message: "Success!",
       data: {
-        taskChart,
+        taskChart: processedTaskChart,
         totalTask,
       },
     };
   } catch (err) {
     console.error(err);
-    return { statusCode: 500, message: "Bad request!" };
+    return { statusCode: 500, message: err };
   }
 };
 
-const WeeklyChart = async ({ fromDate, toDate, status }: WeeklyTaskParams) => {
+const WeeklyChart = async (
+  { fromDate, toDate, status }: WeeklyTaskParams,
+  token: string
+) => {
   try {
     const errors: string[] = [];
     if (!fromDate) errors.push("fromDate");
@@ -100,11 +126,24 @@ const WeeklyChart = async ({ fromDate, toDate, status }: WeeklyTaskParams) => {
         ],
       };
     }
+    const userInfo = LoadUserInfo(token);
     const weeklyTask = await prisma.tasks.findMany({
       where: {
         status: {
           in: status,
         },
+        OR: [
+          { authorId: userInfo?.userId },
+          {
+            project: {
+              member: {
+                some: {
+                  userId: userInfo?.userId,
+                },
+              },
+            },
+          },
+        ],
         createdAt: {
           gte: fromDate,
           lte: toDate,
@@ -143,18 +182,34 @@ const WeeklyChart = async ({ fromDate, toDate, status }: WeeklyTaskParams) => {
   }
 };
 
-const MonthlyChart = async ({ status, month }: MonthlyTaskParams) => {
+const MonthlyChart = async (
+  { status, month }: MonthlyTaskParams,
+  token: string
+) => {
   try {
     const date = new Date(month);
 
     const startDate = startOfMonth(new Date(date));
     const endDate = endOfMonth(new Date(date));
 
+    const userInfo = LoadUserInfo(token);
     const monthlyTask = await prisma.tasks.findMany({
       where: {
         status: {
           in: status,
         },
+        OR: [
+          { authorId: userInfo?.userId },
+          {
+            project: {
+              member: {
+                some: {
+                  userId: userInfo?.userId,
+                },
+              },
+            },
+          },
+        ],
         createdAt: {
           gte: startDate,
           lte: endDate,

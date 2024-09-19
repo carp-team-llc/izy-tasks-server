@@ -464,6 +464,11 @@ date-fns@^3.6.0:
   resolved "https://registry.npmjs.org/date-fns/-/date-fns-3.6.0.tgz"
   integrity sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==
 
+date-fns@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-4.1.0.tgz#64b3d83fff5aa80438f5b1a633c2e83b8a1c2d14"
+  integrity sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==
+
 debug@2.6.9:
   version "2.6.9"
   resolved "https://registry.npmjs.org/debug/-/debug-2.6.9.tgz"
@@ -854,6 +859,7 @@ isexe@^2.0.0:
     "@prisma/client" "^5.16.1"
     "@types/body-parser" "^1.19.5"
     "@types/node" "^20.14.2"
+    "@types/nodemailer" "^6.4.15"
     "@types/uuid" "^9.0.8"
     bcrypt "^5.1.1"
     cors "^2.8.5"
@@ -861,7 +867,7 @@ isexe@^2.0.0:
     date-fns "^3.6.0"
     dotenv "^16.4.5"
     express "^4.19.2"
-    izy_task_server "file:../../../../../../AppData/Local/Yarn/Cache/v6/npm-izy-task-server-1.0.0-cbe541a6-df50-4748-aa60-c12e2921fea9-1726149025145/node_modules/izy_task_server"
+    izy_task_server "file:../../../../../../AppData/Local/Yarn/Cache/v6/npm-izy-task-server-1.0.0-146ab853-4f3c-49a4-b1ca-e13b8152a5b8-1726746154801/node_modules/izy_task_server"
     jsonwebtoken "^9.0.2"
     mongoose "^8.4.1"
     nodemailer "^6.9.15"

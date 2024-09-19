@@ -23,11 +23,12 @@ export class ChartService {
   async WeeklyChart(req: Request, res: Response) {
     try {
       const { fromDate, toDate, status } = req.body;
+      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
       const weeklyChart = await WeeklyChart({
         fromDate,
         toDate,
         status
-      });
+      }, token);
       return res.status(weeklyChart.statusCode).json({
         message: weeklyChart.message,
         data: weeklyChart.data,
@@ -42,10 +43,11 @@ export class ChartService {
   async MonthlyChart(req: Request, res: Response) {
     try {
       const { status, month, } = req.body;
+      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
       const monthlyChart = await MonthlyChart({
         month,
         status
-      });
+      }, token);
       return res.status(monthlyChart.statusCode).json({
         message: monthlyChart.message,
         data: monthlyChart.data,

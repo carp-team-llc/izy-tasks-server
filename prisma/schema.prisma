@@ -112,6 +112,8 @@ model Tasks {
   employee        User?       @relation("AssignedTasks", fields: [employeeId], references: [id])
   authorId        String?     @db.ObjectId
   author          User?       @relation("AuthoredTasks", fields: [authorId], references: [id])
+  sprintId        String?     @db.ObjectId
+  sprint          Sprint?     @relation(fields: [sprintId], references: [id], onDelete: Cascade)
 }
 
 model TaskHistory {
@@ -121,5 +123,15 @@ model TaskHistory {
   changes         Json
   createdAt       DateTime    @default(now())
   task            Tasks?      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model Sprint {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  effectiveDate   DateTime
+  expiryDate      DateTime
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  tasks           Tasks[]
 }
 
