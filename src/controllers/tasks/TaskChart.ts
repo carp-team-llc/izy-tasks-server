@@ -127,7 +127,13 @@ const WeeklyChart = async (
       };
     }
     const userInfo = LoadUserInfo(token);
-    const weeklyTask = await prisma.tasks.findMany({
+    const startOfDay = new Date(fromDate);
+    startOfDay.setHours(0, 0, 0, 0); 
+    const endOfDay = new Date(toDate);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const weeklyTotal = await prisma.tasks.groupBy({
+      by: ["status"],
       where: {
         status: {
           in: status,
@@ -149,32 +155,34 @@ const WeeklyChart = async (
           lte: toDate,
         },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
-    const weeklyTotal = await prisma.tasks.groupBy({
-      by: ["status"],
-      where: {
-        status: {
-          in: status,
-        },
-        createdAt: {
-          gte: fromDate,
-          lte: toDate,
-        },
-      },
       _count: {
         status: true,
       },
     });
 
+    const getStatusInfo = weeklyTotal?.map((task) => {
+      return {
+        total: task?._count?.status,
+        name: task?.status,
+      };
+    });
+
+    const processedTaskChart = getStatusInfo.map((task) => {
+      const statusInfo = Helper.HandleStatus({ status: task.name });
+
+      return {
+        ...task,
+        statusInfo,
+      };
+    });
+    const totalTask = weeklyTotal.length
     return {
       statusCode: 200,
       message: "Success!",
-      data: weeklyTask,
-      total: weeklyTotal,
+      data: {
+        taskChart: processedTaskChart,
+        totalTask: totalTask
+      }
     };
   } catch (err) {
     console.error(err);
