@@ -2,11 +2,12 @@
 import prisma from "../../utils/connection/connection";
 
 type Variable = {
+  where: any;
   skip: number,
   take: number,
 }
 
-const NotificationList = async ({ skip, take }: Variable) => {
+const NotificationList = async ({ where, skip, take }: Variable) => {
   try {
 
     const startOfToday = new Date();
@@ -16,7 +17,10 @@ const NotificationList = async ({ skip, take }: Variable) => {
       where: {
         createdAt: {
           gte: startOfToday,
-        }
+        },
+        OR: [
+          {}
+        ]
       },
       orderBy: {
         createdAt: 'desc',
