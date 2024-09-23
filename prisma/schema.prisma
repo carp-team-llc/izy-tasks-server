@@ -24,6 +24,7 @@ model User {
   project         ProjectMember[]
   assignedTasks   Tasks[]    @relation("AssignedTasks")
   authoredTasks   Tasks[]    @relation("AuthoredTasks")
+  history         TaskHistory[]
 }
 
 model Profile {
@@ -114,6 +115,8 @@ model Tasks {
   author          User?       @relation("AuthoredTasks", fields: [authorId], references: [id])
   sprintId        String?     @db.ObjectId
   sprint          Sprint?     @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  taskListId      String?     @db.ObjectId
+  taskList        TaskList?   @relation(fields: [taskListId], references: [id], onDelete: Cascade)
 }
 
 model TaskHistory {
@@ -123,6 +126,17 @@ model TaskHistory {
   changes         Json
   createdAt       DateTime    @default(now())
   task            Tasks?      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  authorId        String?     @db.ObjectId
+  author          User?       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model TaskList {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  name            String      
+  description     String
+  createdAt       DateTime    @default(now())
+  avatar          String?      @default("../assets/images/avatars/cat.jpg")
+  tasks           Tasks[]
 }
 
 model Sprint {

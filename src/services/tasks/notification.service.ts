@@ -6,6 +6,7 @@ export class TaskNotification {
     try {
       const { take, skip } = req.body;
       const notifications = await NotificationList({
+        where: {},
         take: take || 10,
         skip: skip || 0,
       });
