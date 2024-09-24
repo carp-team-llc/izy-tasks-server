@@ -4,12 +4,14 @@ import { TasksService } from "../../services/tasks/tasks.service";
 import { TaskStatusHandlers } from "../../services/tasks/taskStatusHandlers.service";
 import { ChartService } from "../../services/tasks/chart.service";
 import { TaskNotification } from "../../services/tasks/notification.service";
+import { TaskListService } from "../../services/tasks/tasklist.service";
 
 const router = express.Router();
 const taskServices = new TasksService();
 const taskStatusHandlers = new TaskStatusHandlers();
 const chartServices = new ChartService();
-const taskNotification = new TaskNotification
+const taskNotification = new TaskNotification();
+const taskListServices = new TaskListService
 
 // #region Task Manager
 
@@ -74,7 +76,12 @@ router.post("/monthly_chart", async (req, res) => {
 router.post("/load_new_notification", async (req, res) => {
     await taskNotification.NotificationList(req, res)
 })
+// #endregion
 
+// #region Task List
+router.post("/create_task_list", async (req, res) => {
+    await taskListServices.CreateTaskListService(req, res)
+})
 // #endregion
 
 export default router;

@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { UserAuth } from './dto';
 import prisma from '../../utils/connection/connection';
 
-const userRegister = async ({ username, email, password, phone }: UserAuth) => {
+const userRegister = async ({ username, email, password, phone, taskListId }: UserAuth) => {
     try {
 
         if (!username || !email || !password || !phone) {
@@ -30,7 +30,7 @@ const userRegister = async ({ username, email, password, phone }: UserAuth) => {
                 password: hashedPassword,
                 phone,
                 role: 'member',
-                isAdmin: false, 
+                isAdmin: false,
             },
         });
 
