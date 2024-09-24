@@ -9,22 +9,24 @@ datasource db {
 }
 
 model User {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  username        String    @unique
-  email           String    @unique
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  username        String      @unique
+  email           String      @unique
   password        String    
   phone           String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
   role            String?
-  isAdmin         Boolean   @default(false)
-  isVerify        Boolean   @default(false)
+  isAdmin         Boolean     @default(false)
+  isVerify        Boolean     @default(false)
   profile         Profile?
   team            TeamMember[]
   project         ProjectMember[]
-  assignedTasks   Tasks[]    @relation("AssignedTasks")
-  authoredTasks   Tasks[]    @relation("AuthoredTasks")
+  assignedTasks   Tasks[]     @relation("AssignedTasks")
+  authoredTasks   Tasks[]     @relation("AuthoredTasks")
   history         TaskHistory[]
+  taskListId      String?      @db.ObjectId
+  taskList        TaskList[]
 }
 
 model Profile {
@@ -135,8 +137,10 @@ model TaskList {
   name            String      
   description     String
   createdAt       DateTime    @default(now())
-  avatar          String?      @default("../assets/images/avatars/cat.jpg")
+  avatar          String?     @default("../assets/images/avatars/cat.jpg")
   tasks           Tasks[]
+  authorId        String      @db.ObjectId
+  author          User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
 }
 
 model Sprint {

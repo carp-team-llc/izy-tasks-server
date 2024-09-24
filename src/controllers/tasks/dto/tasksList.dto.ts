@@ -4,5 +4,6 @@ export interface TaskListDTO {
   description?: string;
   createdAt?: string;
   avatar?: string;
-  tasks?: string;
+  tasks?: string[];
+  authorId?: any;
 }
