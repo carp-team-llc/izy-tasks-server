@@ -47,7 +47,7 @@ const CreateListTask = async ({ name, description, avatar, tasks }: TaskListDTO,
   }
 }
 
-const UpdateTaskList = async ({ id, name, description, avatar, tasks }: TaskListDTO, token: string) => {
+const UpdateTaskList = async ({ id, name, description, avatar, tasks }: TaskListDTO) => {
   try {
     const errors: string[] = [];
     if (!id) errors.push("id");
@@ -91,7 +91,7 @@ const UpdateTaskList = async ({ id, name, description, avatar, tasks }: TaskList
   }
 }
 
-const DeleteTaskList = async (id: string, token: string) => {
+const DeleteTaskList = async (id: string) => {
   try {
     if (!id) {
       return {

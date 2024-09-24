@@ -82,6 +82,12 @@ router.post("/load_new_notification", async (req, res) => {
 router.post("/create_task_list", async (req, res) => {
     await taskListServices.CreateTaskListService(req, res)
 })
+router.post("/update_task_list", async (req, res) => {
+    await taskListServices.UpdateTaskListService(req, res)
+})
+router.post("/delete_task_list", async (req, res) => {
+    await taskListServices.DeleteTaskListService(req, res)
+})
 // #endregion
 
 export default router;
