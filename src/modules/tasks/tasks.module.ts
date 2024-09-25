@@ -79,6 +79,9 @@ router.post("/load_new_notification", async (req, res) => {
 // #endregion
 
 // #region Task List
+router.post("/task_list_pagination", async (req, res) => {
+    await taskListServices.TaskListPaginationService(req, res)
+})
 router.post("/create_task_list", async (req, res) => {
     await taskListServices.CreateTaskListService(req, res)
 })

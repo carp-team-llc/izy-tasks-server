@@ -1,7 +1,21 @@
 import { Request, Response } from "express";
-import { CreateListTask, DeleteTaskList, UpdateTaskList } from "../../controllers/tasks/TaskList";
+import { CreateListTask, DeleteTaskList, TaskListPagination, UpdateTaskList } from "../../controllers/tasks/TaskList";
 
 export class TaskListService {
+  async TaskListPaginationService(req: Request, res: Response) {
+    const { where, skip, take } = req.body;
+    const token = req.headers["authorization"].split(" ")[1].replace("Bearer ", "")
+    const taskListPagination = await TaskListPagination({
+      where,
+      take,
+      skip
+    }, token)
+    res.status(taskListPagination.statusCode).json({
+      message: taskListPagination.message,
+      data: taskListPagination.data
+    })
+  }
+
   async CreateTaskListService(req: Request, res: Response) {
     const { name, description, avatar, tasks } = req.body;
     const token = req.headers["authorization"]

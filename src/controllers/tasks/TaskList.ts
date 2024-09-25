@@ -1,9 +1,34 @@
-
 import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
 import prisma from "../../utils/connection/connection";
 import type { TaskListDTO } from "./dto/tasksList.dto";
 
-const CreateListTask = async ({ name, description, avatar, tasks }: TaskListDTO, token: string) => {
+const TaskListPagination = async ({ where, skip, take }: any, token) => {
+  try {
+    const userInfo = LoadUserInfo(token)
+    const taskListPagination = await prisma.taskList.findMany({
+      where: {
+        OR: [
+          { authorId: userInfo?.userId },
+        ],
+        AND: where,
+      },
+      take,
+      skip
+    });
+    return {
+      statusCode: 201,
+      message: "Success!",
+      data: taskListPagination
+    }
+  } catch (err) {
+    console.error("Err in Task list pagination: ", err);
+  }
+};
+
+const CreateListTask = async (
+  { name, description, avatar, tasks }: TaskListDTO,
+  token: string
+) => {
   try {
     const errors: string[] = [];
     if (!name) errors.push("name");
@@ -23,31 +48,37 @@ const CreateListTask = async ({ name, description, avatar, tasks }: TaskListDTO,
     const userInfo = LoadUserInfo(token);
     const createListTask = await prisma.taskList.create({
       data: {
-        name, 
+        name,
         description,
-        avatar, 
+        avatar,
         tasks: tasks
-        ? { connect: tasks.map((taskId) => ({ id: taskId })) }
-        : undefined,
+          ? { connect: tasks.map((taskId) => ({ id: taskId })) }
+          : undefined,
         authorId: userInfo?.userId,
-      }
-    })
+      },
+    });
     return {
       statusCode: 201,
       message: "Create Task List successfully!",
-      data: createListTask
-    }
+      data: createListTask,
+    };
   } catch (err) {
-    console.error("Error in Create Task List: ====> ")
+    console.error("Error in Create Task List: ====> ");
     return {
       statusCode: 500,
       message: "Internal Server Error!",
       data: [],
-    }
+    };
   }
-}
+};
 
-const UpdateTaskList = async ({ id, name, description, avatar, tasks }: TaskListDTO) => {
+const UpdateTaskList = async ({
+  id,
+  name,
+  description,
+  avatar,
+  tasks,
+}: TaskListDTO) => {
   try {
     const errors: string[] = [];
     if (!id) errors.push("id");
@@ -72,24 +103,24 @@ const UpdateTaskList = async ({ id, name, description, avatar, tasks }: TaskList
         description,
         avatar,
         tasks: tasks
-        ? { connect: tasks.map((taskId) => ({ id: taskId })) }
-        : undefined,
-      }
-    })
+          ? { connect: tasks.map((taskId) => ({ id: taskId })) }
+          : undefined,
+      },
+    });
     return {
       statusCode: 201,
       message: "Update task list successfully!",
       data: updateTask,
-    }
+    };
   } catch (err) {
-    console.error("Error in Update Task List: ====> ")
+    console.error("Error in Update Task List: ====> ");
     return {
       statusCode: 500,
       message: "Internal Server Error!",
       data: [],
-    }
+    };
   }
-}
+};
 
 const DeleteTaskList = async (id: string) => {
   try {
@@ -107,22 +138,22 @@ const DeleteTaskList = async (id: string) => {
     }
     const deleteTaskList = await prisma.taskList.delete({
       where: {
-        id: id
-      }
-    })
+        id: id,
+      },
+    });
     return {
       statusCode: 201,
       message: `Task list have id: ${id} has been delete!`,
       data: [],
-    }
+    };
   } catch (err) {
-    console.error("Error in Delete Task List: ====> ")
+    console.error("Error in Delete Task List: ====> ");
     return {
       statusCode: 500,
       message: "Internal Server Error!",
       data: [],
-    }
+    };
   }
-}
+};
 
-export { CreateListTask, UpdateTaskList, DeleteTaskList }
+export { TaskListPagination, CreateListTask, UpdateTaskList, DeleteTaskList };
