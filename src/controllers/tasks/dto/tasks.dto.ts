@@ -7,6 +7,7 @@ export interface tasks {
     status: string;
     statusColor: string;
     statusName: string;
+    createdAt?: string;
     expirationDate: Date;
     isExpiration: boolean;
     images: string[];

@@ -28,7 +28,7 @@ const userLogin = async ({email, password}: UserLogin) => {
             updatedAt: user.updatedAt,
             isAdmin: user.isAdmin,
             isVerify: user.isVerify
-        }, process.env.ACCESS_TOKEN, { expiresIn: '1h' }); 
+        }, process.env.ACCESS_TOKEN, { expiresIn: '10h' }); 
 
         return { 
             statusCode: 200, 

@@ -60,4 +60,4 @@ const ForgotPasswordMail = async (email: string) => {
   }
 };
 
-export { ForgotPasswordMail }
+export { SendMailSystem, ForgotPasswordMail }

@@ -4,7 +4,7 @@
   "description": "Api server for izy task app ",
   "main": "App.ts",
   "scripts": {
-    "start:dev": "cross-env NODE_ENV=development ts-node-dev --respawn App.ts",
+    "start:dev": "cross-env NODE_ENV=development TZ=Asia/Ho_Chi_Minh ts-node-dev --respawn App.ts",
     "build": "tsc",
     "studio": "dotenv -e .env.development -- npx prisma studio --port 5556"
   },
@@ -24,6 +24,7 @@
     "express": "^4.19.2",
     "izy_task_server": "file:",
     "jsonwebtoken": "^9.0.2",
+    "moment-timezone": "^0.5.45",
     "mongoose": "^8.4.1",
     "nodemailer": "^6.9.15",
     "nodemon": "^3.1.3",
