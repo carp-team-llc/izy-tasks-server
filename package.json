@@ -6,7 +6,8 @@
   "scripts": {
     "start:dev": "cross-env NODE_ENV=development TZ=Asia/Ho_Chi_Minh ts-node-dev --respawn App.ts",
     "build": "tsc",
-    "studio": "dotenv -e .env.development -- npx prisma studio --port 5556"
+    "studio": "dotenv -e .env.development -- npx prisma studio --port 5556",
+    "generate": "cd prisma & npx prisma generate"
   },
   "author": "ca",
   "license": "MIT",
