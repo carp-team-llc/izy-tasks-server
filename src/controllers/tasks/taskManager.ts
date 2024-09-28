@@ -55,7 +55,6 @@ const CreateTask = async (
         const errors: string[] = [];
         if (!name) errors.push("name");
         if (!body) errors.push("body");
-        if (!author) errors.push("author");
         if (!expirationDate) errors.push("expirationDate");
         if (images.length === 0) errors.push("images");
 
