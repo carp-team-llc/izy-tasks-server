@@ -42,6 +42,7 @@ export class TasksService {
                 team,
                 employee
             }: tasks = req.body;
+            const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
             const result = await CreateTask({
                 name,
                 body,
@@ -56,7 +57,7 @@ export class TasksService {
                 projectId,
                 team,
                 employee
-            });
+            }, token);
             return res.status(result.statusCode).json({
                 message: result.message,
                 task: result.task
@@ -85,6 +86,7 @@ export class TasksService {
                 team,
                 employee
             }: tasks = req.body;
+            const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
 
             const result = await UpdateTask({
                 id,
@@ -101,7 +103,7 @@ export class TasksService {
                 projectId,
                 team,
                 employee
-            })
+            }, token)
             return res.status(result.statusCode).json({
                 message: result.message,
                 task: result.task

@@ -1,6 +1,9 @@
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import { UserAuth } from './dto';
 import prisma from '../../utils/connection/connection';
+import { SendMailSystem } from '../mail/SendMail';
+import { ActivateAccountEmailForm } from '../../constant/MailForm';
 
 const userRegister = async ({ username, email, password, phone, taskListId }: UserAuth) => {
     try {
@@ -31,12 +34,24 @@ const userRegister = async ({ username, email, password, phone, taskListId }: Us
                 phone,
                 role: 'member',
                 isAdmin: false,
+                verificationToken: crypto.randomBytes(32).toString('hex')
             },
         });
 
+        const verificationLink = `${process.env.CLIENT_URL_LOCAL}/authentication/verify-email?token=${newUser.verificationToken}`;
+
+        const sendActivateMail = await SendMailSystem({
+            to: email,
+            subject: "Activate your account!",
+            text: "Hi, we are Carp Team!",
+            content: verificationLink,
+            html: ActivateAccountEmailForm(email, verificationLink)
+        })
+
         return { 
-            statusCode: 201, 
+            statusCode: sendActivateMail.statusCode, 
             message: 'User created successfully', 
+            notification: 'We just sent you an email to verify your account, please check your email to verify your account!',
             data: {
                 username: newUser.username,
                 email: newUser.email,
