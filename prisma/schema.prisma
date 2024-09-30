@@ -70,6 +70,8 @@ model Project {
   name        String
   description String
   createdAt   DateTime        @default(now())
+  timeworking String?
+  permission  Json?
   member      ProjectMember[]
   tasks       Tasks[]
   avatar      String?         @default("../assets/images/avatars/cat.jpg")
@@ -98,6 +100,7 @@ model Tasks {
   statusColor    String
   statusName     String
   createdAt      DateTime      @default(now())
+  estimatetime   String?
   updatedAt      DateTime      @updatedAt
   isExpiration   Boolean       @default(false)
   expirationDate DateTime

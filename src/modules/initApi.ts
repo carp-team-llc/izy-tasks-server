@@ -5,7 +5,7 @@ import authRouter from '../modules/auth/auth.module';
 import taskService from "../modules/tasks/tasks.module";
 import projectServices from '../modules/projects/project.module';
 import teamServices from '../modules/teams/team.module';
-import userServices from '../modules/users/user.module';
+import profileServices from '../modules/profile/profile.module';
 import authMiddleware from '../utils/middleware/authentication/authMiddleware';
 import mailSystemServices from '../modules/mail/mail.module';
 import AccountMiddleware from '../utils/middleware/authentication/AccountMiddleware';
@@ -23,7 +23,7 @@ const initApi = (app) => {
     api.use("/task", authMiddleware, AccountMiddleware, taskService);
     api.use("/project", authMiddleware, AccountMiddleware, projectServices);
     api.use("/team", authMiddleware, AccountMiddleware, teamServices);
-    api.use("/user", authMiddleware, AccountMiddleware, userServices);
+    api.use("/user/profile", authMiddleware, AccountMiddleware, profileServices);
     api.use("/setup", authMiddleware, AccountMiddleware, SetupService);
 };
 

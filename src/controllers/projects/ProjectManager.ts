@@ -45,6 +45,8 @@ const CreateProject = async ({
   name,
   description,
   createdAt,
+  timeworking,
+  permission,
   member,
   tasks,
   avatar,
@@ -67,6 +69,8 @@ const CreateProject = async ({
         name: name,
         description: description,
         createdAt,
+        permission,
+        timeworking,
         tasks: tasks
           ? { connect: tasks.map((taskId) => ({ id: taskId })) }
           : undefined,
@@ -132,6 +136,8 @@ const UpdateProject = async ({
   member,
   tasks,
   avatar,
+  permission,
+  timeworking,
   deadline,
 }: ProjectDto) => {
   try {
@@ -142,6 +148,8 @@ const UpdateProject = async ({
         name: name,
         description: description,
         createdAt,
+        timeworking,
+        permission,
         tasks: tasks
           ? { connect: tasks.map((taskId) => ({ id: taskId })) }
           : undefined,

@@ -41,6 +41,7 @@ const CreateTask = async (
         author,
         expirationDate,
         isExpiration,
+        estimatetime,
         images,
         tags,
         projectId,
@@ -75,6 +76,7 @@ const CreateTask = async (
                 },
                 expirationDate,
                 isExpiration,
+                estimatetime,
                 images,
                 tags,
                 project: projectId ? { connect: { id: projectId } } : undefined,
@@ -129,6 +131,7 @@ const UpdateTask = async (
         author,
         expirationDate,
         isExpiration,
+        estimatetime,
         images,
         tags,
         projectId,
@@ -150,6 +153,7 @@ const UpdateTask = async (
         if (!status) errors.push("status");
         if (!author) errors.push("author");
         if (!expirationDate) errors.push("expirationDate");
+        if (!estimatetime) errors.push("estimatetime");
         if (images.length === 0) errors.push("images");
         if (tags.length === 0) errors.push("tags");
 
@@ -168,6 +172,7 @@ const UpdateTask = async (
                 statusName: HandleStatus({status}).name,
                 author: { connect: userInfo?.userId },
                 expirationDate,
+                estimatetime,
                 isExpiration,
                 images,
                 tags,
@@ -194,6 +199,7 @@ const UpdateTask = async (
                         statusName: updatedTask.statusName,
                         author: updatedTask.authorId,
                         expirationDate: updatedTask.expirationDate,
+                        estimatetime: updatedTask.estimatetime,
                         images: updatedTask.images,
                         tags: updatedTask.tags,
                         project: updatedTask.projectId,
