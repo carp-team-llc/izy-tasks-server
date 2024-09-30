@@ -1,31 +1,25 @@
 import nodemailer from "nodemailer";
+import { MailConfig } from "../configs/mail.config";
 import type { MailDTO } from "./mail.dto";
-import { OAuth2Client } from 'google-auth-library'
+import { ConfidentialClientApplication } from "@azure/msal-node";
 
 export const SendMail = async ({ to, subject, text, html }: MailDTO) => {
-
-  const GetAccessToken = () => {
-    const myOAuth2Client = new OAuth2Client(
-      process.env.CLIENT_ID_SERVICE,
-      process.env.CLIENT_SECRET_SERVICE
-    )
-    myOAuth2Client.setCredentials({
-      refresh_token: process.env.REFRESH_TOKEN
-    })
-    return myOAuth2Client.getAccessToken()
-  }
-
+  const cca = new ConfidentialClientApplication(MailConfig);
+  const getAccessToken = async () => {
+    const result = await cca.acquireTokenByClientCredential({
+      scopes: ["https://graph.microsoft.com/.default"],
+    });
+    return result.accessToken;
+  };
   const sendEmail = async () => {
-    const accessToken = await GetAccessToken();
+    const accessToken = await getAccessToken();
+
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: "Outlook365",
       auth: {
         type: "OAuth2",
-        user: process.env.MAIL_USER,
-        clientId: process.env.CLIENT_ID_SERVICE,
-        clientSecret: process.env.CLIENT_SECRET_SERVICE,
-        refreshToken: process.env.REFRESH_TOKEN,
-        accessToken: accessToken.token,
+        user: process.env.MAIL_USERNAME,
+        accessToken: accessToken,
       },
     });
     const mailOptions = {

@@ -17,9 +17,6 @@ const SendMailSystem = async ({
       };
     }
 
-    console.log(to)
-    
-    console.log(content)
     const sendMail = await SendMail({
       to,
       subject,
@@ -30,8 +27,9 @@ const SendMailSystem = async ({
       statusCode: 201,
       message: `Send mail to ${to} success!`,
     };
+    
   } catch (err) {
-    console.error(err)
+    console.error(err);
     return {
       statusCode: 500,
       message: "Error when send mail!",
@@ -45,19 +43,27 @@ const ForgotPasswordMail = async (email: string) => {
       to: email,
       subject: "Reset your password!",
       text: "Hi, we are Carp Team!",
-      content: "https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUXbmV2ZXIgZ29ubmEgZ2l2ZSB5b3UgdXA%3D"
-    })
-    return {
-      statusCode: sendMail.statusCode,
-      message: sendMail.message
+      content:
+        "https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUXbmV2ZXIgZ29ubmEgZ2l2ZSB5b3UgdXA%3D",
+    });
+    if (sendMail) {
+      return {
+        statusCode: sendMail.statusCode,
+        message: sendMail.message,
+      };
+    } else {
+      return {
+        statusCode: 500,
+        message: "Error when send mail!",
+      };
     }
   } catch (err) {
-    console.error(err)
+    console.error(err);
     return {
       statusCode: 500,
       message: "Error when send mail!",
-    }
+    };
   }
 };
 
-export { SendMailSystem, ForgotPasswordMail }
+export { SendMailSystem, ForgotPasswordMail };
