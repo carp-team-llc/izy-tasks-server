@@ -18,6 +18,7 @@ export interface tasks {
     progress?: number;
     employee?: any;
     author?: any;
+    estimatetime?: string;
 }
 
 export class tasksVariables {
