@@ -23,4 +23,6 @@ export interface ProjectDto {
   tasks?: string[];
   avatar?: string;
   deadline: Date;
+  timeworking?: string;
+  permission?: object[];
 }
