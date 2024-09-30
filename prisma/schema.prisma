@@ -8,23 +8,25 @@ datasource db {
 }
 
 model User {
-  id            String          @id @default(auto()) @map("_id") @db.ObjectId
-  username      String          @unique
-  email         String          @unique
-  password      String
-  phone         String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  role          String?
-  isAdmin       Boolean         @default(false)
-  profile       Profile?
-  team          TeamMember[]
-  project       ProjectMember[]
-  assignedTasks Tasks[]         @relation("AssignedTasks")
-  authoredTasks Tasks[]         @relation("AuthoredTasks")
-  history       TaskHistory[]
-  taskListId    String?         @db.ObjectId
-  taskList      TaskList[]
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  username          String          @unique
+  email             String          @unique
+  password          String
+  phone             String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  role              String?
+  isAdmin           Boolean         @default(false)
+  isVerify          Boolean         @default(false)
+  verificationToken String?
+  profile           Profile?
+  team              TeamMember[]
+  project           ProjectMember[]
+  assignedTasks     Tasks[]         @relation("AssignedTasks")
+  authoredTasks     Tasks[]         @relation("AuthoredTasks")
+  history           TaskHistory[]
+  taskListId        String?         @db.ObjectId
+  taskList          TaskList[]
 }
 
 model Profile {
