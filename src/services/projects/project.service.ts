@@ -10,6 +10,7 @@ import {
   UpdateProject,
 } from "../../controllers/projects/ProjectManager";
 import { AddTask } from "../../controllers/projects/ProjectManagement";
+import { permission } from "process";
 
 export class ProjectService {
   // #region project manager
@@ -30,12 +31,15 @@ export class ProjectService {
 
   async CreateProjectService(req: Request, res: Response) {
     try {
-      const { name, description, member, tasks, avatar, deadline }: ProjectDto =
+      const { name, description, member, tasks, avatar, deadline, permission, timeworking }: ProjectDto =
         req.body;
       const createProject = await CreateProject({
         name: name,
         description: description,
         member: member,
+        permission: permission,
+        timeworking: timeworking,
+
         tasks: tasks,
         avatar: avatar,
         deadline: deadline,
@@ -52,6 +56,8 @@ export class ProjectService {
         id,
         name,
         description,
+        permission,
+        timeworking,
         member,
         tasks,
         avatar,
@@ -61,6 +67,8 @@ export class ProjectService {
         id,
         name,
         description,
+        timeworking,
+        permission,
         member,
         tasks,
         avatar,

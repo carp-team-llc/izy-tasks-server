@@ -8,25 +8,23 @@ datasource db {
 }
 
 model User {
-  id                String          @id @default(auto()) @map("_id") @db.ObjectId
-  username          String          @unique
-  email             String          @unique
-  password          String
-  phone             String?
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  role              String?
-  isAdmin           Boolean         @default(false)
-  isVerify          Boolean         @default(false)
-  verificationToken String?
-  profile           Profile?
-  team              TeamMember[]
-  project           ProjectMember[]
-  assignedTasks     Tasks[]         @relation("AssignedTasks")
-  authoredTasks     Tasks[]         @relation("AuthoredTasks")
-  history           TaskHistory[]
-  taskListId        String?         @db.ObjectId
-  taskList          TaskList[]
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  username      String          @unique
+  email         String          @unique
+  password      String
+  phone         String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  role          String?
+  isAdmin       Boolean         @default(false)
+  profile       Profile?
+  team          TeamMember[]
+  project       ProjectMember[]
+  assignedTasks Tasks[]         @relation("AssignedTasks")
+  authoredTasks Tasks[]         @relation("AuthoredTasks")
+  history       TaskHistory[]
+  taskListId    String?         @db.ObjectId
+  taskList      TaskList[]
 }
 
 model Profile {
@@ -70,6 +68,8 @@ model Project {
   name        String
   description String
   createdAt   DateTime        @default(now())
+  timeworking String?
+  permission  Json?
   member      ProjectMember[]
   tasks       Tasks[]
   avatar      String?         @default("../assets/images/avatars/cat.jpg")
@@ -98,6 +98,7 @@ model Tasks {
   statusColor    String
   statusName     String
   createdAt      DateTime      @default(now())
+  estimatetime   String?
   updatedAt      DateTime      @updatedAt
   isExpiration   Boolean       @default(false)
   expirationDate DateTime
