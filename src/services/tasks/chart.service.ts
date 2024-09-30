@@ -5,14 +5,14 @@ export class ChartService {
   async DailyChart(req: Request, res: Response) {
     try {
       const { createdAt, status } = req.body;
+      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
       const dailyChart = await DailyChart({
         createdAt,
         status,
-      });
+      }, token);
       return res.status(dailyChart.statusCode).json({
         message: dailyChart.message,
         data: dailyChart.data,
-        total: dailyChart.total,
       });
     } catch (err) {
       console.error(err);
@@ -23,15 +23,15 @@ export class ChartService {
   async WeeklyChart(req: Request, res: Response) {
     try {
       const { fromDate, toDate, status } = req.body;
+      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
       const weeklyChart = await WeeklyChart({
         fromDate,
         toDate,
         status
-      });
+      }, token);
       return res.status(weeklyChart.statusCode).json({
         message: weeklyChart.message,
-        data: weeklyChart.data,
-        total: weeklyChart.total
+        data: weeklyChart.data
       })
     } catch (err) {
       console.error(err);
@@ -42,10 +42,11 @@ export class ChartService {
   async MonthlyChart(req: Request, res: Response) {
     try {
       const { status, month, } = req.body;
+      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
       const monthlyChart = await MonthlyChart({
         month,
         status
-      });
+      }, token);
       return res.status(monthlyChart.statusCode).json({
         message: monthlyChart.message,
         data: monthlyChart.data,

@@ -75,6 +75,10 @@ const CompletedTask = async ({ id }) => {
   return await UpdateTaskStatus({ id, statusKey: 'Completed' });
 };
 
+const DoingTask = async ({ id }) => {
+  return await UpdateTaskStatus({ id, statusKey: 'Doing' });
+};
+
 const LateTask = async ({ id }) => {
   return await UpdateTaskStatus({ id, statusKey: 'Late' });
 };
@@ -87,4 +91,4 @@ const PendingTask = async ({ id }) => {
   return await UpdateTaskStatus({ id, statusKey: 'Pending' });
 };
 
-export { CompletedTask, CancelTask, PendingTask, NewTask, LateTask };
+export { CompletedTask, CancelTask, DoingTask, PendingTask, NewTask, LateTask };

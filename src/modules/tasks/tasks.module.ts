@@ -4,12 +4,14 @@ import { TasksService } from "../../services/tasks/tasks.service";
 import { TaskStatusHandlers } from "../../services/tasks/taskStatusHandlers.service";
 import { ChartService } from "../../services/tasks/chart.service";
 import { TaskNotification } from "../../services/tasks/notification.service";
+import { TaskListService } from "../../services/tasks/tasklist.service";
 
 const router = express.Router();
 const taskServices = new TasksService();
 const taskStatusHandlers = new TaskStatusHandlers();
 const chartServices = new ChartService();
-const taskNotification = new TaskNotification
+const taskNotification = new TaskNotification();
+const taskListServices = new TaskListService
 
 // #region Task Manager
 
@@ -38,6 +40,10 @@ router.post("/cancel_task", async (req, res) => {
 
 router.post("/completed_task", async (req, res) => {
     await taskStatusHandlers.CompletedTask(req, res)
+})
+
+router.post("/doing_task", async (req, res) => {
+    await taskStatusHandlers.DoingTask(req, res)
 })
 
 router.post("/late_task", async (req, res) => {
@@ -70,5 +76,21 @@ router.post("/monthly_chart", async (req, res) => {
 router.post("/load_new_notification", async (req, res) => {
     await taskNotification.NotificationList(req, res)
 })
+// #endregion
+
+// #region Task List
+router.post("/task_list_pagination", async (req, res) => {
+    await taskListServices.TaskListPaginationService(req, res)
+})
+router.post("/create_task_list", async (req, res) => {
+    await taskListServices.CreateTaskListService(req, res)
+})
+router.post("/update_task_list", async (req, res) => {
+    await taskListServices.UpdateTaskListService(req, res)
+})
+router.post("/delete_task_list", async (req, res) => {
+    await taskListServices.DeleteTaskListService(req, res)
+})
+// #endregion
 
 export default router;

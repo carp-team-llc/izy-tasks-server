@@ -15,6 +15,6 @@ router.post("/register", async (req, res) => {
 
 router.post("/users_panigation", async(req, res) => {
     await authService.userListPanigation(req, res);
-})
+});
 
 export default router;

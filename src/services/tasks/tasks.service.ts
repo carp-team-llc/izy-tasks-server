@@ -12,11 +12,12 @@ export class TasksService {
                 skip,
                 take,
             }: tasksVariables = req.body;
+            const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
             const tasksList = await tasksPanigation({
                 where: where,
                 skip: skip,
                 take: take
-            });
+            }, token);
             return res.status(tasksList.statusCode).json(tasksList.data)
 
         } catch (err) {
@@ -42,6 +43,7 @@ export class TasksService {
                 team,
                 employee
             }: tasks = req.body;
+            const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
             const result = await CreateTask({
                 name,
                 body,
@@ -57,8 +59,11 @@ export class TasksService {
                 projectId,
                 team,
                 employee
-            });
-            return res.json(result)
+            }, token);
+            return res.status(result.statusCode).json({
+                message: result.message,
+                task: result.task
+            })
 
         } catch (err) {
             return res.status(500).json({message: "Internal Server Error!"})
@@ -84,6 +89,7 @@ export class TasksService {
                 team,
                 employee
             }: tasks = req.body;
+            const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
 
             const result = await UpdateTask({
                 id,
@@ -101,8 +107,11 @@ export class TasksService {
                 projectId,
                 team,
                 employee
+            }, token)
+            return res.status(result.statusCode).json({
+                message: result.message,
+                task: result.task
             })
-            return res.json(result)
 
         } catch (err) {
             return res.status(500).json({message: "Internal Server Error!"})
@@ -113,7 +122,9 @@ export class TasksService {
         try {
             const { id } = req.body;
             const result = await DeleteTask({ id })
-            return res.json(result)
+            return res.status(result.statusCode).json({
+                message: result.message,
+            })
         } catch (err) {
             return res.status(500).json({message: "Internal Server Error!"})
         }

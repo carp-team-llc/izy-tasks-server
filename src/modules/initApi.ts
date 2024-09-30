@@ -7,6 +7,9 @@ import projectServices from '../modules/projects/project.module';
 import teamServices from '../modules/teams/team.module';
 import profileServices from '../modules/profile/profile.module';
 import authMiddleware from '../utils/middleware/authentication/authMiddleware';
+import mailSystemServices from '../modules/mail/mail.module';
+import AccountMiddleware from '../utils/middleware/authentication/AccountMiddleware';
+import SetupService from "../modules/setup/setup.module"
 
 
 const api = express.Router();

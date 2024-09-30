@@ -4,6 +4,7 @@ import userLogin from '../../controllers/auth/Login';
 import { UserLogin, UserAuth, UserPagination } from '../../controllers/auth/dto/authInfo.dto';
 import userRegister from '../../controllers/auth/Register';
 import usersPanigaiton from '../../controllers/auth/UsersPanigation';
+import { SendMail } from '../../utils/mail/mail.service';
 
 export class AuthService{
 
@@ -52,5 +53,4 @@ export class AuthService{
             return res.status(500).json({message: "Internal Server Error!"})
         }
     }
-
 }

@@ -1,6 +1,8 @@
 import { tasks } from "./dto";
 import prisma from '../../utils/connection/connection';
 import { EnumData } from "../../constant/enumData";
+import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
+import moment from "moment-timezone";
 
 const HandleStatus = ({status}) => {
     const statusInfo = EnumData.StatusType[status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()];
@@ -47,13 +49,13 @@ const CreateTask = async (
         employee,
         priority,
         progress,
-    }: tasks
+    }: tasks,
+    token: string
 ) => {
     try {
         const errors: string[] = [];
         if (!name) errors.push("name");
         if (!body) errors.push("body");
-        if (!author) errors.push("author");
         if (!expirationDate) errors.push("expirationDate");
         if (images.length === 0) errors.push("images");
 
@@ -61,6 +63,7 @@ const CreateTask = async (
             return { statusCode: 400, message: `The following fields are empty: ${errors.join(", ")}` };
         }
 
+        const userInfo = LoadUserInfo(token);
         const newTask = await prisma.tasks.create({
             data: {
                 name,
@@ -69,7 +72,7 @@ const CreateTask = async (
                 statusColor: EnumData.StatusType.New.color,
                 statusName: EnumData.StatusType.New.name,
                 author:  {
-                    connect: { id: author }
+                    connect: { id: userInfo?.userId }
                 },
                 expirationDate,
                 isExpiration,
@@ -105,7 +108,8 @@ const CreateTask = async (
                         projectId: newTask.projectId,
                         team: newTask.team,
                         employee: newTask.employeeId,
-                    }
+                    },
+                    authorId: userInfo?.userId,
                 }
             })
         }
@@ -135,7 +139,8 @@ const UpdateTask = async (
         employee,
         priority,
         progress,
-    }: tasks
+    }: tasks,
+    token: string
 ) => {
     try {
         if (!id) {
@@ -156,6 +161,7 @@ const UpdateTask = async (
             return { statusCode: 400, message: `The following fields are empty: ${errors.join(", ")}` };
         }
 
+        const userInfo = LoadUserInfo(token);
         const updatedTask = await prisma.tasks.update({
             where: { id },
             data: {
@@ -164,7 +170,7 @@ const UpdateTask = async (
                 status,
                 statusColor: HandleStatus({status}).color,
                 statusName: HandleStatus({status}).name,
-                author,
+                author: { connect: userInfo?.userId },
                 expirationDate,
                 estimatetime,
                 isExpiration,

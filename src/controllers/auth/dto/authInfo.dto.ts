@@ -12,6 +12,7 @@ export class UserAuth {
     phone: string
     role: string
     isAdmin: boolean
+    taskListId?: any
 }
 
 export class UserLogin {
