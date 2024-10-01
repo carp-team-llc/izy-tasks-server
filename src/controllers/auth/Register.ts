@@ -38,7 +38,7 @@ const userRegister = async ({ username, email, password, phone, taskListId }: Us
             },
         });
 
-        const verificationLink = `${process.env.CLIENT_URL_LOCAL}/authentication/verify-email?token=${newUser.verificationToken}`;
+        const verificationLink = `${process.env.CLIENT_URL_LOCAL}/api/v1/auth/authentication/verify_email?token=${newUser.verificationToken}`;
 
         const sendActivateMail = await SendMailSystem({
             to: email,

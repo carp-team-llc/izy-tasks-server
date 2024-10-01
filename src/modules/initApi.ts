@@ -11,6 +11,7 @@ import mailSystemServices from '../modules/mail/mail.module';
 import AccountMiddleware from '../utils/middleware/authentication/AccountMiddleware';
 import SetupService from "../modules/setup/setup.module"
 
+
 const api = express.Router();
 
 const initApi = (app) => {
