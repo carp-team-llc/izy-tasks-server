@@ -16,6 +16,13 @@ const userLogin = async ({email, password}: UserLogin) => {
             return { statusCode: 404, message: "User not found" };
         }
 
+        if (!user?.isVerify) {
+            return {
+                statusCode: 401,
+                message: "Please verify account before login!"
+            }
+        }
+
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
             return { statusCode: 401, message: "Password is incorrect" };
