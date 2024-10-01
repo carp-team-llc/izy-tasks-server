@@ -8,7 +8,8 @@ const SendMailSystem = async ({
   text,
   html,
   content,
-}: MailDTO) => {
+  generateHtml
+}: MailDTO & { generateHtml?: (to: string, content: string) => string }) => {
   try {
     if (!to || !subject || !text) {
       return {
@@ -17,11 +18,15 @@ const SendMailSystem = async ({
       };
     }
 
+    const htmlContent = generateHtml
+      ? generateHtml(to, content)
+      : html;
+
     const sendMail = await SendMail({
       to,
       subject,
       text,
-      html: GeneratePasswordResetEmail(to, content),
+      html: htmlContent,
     });
     return {
       statusCode: 201,
