@@ -1,10 +1,11 @@
 
 import { Request, Response } from 'express';
+import { UserAuth, UserLogin, UserPagination } from '../../controllers/auth/dto/authInfo.dto';
 import userLogin from '../../controllers/auth/Login';
-import { UserLogin, UserAuth, UserPagination } from '../../controllers/auth/dto/authInfo.dto';
 import userRegister from '../../controllers/auth/Register';
 import usersPanigaiton from '../../controllers/auth/UsersPanigation';
-import { SendMail } from '../../utils/mail/mail.service';
+import VerifyAccount from '../../controllers/auth/VerifyAccount';
+import { WelcomeNewUser } from '../../constant/MailForm';
 
 export class AuthService{
 
@@ -51,6 +52,19 @@ export class AuthService{
             return res.status(usersList.statusCode).json(usersList.data)
         } catch (err) {
             return res.status(500).json({message: "Internal Server Error!"})
+        }
+    }
+
+    async VerifyEmail(req: Request, res: Response) {
+        const { token } = req.query;
+        const verifyEmail = await VerifyAccount(String(token))
+        if (verifyEmail.statusCode === 201) {
+            res.status(201).send(WelcomeNewUser(verifyEmail.data.toString()));
+        } else {
+            res.status(verifyEmail.statusCode).json({
+                message: verifyEmail.message,
+                data: verifyEmail.data,
+            });
         }
     }
 }
