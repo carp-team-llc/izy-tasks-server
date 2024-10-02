@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { tasks, tasksVariables } from "../../controllers/tasks/dto";
-import tasksPanigation from "../../controllers/tasks/TaskPanigation";
-import { CreateTask, DeleteTask, UpdateTask } from "../../controllers/tasks/TaskManager";
+import { tasks, tasksVariables } from "../../controllers/tasks/dto/tasks.dto";
+import tasksPanigation from "../../controllers/tasks/taskPanigation";
+import { CreateTask, DeleteTask, UpdateTask } from "../../controllers/tasks/taskManager";
 
 export class TasksService {
 

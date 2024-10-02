@@ -33,9 +33,7 @@ const UploadFileToCloud = async () => {
       authProvider: (done) => {
         done(null, accessToken);
       },
-    });
-
-    
+    });    
   };
 
   const client = getAuthenticatedClient();

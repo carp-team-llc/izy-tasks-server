@@ -18,7 +18,7 @@ router.post("/users_panigation", async(req, res) => {
     await authService.userListPanigation(req, res);
 });
 
-router.get("/authentication/verify_email", async(req, res) => {
+router.get("/authentication/verify_email", async(req, res) => { 
     await authService.VerifyEmail(req, res);
 });
 

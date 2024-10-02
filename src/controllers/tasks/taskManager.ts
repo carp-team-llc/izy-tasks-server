@@ -1,4 +1,4 @@
-import { tasks } from "./dto";
+import { tasks } from "./dto/tasks.dto";
 import prisma from '../../utils/connection/connection';
 import { EnumData } from "../../constant/enumData";
 import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
