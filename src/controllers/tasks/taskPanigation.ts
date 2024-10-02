@@ -1,6 +1,6 @@
 
 import prisma from "../../utils/connection/connection";
-import { tasksVariables } from "./dto";
+import { tasksVariables } from "./dto/tasks.dto";
 import { LoadUserInfo } from '../../utils/middleware/permission/LoadUserInfo';
 
 const tasksPanigation = async (variales: tasksVariables, token: string) => {
