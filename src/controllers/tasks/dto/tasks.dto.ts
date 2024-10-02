@@ -1,6 +1,6 @@
 import type { ProjectDto } from "src/controllers/projects/dto/Project.dto";
 
-export interface tasks {
+export class tasks {
     id?: string;
     name: string;
     body: string;

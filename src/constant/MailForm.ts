@@ -119,7 +119,7 @@ function ActivateAccountEmailForm(userName: string, content: string): string {
       <h2>Hello, ${userName}!</h2>
       <p>You have registered an account at Izy Task, please follow the instructions to activate your account!</p>
       <p>Click the button below to proceed:</p>
-      <a href="${content}" class="reset-button">Activate</a>
+      <a href="${content}" class="reset-button" style="color: #fff">Activate</a>
       <p>Thank you,</p>
       <p>Carp Team SP</p>
       <div class="footer">
@@ -245,7 +245,7 @@ function WelcomeNewUser(username: string) {
               <p>Hello ${username}!</p>
               <p>Congratulations! Your account has been successfully verified.</p>
               <p>Have a great experience on our website.</p>
-              <a href="#" class="btn">Go to Dashboard</a>
+              <a href="http://localhost:5173/login" class="btn">Go to login</a>
           </div>
       </div>
 

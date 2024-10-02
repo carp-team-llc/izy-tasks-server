@@ -2,10 +2,10 @@ import express from 'express';
 import initApi from './src/modules/initApi';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4080;
 
 initApi(app);
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on http://[::1]:${PORT}`);
 });
