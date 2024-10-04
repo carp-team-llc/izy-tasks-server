@@ -10,7 +10,8 @@ import authMiddleware from '../utils/middleware/authentication/authMiddleware';
 import mailSystemServices from '../modules/mail/mail.module';
 import AccountMiddleware from '../utils/middleware/authentication/AccountMiddleware';
 import SetupService from "../modules/setup/setup.module"
-
+import { upload } from '../utils/middleware/KeepFileMemory';
+import UploadFile from "../modules/upload/upload.module"
 
 const api = express.Router();
 
@@ -26,6 +27,7 @@ const initApi = (app) => {
     api.use("/team", authMiddleware, AccountMiddleware, teamServices);
     api.use("/user/profile", authMiddleware, AccountMiddleware, profileServices);
     api.use("/setup", authMiddleware, AccountMiddleware, SetupService);
+    api.use("/storage", authMiddleware, AccountMiddleware, upload.single('file'), UploadFile);
 };
 
 export default initApi;

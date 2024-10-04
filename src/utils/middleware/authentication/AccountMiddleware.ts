@@ -27,22 +27,28 @@ const AccountMiddleware = async (
       throw new Error();
     }
     const decoded = jwt.verify(token, ACCESS_TOKEN);
-    const reqEmail = decoded?.email;
-    if (!reqEmail) {
-      return res.status(400).json({ message: "Invalid token!" });
-    }
-    const checkAcivated = await prisma.user.findFirst({
-      where: {
-        email: reqEmail,
-      },
-      select: {
-        isVerify: true,
+    if (typeof decoded === "object" && (decoded as JwtPayload).email) {
+      const reqEmail = (decoded as JwtPayload).email;
+
+      const checkActivated = await prisma.user.findFirst({
+        where: {
+          email: reqEmail,
+        },
+        select: {
+          isVerify: true,
+        },
+      });
+
+      if (!checkActivated?.isVerify) {
+        return res.status(400).json({
+          message:
+            "This account is not activated, please activate this account before trying!",
+        });
+      } else {
+        next();
       }
-    })
-    if (!checkAcivated?.isVerify) {
-      return res.status(400).json({message: "This account is not activate, please activate this account before trying!"})
     } else {
-      next();
+      return res.status(400).json({ message: "Invalid token!" });
     }
   } catch (err) {
     console.error(err);

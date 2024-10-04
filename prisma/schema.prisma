@@ -66,16 +66,17 @@ model TeamMember {
 }
 
 model Project {
-  id          String          @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  description String
-  createdAt   DateTime        @default(now())
-  timeworking String?
-  permission  Json?
-  member      ProjectMember[]
-  tasks       Tasks[]
-  avatar      String?         @default("../assets/images/avatars/cat.jpg")
-  deadline    DateTime        @default(now())
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  description   String
+  createdAt     DateTime        @default(now())
+  timeworking   String?
+  permission    Json?
+  member        ProjectMember[]
+  tasks         Tasks[]
+  avatar        String?         @default("../assets/images/avatars/cat.jpg")
+  deadline      DateTime        @default(now())
+  totalEstimate String?
 }
 
 model ProjectMember {
