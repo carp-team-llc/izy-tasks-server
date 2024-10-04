@@ -1,7 +1,6 @@
 
 import express from 'express';
 import { AuthService } from "../../services/auth/auth.service";
-import VerifyAccount from '../../controllers/auth/VerifyAccount';
 
 const router = express.Router();
 const authService = new AuthService();

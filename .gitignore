@@ -6,4 +6,5 @@ node_modules
 .env.productions
 .env.staging
 
-# hihi
+# firebase
+serviceAccountKey.json
