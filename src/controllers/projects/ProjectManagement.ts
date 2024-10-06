@@ -1,4 +1,19 @@
+import { EnumData } from "../../constant/enumData";
 import prisma from "../../utils/connection/connection";
+
+const RoleList = () => {
+  try {
+    const roleList = EnumData.ProjectRole;
+    return {
+      statusCode: 201,
+      message: "Success!",
+      data: roleList
+    }
+  } catch (err) {
+    console.error("Error in Add Task:", err);
+    return { statusCode: 500, messsage: "Role error!" }; 
+  }
+}
 
 const AddTask = async ({ projectId, taskId }) => {
   try {
@@ -68,4 +83,4 @@ const AddRole = async ({ projectId, memberId, role }: any) => {
   }
 };
 
-export { AddTask, AddRole };
+export { AddTask, AddRole, RoleList };

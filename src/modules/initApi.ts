@@ -16,6 +16,7 @@ import UploadFile from "../modules/upload/upload.module"
 const api = express.Router();
 
 const initApi = (app) => {
+
     app.set("json spaces", 2);
     app.use(cors());
     app.use(bodyParser.json());

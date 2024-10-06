@@ -25,6 +25,10 @@ router.post("/add_task_project", async (req, res) => {
   await projectServices.AddTaskServices(req, res);
 })
 
+router.post("/project_role", async (req, res) => {
+  await projectServices.RoleListService(req, res);
+})
+
 // #endregion
 
 export default router;
