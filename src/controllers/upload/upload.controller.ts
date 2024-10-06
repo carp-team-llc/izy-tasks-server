@@ -1,13 +1,14 @@
 import path from "path";
+import { v4 as uuidv4 } from "uuid";
 import { bucket } from "../../../firebaseAdmin";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 const UploadFileToCloud = async (file: any) => {
   if (!file) {
     console.error("No file provided.");
     return {
-      statusCode: 401,
+      statusCode: 403,
       message: "Choose file before upload!",
       data: {},
     };
@@ -30,7 +31,7 @@ const UploadFileToCloud = async (file: any) => {
     folderPath = "images/";
   }
 
-  console.log("Starting upload to folder:", folderPath);
+  const uniqueFileName = `${uuidv4()}${fileExtension}`;
 
   return new Promise<{
     statusCode: number;
@@ -38,7 +39,7 @@ const UploadFileToCloud = async (file: any) => {
     data: string | {};
   }>((resolve, reject) => {
     try {
-      const blob = bucket.file(`${folderPath}${file.originalname}`);
+      const blob = bucket.file(`${folderPath}${uniqueFileName}`);
       const blobStream = blob.createWriteStream({
         metadata: {
           contentType: file.mimetype,
@@ -46,7 +47,6 @@ const UploadFileToCloud = async (file: any) => {
       });
 
       blobStream.on("error", (err) => {
-        console.error("Error uploading file:", err);
         reject({
           statusCode: 500,
           message: "Upload failed!",
@@ -57,7 +57,6 @@ const UploadFileToCloud = async (file: any) => {
       blobStream.on("finish", async () => {
         await blob.makePublic(); // public file
         const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-        console.log("Upload successful, public URL:", publicUrl);
         resolve({
           statusCode: 201,
           data: publicUrl,
@@ -68,7 +67,6 @@ const UploadFileToCloud = async (file: any) => {
       // Start the upload stream
       blobStream.end(file.buffer);
     } catch (err) {
-      console.error("Internal error during upload:", err);
       reject({
         statusCode: 500,
         message: "Internal Server Error!",

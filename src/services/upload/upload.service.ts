@@ -1,7 +1,7 @@
 
-import { Request, Response } from "express";
-import type { MulterRequest } from "../../options/types/type";
+import { Response } from "express";
 import UploadFileToCloud from "../../controllers/upload/upload.controller";
+import type { MulterRequest } from "../../options/types/type";
 
 export class UploadFileService {
   async UploadFile(req: MulterRequest, res: Response) {
