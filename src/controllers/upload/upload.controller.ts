@@ -55,7 +55,7 @@ const UploadFileToCloud = async (file: any) => {
       });
 
       blobStream.on("finish", async () => {
-        await blob.makePublic(); // public file
+        await blob.makePublic();
         const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
         resolve({
           statusCode: 201,
@@ -64,7 +64,6 @@ const UploadFileToCloud = async (file: any) => {
         });
       });
 
-      // Start the upload stream
       blobStream.end(file.buffer);
     } catch (err) {
       reject({
