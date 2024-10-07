@@ -72,7 +72,7 @@ const CreateTask = async (
                 statusColor: EnumData.StatusType.New.color,
                 statusName: EnumData.StatusType.New.name,
                 author:  {
-                    connect: { id: userInfo?.userId }
+                    connect: { id: userInfo.userId }
                 },
                 expirationDate,
                 isExpiration,
@@ -82,7 +82,7 @@ const CreateTask = async (
                 project: projectId ? { connect: { id: projectId } } : undefined,
                 team: team || null,
                 employee: {
-                    connect: { id: employee }
+                    connect: { id: employee || userInfo.userId }
                 },
                 priority: priority || EnumData.PriorityType.Low.code,
                 priorityName: HandlePriority({ priority: priority || EnumData.PriorityType.Low.code }).name,
