@@ -2,7 +2,7 @@ import { startOfMonth, endOfMonth } from "date-fns";
 import prisma from "../../utils/connection/connection";
 import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
 import Helper from "../../utils/helper";
-import { startOfDay, endOfDay } from 'date-fns';
+import { startOfDay, endOfDay } from "date-fns";
 
 interface GetTasksByStatusAndDateParams {
   status: string[];
@@ -89,7 +89,11 @@ const DailyChart = async (
       };
     });
 
-    const totalTask = taskChart.length;
+    const loadTotalStatus: number[] = getStatusInfo.map((item: any) => {
+      return item?.total;
+    });
+    const totalTask = loadTotalStatus.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
     return {
       statusCode: 200,
       message: "Success!",
@@ -128,7 +132,7 @@ const WeeklyChart = async (
     }
     const userInfo = LoadUserInfo(token);
     const startOfDay = new Date(fromDate);
-    startOfDay.setHours(0, 0, 0, 0); 
+    startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date(toDate);
     endOfDay.setHours(23, 59, 59, 999);
 
@@ -175,14 +179,17 @@ const WeeklyChart = async (
         statusInfo,
       };
     });
-    const totalTask = weeklyTotal.length
+    const loadTotalStatus: number[] = getStatusInfo.map((item: any) => {
+      return item?.total;
+    });
+    const totalTask = loadTotalStatus.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
     return {
       statusCode: 200,
       message: "Success!",
       data: {
         taskChart: processedTaskChart,
-        totalTask: totalTask
-      }
+        totalTask: totalTask,
+      },
     };
   } catch (err) {
     console.error(err);

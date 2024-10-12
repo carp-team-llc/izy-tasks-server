@@ -39,7 +39,7 @@ const UploadFileToCloud = async (file: any) => {
     data: string | {};
   }>((resolve, reject) => {
     try {
-      const blob = bucket.file(`${folderPath}${uniqueFileName}`);
+      const blob = bucket.file(`${folderPath}personal/${uniqueFileName}`);
       const blobStream = blob.createWriteStream({
         metadata: {
           contentType: file.mimetype,
@@ -75,4 +75,39 @@ const UploadFileToCloud = async (file: any) => {
   });
 };
 
-export default UploadFileToCloud;
+const DeleteFileFromCloud = async (fileUrl: string) => {
+  if (!fileUrl) {
+    return {
+      statusCode: 400,
+      message: "No file URL provided.",
+    };
+  }
+
+  try {
+    const baseUrl = `https://storage.googleapis.com/${bucket.name}/`;
+    if (!fileUrl.startsWith(baseUrl)) {
+      return {
+        statusCode: 400,
+        message: "Invalid file URL.",
+      };
+    }
+
+    const filePath = fileUrl.replace(baseUrl, "");
+
+    const file = bucket.file(filePath);
+    await file.delete();
+
+    return {
+      statusCode: 200,
+      message: "File deleted successfully!",
+    };
+  } catch (error) {
+    console.error("Error deleting file:", error);
+    return {
+      statusCode: 500,
+      message: "Failed to delete file.",
+    };
+  }
+};
+
+export { UploadFileToCloud, DeleteFileFromCloud };
