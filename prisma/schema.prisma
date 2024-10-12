@@ -27,6 +27,7 @@ model User {
   history           TaskHistory[]
   taskListId        String?         @db.ObjectId
   taskList          TaskList[]
+  haveProfile       Boolean?        @default(false)
 }
 
 model Profile {
