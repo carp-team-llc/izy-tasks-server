@@ -9,7 +9,7 @@ import {
   ProjectPanigation,
   UpdateProject,
 } from "../../controllers/projects/ProjectManager";
-import { AddTask } from "../../controllers/projects/ProjectManagement";
+import { AddTask, RoleList } from "../../controllers/projects/ProjectManagement";
 import { permission } from "process";
 
 export class ProjectService {
@@ -99,6 +99,18 @@ export class ProjectService {
       const { projectId, taskId } = req.body;
       const addTask = await AddTask({ projectId, taskId });
       return res.json(addTask);
+    } catch {
+      return res.status(500).json({ message: "Internal Server Error!" });
+    }
+  }
+
+  async RoleListService(req: Request, res: Response) {
+    try {
+      const showRole = RoleList();
+      return res.status(showRole.statusCode).json({
+        message: showRole.message,
+        data: showRole.data
+      })
     } catch {
       return res.status(500).json({ message: "Internal Server Error!" });
     }

@@ -57,7 +57,6 @@ const CreateTask = async (
         if (!name) errors.push("name");
         if (!body) errors.push("body");
         if (!expirationDate) errors.push("expirationDate");
-        if (images.length === 0) errors.push("images");
 
         if (errors.length > 0) {
             return { statusCode: 400, message: `The following fields are empty: ${errors.join(", ")}` };
@@ -72,17 +71,17 @@ const CreateTask = async (
                 statusColor: EnumData.StatusType.New.color,
                 statusName: EnumData.StatusType.New.name,
                 author:  {
-                    connect: { id: userInfo?.userId }
+                    connect: { id: userInfo.userId }
                 },
                 expirationDate,
                 isExpiration,
                 estimatetime,
-                images,
-                tags,
+                images: images || [],
+                tags: tags || [],
                 project: projectId ? { connect: { id: projectId } } : undefined,
                 team: team || null,
                 employee: {
-                    connect: { id: employee }
+                    connect: { id: employee || userInfo.userId }
                 },
                 priority: priority || EnumData.PriorityType.Low.code,
                 priorityName: HandlePriority({ priority: priority || EnumData.PriorityType.Low.code }).name,
@@ -154,8 +153,6 @@ const UpdateTask = async (
         if (!author) errors.push("author");
         if (!expirationDate) errors.push("expirationDate");
         if (!estimatetime) errors.push("estimatetime");
-        if (images.length === 0) errors.push("images");
-        if (tags.length === 0) errors.push("tags");
 
         if (errors.length > 0) {
             return { statusCode: 400, message: `The following fields are empty: ${errors.join(", ")}` };
@@ -174,8 +171,8 @@ const UpdateTask = async (
                 expirationDate,
                 estimatetime,
                 isExpiration,
-                images,
-                tags,
+                images: images || [],
+                tags: tags || [],
                 project: projectId ? { connect: { id: projectId } } : undefined,
                 team,
                 employee,

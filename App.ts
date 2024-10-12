@@ -7,5 +7,5 @@ const PORT = process.env.PORT || 4080;
 initApi(app);
 
 app.listen(PORT, () => {
-    console.log(`Server is running on ${process.env.IP_HOST}:${PORT}`);
+    console.log(`Server is running on ${process.env.IP_HOST}`);
 });
