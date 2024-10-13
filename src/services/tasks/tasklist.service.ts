@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { CreateListTask, DeleteTaskList, TaskListPagination, UpdateTaskList } from "../../controllers/tasks/TaskList";
+import { CreateListTask, DeleteTaskList, DetailTaskList, TaskListPagination, UpdateTaskList } from "../../controllers/tasks/TaskList";
 
 export class TaskListService {
   async TaskListPaginationService(req: Request, res: Response) {
@@ -15,6 +15,15 @@ export class TaskListService {
       data: taskListPagination.data
     })
   }
+
+  async DetailTaskListService (req: Request, res: Response) {
+    const id = req.body;
+    const result = await DetailTaskList(id);
+    return res.status(result.statusCode).json({
+        message: result.message,
+        detail: result.detail
+    })
+}
 
   async CreateTaskListService(req: Request, res: Response) {
     const { name, description, avatar, tasks } = req.body;

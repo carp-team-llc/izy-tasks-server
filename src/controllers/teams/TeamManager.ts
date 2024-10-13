@@ -1,5 +1,6 @@
 import { TeamDTO } from "./dto/team.dto";
 import prisma from "../../utils/connection/connection";
+import { EnumData } from "../../constant/enumData";
 
 const CreateTeam = async ({
   name,
@@ -40,6 +41,10 @@ const CreateTeam = async ({
         userId: teamMember.userId,
         teamId: newTeam.id,
         role: teamMember.role,
+        roleCode: EnumData.TeamRole[teamMember.role].code,
+        roleName: EnumData.TeamRole[teamMember.role].name,
+        roleEngName: EnumData.TeamRole[teamMember.role].engName,
+        permission: EnumData.TeamRole[teamMember.role].PERMISSION,
       }));
 
       await prisma.teamMember.createMany({
@@ -120,6 +125,10 @@ const UpdateTeam = async ({
         userId: teamMember.userId,
         teamId: updateTeam.id,
         role: teamMember.role,
+        roleCode: EnumData.TeamRole[teamMember.role].code,
+        roleName: EnumData.TeamRole[teamMember.role].name,
+        roleEngName: EnumData.TeamRole[teamMember.role].engName,
+        permission: EnumData.TeamRole[teamMember.role].PERMISSION,
       }));
 
       await prisma.teamMember.createMany({

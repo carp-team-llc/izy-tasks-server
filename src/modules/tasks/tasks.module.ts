@@ -19,6 +19,10 @@ router.post("/tasks_list", async (req, res) => {
     await taskServices.tasksPagination(req, res);
 })
 
+router.post("/task_detail", async (req, res) => {
+    await taskServices.taskDetail(req, res);
+})
+
 router.post("/create_task", async (req, res) => {
     await taskServices.createTask(req, res);
 })
@@ -81,6 +85,9 @@ router.post("/load_new_notification", async (req, res) => {
 // #region Task List
 router.post("/task_list_pagination", async (req, res) => {
     await taskListServices.TaskListPaginationService(req, res)
+})
+router.post("/task_list_detail", async (req, res) => {
+    await taskListServices.DetailTaskListService(req, res)
 })
 router.post("/create_task_list", async (req, res) => {
     await taskListServices.CreateTaskListService(req, res)
