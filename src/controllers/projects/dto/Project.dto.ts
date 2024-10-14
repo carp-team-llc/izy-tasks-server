@@ -23,6 +23,7 @@ export interface ProjectDto {
   tasks?: string[];
   avatar?: string;
   deadline: Date;
+  teamId?: string;
   timeworking?: string;
   permission?: object[];
 }

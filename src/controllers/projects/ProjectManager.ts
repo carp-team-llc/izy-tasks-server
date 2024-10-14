@@ -49,6 +49,7 @@ const CreateProject = async ({
   permission,
   member,
   tasks,
+  teamId,
   avatar,
   deadline,
 }: ProjectDto) => {
@@ -76,6 +77,7 @@ const CreateProject = async ({
           : undefined,
         avatar: avatar,
         deadline: deadline,
+        teamId: teamId,
       },
     });
 

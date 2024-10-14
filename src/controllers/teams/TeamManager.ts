@@ -1,6 +1,97 @@
-import { TeamDTO } from "./dto/team.dto";
+import { TeamDTO, type pagination } from "./dto/team.dto";
 import prisma from "../../utils/connection/connection";
 import { EnumData } from "../../constant/enumData";
+import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
+
+const TeamPagination = async ({ where, skip, take }: pagination, token: string) => {
+  try {
+    const userInfo = LoadUserInfo(token)
+    const teams = await prisma.team.findMany({
+      where: {
+        member: {
+          some: {
+            userId: userInfo?.userId
+          }
+        },
+        AND: where,
+      },
+      select: {
+        id: true,
+        name: true,
+        bio: true,
+        address: true,
+        phonenumber: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+        avatar: true,
+      },
+      skip,
+      take,
+    })
+    return {
+      statusCode: 201,
+      message: 'success!',
+      data: teams
+    }
+  } catch (err) {
+    console.error("Error: \n", err);
+    return {
+      statusCode: 500,
+      message: "Internal Server Error",
+    };
+  }
+};
+
+const DetailTeam = async ({id}, token: string) => {
+  try {
+    if (!id) {
+      return {
+        statusCode: 400,
+        message: "Missing required parameter: id"
+      }
+    }
+    const userInfo = LoadUserInfo(token)
+    const detail = await prisma.team.findFirst({
+      where: {
+        member: {
+          some: {
+            userId: userInfo?.userId
+          }
+        },
+        AND: id
+      },
+      select: {
+        id: true,
+        name: true,
+        bio: true,
+        address: true,
+        phonenumber: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+        avatar: true,
+        member: {
+          select: {
+            user: true,
+            role: true,
+            roleCode: true,
+            roleName: true,
+            roleEngName: true,
+            permission: true,
+            joinedAt: true,
+          }
+        }
+      }
+    })
+  } catch (err) {
+    console.error("Error: \n", err);
+    return {
+      statusCode: 500,
+      message: "Internal Server Error",
+    };
+  }
+}
 
 const CreateTeam = async ({
   name,
@@ -74,7 +165,7 @@ const CreateTeam = async ({
       data: {
         ...newTeam,
         members: addedMembers,
-      }
+      },
     };
   } catch (err) {
     console.error("Error in Create Team with err: \n", err);
@@ -158,7 +249,7 @@ const UpdateTeam = async ({
       data: {
         ...updateTeam,
         members: addedMembers,
-      }
+      },
     };
   } catch {
     return {
@@ -194,4 +285,4 @@ const DeleteTeam = async ({ id }) => {
   }
 };
 
-export { CreateTeam, UpdateTeam, DeleteTeam };
+export { TeamPagination, CreateTeam, UpdateTeam, DeleteTeam };
