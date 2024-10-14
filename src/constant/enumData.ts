@@ -19,5 +19,10 @@ export const EnumData = {
     Member: { code: "MEMBER", name: "Thành viên", engName: "Member", PERMISSION: "LOW" },
     Moderator: { code: "MOD", name: "Kiểm duyệt viên", engName: "Moderator", PERMISSION: "MEDIUM" },
     Administrator: { code: "ADMIN", name: "Quản trị viên", engName: "Administrator", PERMISSION: "HIGH" }
+  },
+  TeamRole: {
+    Member: { code: "MEMBER", name: "Thành viên", engName: "Member", PERMISSION: "LOW" },
+    Moderator: { code: "MOD", name: "Kiểm duyệt viên", engName: "Moderator", PERMISSION: "MEDIUM" },
+    Administrator: { code: "ADMIN", name: "Quản trị viên", engName: "Administrator", PERMISSION: "HIGH" }
   }
 }

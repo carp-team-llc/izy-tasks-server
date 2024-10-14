@@ -25,6 +25,25 @@ const TaskListPagination = async ({ where, skip, take }: any, token) => {
   }
 };
 
+const DetailTaskList = async ({id}) => {
+  try {
+    if (!id) {
+        return { statusCode: 400, message: "Task ID is required for tgh" };
+    }
+    const detail = await prisma.taskList.findFirst({
+        where: { id }
+    })
+    return {
+        statusCode: 201,
+        message: "success!",
+        detail: detail
+    }
+} catch (err) {
+    console.error('Error: ', err);
+    return { statusCode: 500, message: "Internal Server Error" };
+}
+}
+
 const CreateListTask = async (
   { name, description, avatar, tasks }: TaskListDTO,
   token: string
@@ -156,4 +175,4 @@ const DeleteTaskList = async (id: string) => {
   }
 };
 
-export { TaskListPagination, CreateListTask, UpdateTaskList, DeleteTaskList };
+export { TaskListPagination, CreateListTask, UpdateTaskList, DeleteTaskList, DetailTaskList };

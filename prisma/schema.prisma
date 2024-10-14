@@ -50,6 +50,7 @@ model Team {
   updatedAt   DateTime     @updatedAt
   avatar      String?      @default("../assets/images/avatars/cat.jpg")
   member      TeamMember[]
+  project     Project[]
 }
 
 model TeamMember {
@@ -75,6 +76,8 @@ model Project {
   permission    Json?
   member        ProjectMember[]
   tasks         Tasks[]
+  teamId        String          @db.ObjectId
+  team          Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
   avatar        String?         @default("../assets/images/avatars/cat.jpg")
   deadline      DateTime        @default(now())
   totalEstimate String?

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { tasks, tasksVariables } from "../../controllers/tasks/dto/tasks.dto";
 import tasksPanigation from "../../controllers/tasks/taskPanigation";
-import { CreateTask, DeleteTask, UpdateTask } from "../../controllers/tasks/taskManager";
+import { CreateTask, DeleteTask, TaskDetail, UpdateTask } from "../../controllers/tasks/taskManager";
 
 export class TasksService {
 
@@ -24,6 +24,16 @@ export class TasksService {
             return res.status(500).json({message: "Internal Server Error!"})
         }
     }
+
+    async taskDetail (req: Request, res: Response) {
+        const id = req.body;
+        const result = await TaskDetail(id);
+        return res.status(result.statusCode).json({
+            message: result.message,
+            detail: result.detail
+        })
+    }
+    
 
     async createTask (req: Request, res: Response) {
         try {

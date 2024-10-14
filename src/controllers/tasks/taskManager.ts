@@ -2,7 +2,6 @@ import { tasks } from "./dto/tasks.dto";
 import prisma from '../../utils/connection/connection';
 import { EnumData } from "../../constant/enumData";
 import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
-import moment from "moment-timezone";
 
 const HandleStatus = ({status}) => {
     const statusInfo = EnumData.StatusType[status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()];
@@ -33,6 +32,25 @@ const HandlePriority = ({ priority }) => {
 
     return EnumData.PriorityType.Low;
 };
+
+const TaskDetail = async ({id}) => {
+    try {
+        if (!id) {
+            return { statusCode: 400, message: "Task ID is required for tgh" };
+        }
+        const detail = await prisma.tasks.findFirst({
+            where: { id }
+        })
+        return {
+            statusCode: 201,
+            message: "success!",
+            detail: detail
+        }
+    } catch (err) {
+        console.error('Error: ', err);
+        return { statusCode: 500, message: "Internal Server Error" };
+    }
+}
 
 const CreateTask = async (
     {
@@ -246,4 +264,4 @@ const DeleteTask = async ({ id }) => {
     }
 }
 
-export { CreateTask, UpdateTask, DeleteTask }
+export { TaskDetail, CreateTask, UpdateTask, DeleteTask }
