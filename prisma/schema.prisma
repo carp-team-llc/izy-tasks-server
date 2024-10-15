@@ -104,7 +104,7 @@ model Tasks {
   status         String
   statusColor    String
   statusName     String
-  createdAt      DateTime      @default(now())
+  createdAt      DateTime      @default(now()) 
   estimatetime   String?
   updatedAt      DateTime      @updatedAt
   isExpiration   Boolean       @default(false)

@@ -9,6 +9,9 @@ const teamService = new TeamManagerService();
 router.post("/team_pagination", async(req, res) => {
   await teamService.TeamPagination(req, res);
 })
+router.post("/team_detail", async(req, res) => {
+  await teamService.DetailTeamService(req, res);
+})
 router.post("/create_team", async(req, res) => {
   await teamService.CreateTeamService(req, res);
 })

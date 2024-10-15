@@ -13,7 +13,7 @@ export const EnumData = {
     Low: { code: "LOW", name: "Thấp", engName: "Low", color: color.low },
     Normal: { code: "NORMAL", name: "Bình thường", engName: "Normal", color: color.normal},
     Medium: { code: "MEDIUM", name: "Trung bình", engName: "Medium", color: color.medium },
-    High: { code: "HIGH", name: "Cao", engName: "Hight", color: color.highest},                                                                                                                                                                                                              
+    High: { code: "HIGH", name: "Cao", engName: "High", color: color.highest},                                                                                                                                                                                                              
   },
   ProjectRole : {
     Member: { code: "MEMBER", name: "Thành viên", engName: "Member", PERMISSION: "LOW" },
