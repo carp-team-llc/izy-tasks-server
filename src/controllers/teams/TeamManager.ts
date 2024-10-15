@@ -3,15 +3,18 @@ import prisma from "../../utils/connection/connection";
 import { EnumData } from "../../constant/enumData";
 import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
 
-const TeamPagination = async ({ where, skip, take }: pagination, token: string) => {
+const TeamPagination = async (
+  { where, skip, take }: pagination,
+  token: string
+) => {
   try {
-    const userInfo = LoadUserInfo(token)
-    const teams = await prisma.team.findMany({
+    const userInfo = LoadUserInfo(token); // load user info from token
+    const teams = await prisma.team.findMany({ // get all teams that are member of the user
       where: {
         member: {
           some: {
-            userId: userInfo?.userId
-          }
+            userId: userInfo?.userId,
+          },
         },
         AND: where,
       },
@@ -28,12 +31,12 @@ const TeamPagination = async ({ where, skip, take }: pagination, token: string) 
       },
       skip,
       take,
-    })
+    });
     return {
       statusCode: 201,
-      message: 'success!',
-      data: teams
-    }
+      message: "success!",
+      data: teams,
+    };
   } catch (err) {
     console.error("Error: \n", err);
     return {
@@ -43,23 +46,25 @@ const TeamPagination = async ({ where, skip, take }: pagination, token: string) 
   }
 };
 
-const DetailTeam = async ({id}, token: string) => {
+const DetailTeam = async ({ id }, token: string) => {
   try {
     if (!id) {
       return {
         statusCode: 400,
-        message: "Missing required parameter: id"
-      }
+        message: "Missing required parameter: id",
+      };
     }
-    const userInfo = LoadUserInfo(token)
+    const userInfo = LoadUserInfo(token);
     const detail = await prisma.team.findFirst({
       where: {
         member: {
           some: {
-            userId: userInfo?.userId
-          }
+            userId: userInfo?.userId,
+          },
         },
-        AND: id
+        AND: {
+          id: id,
+        },
       },
       select: {
         id: true,
@@ -73,17 +78,27 @@ const DetailTeam = async ({id}, token: string) => {
         avatar: true,
         member: {
           select: {
-            user: true,
+            user: {
+              select: {
+                id: true,
+                username: true,
+                email: true,
+              }
+            },
             role: true,
             roleCode: true,
             roleName: true,
             roleEngName: true,
             permission: true,
             joinedAt: true,
-          }
-        }
-      }
-    })
+          },
+        },
+      },
+    });
+    return {
+      statusCode: 201,
+      data: detail,
+    };
   } catch (err) {
     console.error("Error: \n", err);
     return {
@@ -91,7 +106,7 @@ const DetailTeam = async ({id}, token: string) => {
       message: "Internal Server Error",
     };
   }
-}
+};
 
 const CreateTeam = async ({
   name,
@@ -105,9 +120,6 @@ const CreateTeam = async ({
   try {
     const errors: string[] = [];
     if (!name) errors.push("Name is required");
-    if (!address) errors.push("Address is required");
-    if (!phonenumber) errors.push("Phonenumber is required");
-    if (!email) errors.push("Email is required");
     if (errors.length > 0) {
       return {
         statusCode: 400,
@@ -189,9 +201,6 @@ const UpdateTeam = async ({
   try {
     const errors: string[] = [];
     if (!name) errors.push("Name is required");
-    if (!address) errors.push("Address is required");
-    if (!phonenumber) errors.push("Phonenumber is required");
-    if (!email) errors.push("Email is required");
     if (errors.length > 0) {
       return {
         statusCode: 400,
@@ -285,4 +294,4 @@ const DeleteTeam = async ({ id }) => {
   }
 };
 
-export { TeamPagination, CreateTeam, UpdateTeam, DeleteTeam };
+export { TeamPagination, CreateTeam, UpdateTeam, DeleteTeam, DetailTeam };

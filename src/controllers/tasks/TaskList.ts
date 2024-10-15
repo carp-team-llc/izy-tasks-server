@@ -31,7 +31,27 @@ const DetailTaskList = async ({id}) => {
         return { statusCode: 400, message: "Task ID is required for tgh" };
     }
     const detail = await prisma.taskList.findFirst({
-        where: { id }
+        where: { id },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          createdAt: true,
+          avatar: true,
+          tasks: {
+            select: {
+              id: true,
+              name: true,
+              status: true,
+              statusName: true,
+              statusColor: true,
+              createdAt: true,
+              updatedAt: true,
+              expirationDate: true,
+            },
+          },
+          authorId: true,
+        }
     })
     return {
         statusCode: 201,
@@ -47,7 +67,7 @@ const DetailTaskList = async ({id}) => {
 const CreateListTask = async (
   { name, description, avatar, tasks }: TaskListDTO,
   token: string
-) => {
+) => { 
   try {
     const errors: string[] = [];
     if (!name) errors.push("name");
