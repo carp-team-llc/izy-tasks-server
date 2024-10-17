@@ -12,6 +12,7 @@ import AccountMiddleware from '../utils/middleware/authentication/AccountMiddlew
 import SetupService from "../modules/setup/setup.module"
 import { upload } from '../utils/middleware/KeepFileMemory';
 import UploadFile from "../modules/upload/upload.module"
+import timeline from '../modules/timeline/time.module';
 
 const api = express.Router();
 
@@ -29,6 +30,7 @@ const initApi = (app) => {
     api.use("/user/profile", authMiddleware, AccountMiddleware, profileServices);
     api.use("/setup", authMiddleware, AccountMiddleware, SetupService);
     api.use("/storage", authMiddleware, AccountMiddleware, upload.single('file'), UploadFile);
+    api.use('/timeline', authMiddleware, AccountMiddleware, timeline);
 };
 
 export default initApi;

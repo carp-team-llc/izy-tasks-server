@@ -72,13 +72,15 @@ model Project {
   name          String
   description   String
   createdAt     DateTime        @default(now())
-  timeworking   String?
+  updatedAt     DateTime        @updatedAt
+  timeworking   Float?  
   permission    Json?
   member        ProjectMember[]
   tasks         Tasks[]
   teamId        String          @db.ObjectId
   team          Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
   avatar        String?         @default("../assets/images/avatars/cat.jpg")
+  startTime     DateTime
   deadline      DateTime        @default(now())
   totalEstimate String?
 }

@@ -31,7 +31,7 @@ export class ProjectService {
 
   async CreateProjectService(req: Request, res: Response) {
     try {
-      const { name, description, member, tasks, avatar, deadline, permission, timeworking }: ProjectDto =
+      const { name, description, member, tasks, avatar, startTime, deadline, teamId, permission, timeworking }: ProjectDto =
         req.body;
       const createProject = await CreateProject({
         name: name,
@@ -39,9 +39,10 @@ export class ProjectService {
         member: member,
         permission: permission,
         timeworking: timeworking,
-
+        teamId: teamId,
         tasks: tasks,
         avatar: avatar,
+        startTime: startTime,
         deadline: deadline,
       });
       return res.json(createProject);
@@ -60,7 +61,9 @@ export class ProjectService {
         timeworking,
         member,
         tasks,
+        teamId,
         avatar,
+        startTime,
         deadline,
       }: ProjectDto = req.body;
       const updateProject = await UpdateProject({
@@ -71,7 +74,9 @@ export class ProjectService {
         permission,
         member,
         tasks,
+        teamId,
         avatar,
+        startTime,
         deadline,
       });
       return res.json(updateProject);
