@@ -51,6 +51,7 @@ const CreateProject = async ({
   tasks,
   teamId,
   avatar,
+  startTime,
   deadline,
 }: ProjectDto) => {
   try {
@@ -65,19 +66,25 @@ const CreateProject = async ({
       };
     }
 
+    const deadlineDate = new Date(deadline);
+    const startTimeDate = new Date(startTime);
+    const totalEstimateInDays = (deadlineDate.getTime() - startTimeDate.getTime()) / (1000 * 60 * 60 * 24);
+
     const newProject = await prisma.project.create({
       data: {
-        name: name,
-        description: description,
+        name,
+        description,
         createdAt,
         permission,
         timeworking,
         tasks: tasks
           ? { connect: tasks.map((taskId) => ({ id: taskId })) }
           : undefined,
-        avatar: avatar,
-        deadline: deadline,
-        teamId: teamId,
+        avatar,
+        startTime,
+        deadline,
+        teamId,
+        totalEstimate: totalEstimateInDays.toString()
       },
     });
 
@@ -137,13 +144,18 @@ const UpdateProject = async ({
   createdAt,
   member,
   tasks,
+  teamId,
   avatar,
   permission,
   timeworking,
+  startTime,
   deadline,
 }: ProjectDto) => {
   try {
 
+    const deadlineDate = new Date(deadline);
+    const startTimeDate = new Date(startTime);
+    const totalEstimateInDays = (deadlineDate.getTime() - startTimeDate.getTime()) / (1000 * 60 * 60 * 24);
     const updateProject = await prisma.project.update({
       where: { id: id },
       data: {
@@ -155,8 +167,11 @@ const UpdateProject = async ({
         tasks: tasks
           ? { connect: tasks.map((taskId) => ({ id: taskId })) }
           : undefined,
-        avatar: avatar,
+        teamId,
+          avatar: avatar,
+        startTime: startTime,
         deadline: deadline,
+        totalEstimate: totalEstimateInDays.toString()
       },
     });
     
