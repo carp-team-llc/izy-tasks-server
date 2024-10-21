@@ -12,7 +12,7 @@ interface GetTasksByStatusAndDateParams {
 interface WeeklyTaskParams {
   fromDate: string;
   toDate: string;
-  status: any;
+  status: string[];
 }
 
 interface MonthlyTaskParams {
@@ -164,6 +164,27 @@ const WeeklyChart = async (
       },
     });
 
+    const totalTask = await prisma.tasks.count({
+      where: {
+        OR: [
+          { authorId: userInfo?.userId },
+          {
+            project: {
+              member: {
+                some: {
+                  userId: userInfo?.userId,
+                },
+              },
+            },
+          },
+        ],
+        createdAt: {
+          gte: fromDate,
+          lte: toDate,
+        },
+      }
+    })
+
     const getStatusInfo = weeklyTotal?.map((task) => {
       return {
         total: task?._count?.status,
@@ -179,16 +200,13 @@ const WeeklyChart = async (
         statusInfo,
       };
     });
-    const loadTotalStatus: number[] = getStatusInfo.map((item: any) => {
-      return item?.total;
-    });
-    const totalTask = loadTotalStatus.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
     return {
       statusCode: 200,
       message: "Success!",
       data: {
         taskChart: processedTaskChart,
-        totalTask: totalTask,
+        totalTask: totalTask
       },
     };
   } catch (err) {

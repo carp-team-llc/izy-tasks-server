@@ -4,70 +4,83 @@ import type { TaskListDTO } from "./dto/tasksList.dto";
 
 const TaskListPagination = async ({ where, skip, take }: any, token) => {
   try {
-    const userInfo = LoadUserInfo(token)
-    const taskListPagination = await prisma.taskList.findMany({
+    const userInfo = LoadUserInfo(token);
+    const taskList = await prisma.taskList.findMany({
       where: {
-        OR: [
-          { authorId: userInfo?.userId },
-        ],
+        OR: [{ authorId: userInfo?.userId }],
         AND: where,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
       take,
-      skip
+      skip,
     });
+    const totalTasks = await prisma.taskList.count({
+      where: {
+        OR: [{ authorId: userInfo?.userId }],
+        AND: where,
+      },
+    });
+    const totalPages = Math.ceil(totalTasks / take);
     return {
       statusCode: 201,
       message: "Success!",
-      data: taskListPagination
+      data: {
+        taskList,
+        currentPage: Math.ceil(skip / take) + 1,
+        totalTasks,
+        totalPages
     }
+    };
   } catch (err) {
     console.error("Err in Task list pagination: ", err);
   }
 };
 
-const DetailTaskList = async ({id}) => {
+const DetailTaskList = async ({ id }) => {
   try {
     if (!id) {
-        return { statusCode: 400, message: "Task ID is required for tgh" };
+      return { statusCode: 400, message: "Task ID is required for tgh" };
     }
     const detail = await prisma.taskList.findFirst({
-        where: { id },
-        select: {
-          id: true,
-          name: true,
-          description: true,
-          createdAt: true,
-          avatar: true,
-          tasks: {
-            select: {
-              id: true,
-              name: true,
-              status: true,
-              statusName: true,
-              statusColor: true,
-              createdAt: true,
-              updatedAt: true,
-              expirationDate: true,
-            },
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        createdAt: true,
+        avatar: true,
+        tasks: {
+          select: {
+            id: true,
+            name: true,
+            status: true,
+            statusName: true,
+            statusColor: true,
+            createdAt: true,
+            updatedAt: true,
+            expirationDate: true,
           },
-          authorId: true,
-        }
-    })
+        },
+        authorId: true,
+      },
+    });
     return {
-        statusCode: 201,
-        message: "success!",
-        detail: detail
-    }
-} catch (err) {
-    console.error('Error: ', err);
+      statusCode: 201,
+      message: "success!",
+      detail: detail,
+    };
+  } catch (err) {
+    console.error("Error: ", err);
     return { statusCode: 500, message: "Internal Server Error" };
-}
-}
+  }
+};
 
 const CreateListTask = async (
   { name, description, avatar, tasks }: TaskListDTO,
   token: string
-) => { 
+) => {
   try {
     const errors: string[] = [];
     if (!name) errors.push("name");
@@ -195,4 +208,10 @@ const DeleteTaskList = async (id: string) => {
   }
 };
 
-export { TaskListPagination, CreateListTask, UpdateTaskList, DeleteTaskList, DetailTaskList };
+export {
+  TaskListPagination,
+  CreateListTask,
+  UpdateTaskList,
+  DeleteTaskList,
+  DetailTaskList,
+};

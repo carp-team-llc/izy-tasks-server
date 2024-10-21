@@ -33,14 +33,52 @@ const HandlePriority = ({ priority }) => {
     return EnumData.PriorityType.Low;
 };
 
-const TaskDetail = async ({id}) => {
+const TaskDetail = async ({ id }) => {
     try {
         if (!id) {
             return { statusCode: 400, message: "Task ID is required for tgh" };
         }
         const detail = await prisma.tasks.findFirst({
-            where: { id }
-        })
+            where: { id },
+            include: {
+                project: {
+                    select: {
+                        name: true,
+                        team: {
+                            select: {
+                                name: true,
+                            },
+                        },
+                    },
+                },
+                taskList: {
+                    select: {
+                        name: true,
+                    },
+                },
+                employee: {
+                    select: {
+                        username: true,
+                        profile: {
+                            select: {
+                                avatar: true,
+                            },
+                        }
+                    },
+                },
+                author: {
+                    select: {
+                        username: true,
+                        profile: {
+                            select: {
+                                avatar: true,
+                            },
+                        }
+                    },
+                }
+            },
+        });
+
         return {
             statusCode: 201,
             message: "success!",
@@ -57,8 +95,9 @@ const CreateTask = async (
         name,
         body,
         author,
+        startTime,
         expirationDate,
-        isExpiration,
+        isExpiration, 
         estimatetime,
         images,
         tags,
@@ -91,6 +130,7 @@ const CreateTask = async (
                 author:  {
                     connect: { id: userInfo.userId }
                 },
+                startTime,
                 expirationDate,
                 isExpiration,
                 estimatetime,
@@ -146,6 +186,7 @@ const UpdateTask = async (
         body,
         status,
         author,
+        startTime,
         expirationDate,
         isExpiration,
         estimatetime,
@@ -186,6 +227,7 @@ const UpdateTask = async (
                 statusColor: HandleStatus({status}).color,
                 statusName: HandleStatus({status}).name,
                 author: { connect: userInfo?.userId },
+                startTime,
                 expirationDate,
                 estimatetime,
                 isExpiration,
