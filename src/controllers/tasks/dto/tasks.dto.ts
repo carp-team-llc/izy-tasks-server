@@ -8,6 +8,7 @@ export class tasks {
     statusColor: string;
     statusName: string;
     createdAt?: string;
+    startTime: Date;
     expirationDate: Date;
     isExpiration: boolean;
     images: string[];

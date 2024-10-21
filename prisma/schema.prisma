@@ -110,6 +110,7 @@ model Tasks {
   estimatetime   String?
   updatedAt      DateTime      @updatedAt
   isExpiration   Boolean       @default(false)
+  startTime      DateTime
   expirationDate DateTime
   images         String[]
   tags           String[]

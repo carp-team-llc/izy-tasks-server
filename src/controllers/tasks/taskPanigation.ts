@@ -24,6 +24,9 @@ const tasksPanigation = async (variales: tasksVariables, token: string) => {
                 ],
                 AND: where,
             },
+            orderBy: {
+                createdAt: 'desc',
+            },
             skip,
             take,
         });

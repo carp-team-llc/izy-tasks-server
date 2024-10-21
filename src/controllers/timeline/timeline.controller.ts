@@ -1,6 +1,7 @@
+import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
 import prisma from "../../utils/connection/connection";
 
-const ProjectTimline = async (id: string) => {
+const ProjectTimline = async (id: string, token: string) => {
   try {
     if (!id) {
       return {
@@ -9,7 +10,19 @@ const ProjectTimline = async (id: string) => {
       };
     }
     const projectInfo = await prisma.project.findFirst({
-      where: { id },
+      where: {
+        id,
+        AND: {
+          member: {
+            some: {
+              userId: LoadUserInfo(token)?.userId,
+            },
+          },
+          permission: {
+            
+          }
+        }
+      },
       select: {
         id: true,
         name: true,
@@ -20,8 +33,22 @@ const ProjectTimline = async (id: string) => {
         deadline: true,
         timeworking: true,
         totalEstimate: true,
+        tasks: true,
       },
     });
+
+    if (!projectInfo) {
+      return {
+        statusCode: 403,
+        message: "You aren't a member in this project",
+      };
+    }
+
+    const totalTask = projectInfo.tasks.length;
+    const completedTask = projectInfo.tasks.filter(
+      (task: any) => task.status === "COMPLETED"
+    ).length;
+    const percent = Number(completedTask * 100) / Number(totalTask);
 
     return {
       statusCode: 200,
@@ -30,6 +57,9 @@ const ProjectTimline = async (id: string) => {
         deadline: projectInfo?.deadline,
         timeworking: projectInfo?.timeworking,
         totalEstimate: projectInfo?.totalEstimate,
+        percent: percent,
+        totalTask: totalTask,
+        completedTask: completedTask,
       },
     };
   } catch (err) {
@@ -38,7 +68,7 @@ const ProjectTimline = async (id: string) => {
   }
 };
 
-const TeamTimline = async (id: string) => {
+const TeamTimline = async (id: string, token: string) => {
   try {
     if (!id) {
       return {
@@ -47,8 +77,15 @@ const TeamTimline = async (id: string) => {
       };
     }
     const teamInfo: any = await prisma.team.findFirst({
-      where: { 
-        id: id,
+      where: {
+        id,
+        AND: {
+          member: {
+            some: {
+              userId: LoadUserInfo(token)?.userId,
+            },
+          }
+        }
       },
       select: {
         id: true,
@@ -58,7 +95,6 @@ const TeamTimline = async (id: string) => {
         project: true,
       },
     });
-    console.log(teamInfo.project);
     const projectInfo = teamInfo?.project.map((item: any) => {
       return {
         id: item?.id,
@@ -69,8 +105,8 @@ const TeamTimline = async (id: string) => {
         deadline: item?.deadline,
         timeworking: item?.timeworking,
         totalEstimate: item?.totalEstimate,
-      }
-    })
+      };
+    });
     return {
       statusCode: 200,
       data: {
@@ -79,7 +115,7 @@ const TeamTimline = async (id: string) => {
         createdAt: teamInfo?.createdAt,
         updatedAt: teamInfo?.updatedAt,
         project: projectInfo,
-      }
+      },
     };
   } catch (err) {
     console.log(err);
