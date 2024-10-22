@@ -75,6 +75,25 @@ const TaskDetail = async ({ id }) => {
                             },
                         }
                     },
+                },
+                comments: {
+                    select: {
+                        id: true,
+                        content: true,
+                        createdAt: true,
+                        user: {
+                            select: {
+                                username: true,
+                                profile: {
+                                    select: {
+                                        avatar: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    orderBy: { createdAt: "desc" },
+                    take: 5,
                 }
             },
         });

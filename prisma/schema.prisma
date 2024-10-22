@@ -28,6 +28,7 @@ model User {
   taskListId        String?         @db.ObjectId
   taskList          TaskList[]
   haveProfile       Boolean?        @default(false)
+  comment           Comments[]      @relation("AuthorComments")
 }
 
 model Profile {
@@ -122,14 +123,15 @@ model Tasks {
   priority       String?
   priorityName   String?
   progress       Float?
-  employeeId     String?       @db.ObjectId
-  employee       User?         @relation("AssignedTasks", fields: [employeeId], references: [id])
-  authorId       String?       @db.ObjectId
-  author         User?         @relation("AuthoredTasks", fields: [authorId], references: [id])
-  sprintId       String?       @db.ObjectId
-  sprint         Sprint?       @relation(fields: [sprintId], references: [id], onDelete: Cascade)
-  taskListId     String?       @db.ObjectId
-  taskList       TaskList?     @relation(fields: [taskListId], references: [id], onDelete: Cascade)
+  employeeId     String?        @db.ObjectId
+  employee       User?          @relation("AssignedTasks", fields: [employeeId], references: [id])
+  authorId       String?        @db.ObjectId
+  author         User?          @relation("AuthoredTasks", fields: [authorId], references: [id])
+  sprintId       String?        @db.ObjectId
+  sprint         Sprint?        @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  taskListId     String?        @db.ObjectId
+  taskList       TaskList?      @relation(fields: [taskListId], references: [id], onDelete: Cascade)
+  comments       Comments[]     @relation("TaskComments")
 }
 
 model TaskHistory {
@@ -148,6 +150,7 @@ model TaskList {
   name        String
   description String
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   avatar      String?  @default("../assets/images/avatars/cat.jpg")
   tasks       Tasks[]
   authorId    String   @db.ObjectId
@@ -162,4 +165,15 @@ model Sprint {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   tasks         Tasks[]
+}
+
+model Comments {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  content       String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  taskId        String      @db.ObjectId
+  task          Tasks       @relation("TaskComments", fields: [taskId], references: [id])
+  userId        String      @db.ObjectId
+  user          User        @relation("AuthorComments", fields: [userId], references: [id])
 }

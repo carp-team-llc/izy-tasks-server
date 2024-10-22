@@ -1,8 +1,8 @@
 export const color = {
   completed: "#0eb53b",
-  cancel: "#d92a02",
+  cancel: "#7d7d7d",
   pending: "#c99506",
-  late: "#ed5007",
+  late: "#d92a02",
   new: "#06a2c9",
   doing: "#ff5482",
 
