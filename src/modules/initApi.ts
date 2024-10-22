@@ -13,6 +13,7 @@ import SetupService from "../modules/setup/setup.module"
 import { upload } from '../utils/middleware/KeepFileMemory';
 import UploadFile from "../modules/upload/upload.module"
 import timeline from '../modules/timeline/time.module';
+import Comments from '../modules/comments/comments.module';
 
 const api = express.Router();
 
@@ -22,15 +23,16 @@ const initApi = (app) => {
     app.use(cors());
     app.use(bodyParser.json());
     app.use("/api/v1", api);
-    api.use('/auth', authRouter);
-    api.use('/system/mailservice', mailSystemServices)
+    api.use("/auth", authRouter);
+    api.use("/system/mailservice", mailSystemServices)
     api.use("/task", authMiddleware, AccountMiddleware, taskService);
     api.use("/project", authMiddleware, AccountMiddleware, projectServices);
     api.use("/team", authMiddleware, AccountMiddleware, teamServices);
     api.use("/user/profile", authMiddleware, AccountMiddleware, profileServices);
     api.use("/setup", authMiddleware, AccountMiddleware, SetupService);
     api.use("/storage", authMiddleware, AccountMiddleware, upload.single('file'), UploadFile);
-    api.use('/timeline', authMiddleware, AccountMiddleware, timeline);
+    api.use("/timeline", authMiddleware, AccountMiddleware, timeline);
+    api.use("/comments", authMiddleware, AccountMiddleware, Comments);
 };
 
 export default initApi;
