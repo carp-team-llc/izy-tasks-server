@@ -20,6 +20,14 @@ const UpdateTaskStatus = async ({ id, statusKey }) => {
       });
 
       var logStatus = task.statusName
+
+      if (task.status === EnumData.StatusType.Cancel.code && statusKey !== 'New') {
+        return { statusCode: 400, message: "Task is in 'Cancel' state and can only be changed back to 'New'." };
+      }
+  
+      if (task.status === EnumData.StatusType.Completed.code && statusKey === 'Cancel') {
+        return { statusCode: 400, message: "Task is in 'Completed' state and cannot be changed to 'Cancel'." };
+      }
   
       if (task.status === statusInfo.code) {
         return { statusCode: 400, message: `Task is already in the '${statusInfo.code}' state and cannot be changed.` };
