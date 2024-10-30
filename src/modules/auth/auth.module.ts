@@ -13,7 +13,7 @@ router.post("/register", async (req, res) => {
     await authService.userRegister(req, res);
 });
 
-router.post("/users_panigation", async(req, res) => {
+router.get("/users_panigation", async(req, res) => {
     await authService.userListPanigation(req, res);
 });
 
