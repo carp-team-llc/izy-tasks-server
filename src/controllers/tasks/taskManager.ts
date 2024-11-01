@@ -121,6 +121,7 @@ const CreateTask = async (
         images,
         tags,
         projectId,
+        taskListId,
         team,
         employee,
         priority,
@@ -157,6 +158,7 @@ const CreateTask = async (
                 tags: tags || [],
                 project: projectId ? { connect: { id: projectId } } : undefined,
                 team: team || null,
+                taskList: taskListId ? { connect: { id: taskListId } } : undefined,
                 employee: {
                     connect: { id: employee || userInfo.userId }
                 },
