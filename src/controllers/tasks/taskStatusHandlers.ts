@@ -99,4 +99,4 @@ const PendingTask = async ({ id }) => {
   return await UpdateTaskStatus({ id, statusKey: 'Pending' });
 };
 
-export { CompletedTask, CancelTask, DoingTask, PendingTask, NewTask, LateTask };
+export { UpdateTaskStatus, CompletedTask, CancelTask, DoingTask, PendingTask, NewTask, LateTask };

@@ -15,6 +15,7 @@ export class tasks {
     tags?: string[];
     projectId?: string;
     team?: string;
+    taskListId?: string;
     priority?: string;
     priorityName?: string;
     progress?: number;

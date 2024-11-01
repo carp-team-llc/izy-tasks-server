@@ -51,6 +51,7 @@ export class TasksService {
                 images,
                 tags,
                 projectId,
+                taskListId,
                 team,
                 employee
             }: tasks = req.body;
@@ -69,6 +70,7 @@ export class TasksService {
                 images,
                 tags,
                 projectId,
+                taskListId,
                 team,
                 employee
             }, token);

@@ -1,8 +1,19 @@
 
 import { Request, Response } from "express";
-import { CancelTask, CompletedTask, DoingTask, LateTask, NewTask, PendingTask } from "../../controllers/tasks/taskStatusHandlers";
+import { CancelTask, CompletedTask, DoingTask, LateTask, NewTask, PendingTask, UpdateTaskStatus } from "../../controllers/tasks/taskStatusHandlers";
 
 export class TaskStatusHandlers {
+
+  async UpdateStatus(req: Request, res: Response) {
+    try {
+      const { id, statusKey } = req.body;
+      const result = await UpdateTaskStatus({ id, statusKey });
+      return res.status(result.statusCode).json(result);
+    } catch (error) {
+      console.error("Error: ", error);
+      return res.status(500).json({message: "Internal Server Error!"})
+    }
+  } 
   
   async CancelTask (req: Request, res: Response) {
     try {

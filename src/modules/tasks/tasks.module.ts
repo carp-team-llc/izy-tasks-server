@@ -38,6 +38,14 @@ router.post("/delete_task", async (req, res) => {
 // #endregion
 
 // #region Task Status
+
+router.post("/update_task_status", async (req, res) => {
+    await taskStatusHandlers.UpdateStatus(req, res)
+})
+
+router.post("/complete_task", async (req, res) => {
+    await taskStatusHandlers.CompletedTask(req, res)
+})
 router.post("/cancel_task", async (req, res) => {
     await taskStatusHandlers.CancelTask(req, res)
 })
