@@ -19,7 +19,7 @@ function GeneratePasswordResetEmail(userName: string, content: string): string {
         margin: 0 auto;
         width: 600px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
+        border-radius: 5px; 
       }
       h2 {
         color: #7260E6;
@@ -245,7 +245,7 @@ function WelcomeNewUser(username: string) {
               <p>Hello ${username}!</p>
               <p>Congratulations! Your account has been successfully verified.</p>
               <p>Have a great experience on our website.</p>
-              <a href="http://localhost:5173/login" class="btn">Go to login</a>
+              <a href="http://izytask:5173/login" class="btn">Go to login</a>
           </div>
       </div>
 
