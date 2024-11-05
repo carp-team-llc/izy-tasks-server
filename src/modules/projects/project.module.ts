@@ -8,6 +8,9 @@ const projectServices = new ProjectService();
 router.post("/project_list", async (req, res) => {
   await projectServices.ProjectList(req, res);
 })
+router.post("/project_detail", async (req, res) => {
+  await projectServices.DetailProjectService(req, res);
+})
 router.post("/create_project", async (req, res) => {
   await projectServices.CreateProjectService(req, res);
 })
