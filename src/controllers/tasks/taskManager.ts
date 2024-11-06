@@ -226,41 +226,38 @@ const UpdateTask = async (
             return { statusCode: 400, message: "Task ID is required for update" };
         }
         const priorityData = HandlePriority({ priority: priority || EnumData.PriorityType.Low.code });
-        const errors: string[] = [];
-        if (!name) errors.push("name");
-        if (!body) errors.push("body");
-        if (!status) errors.push("status");
-        if (!author) errors.push("author");
-        if (!expirationDate) errors.push("expirationDate");
-        if (!estimatetime) errors.push("estimatetime");
-
-        if (errors.length > 0) {
-            return { statusCode: 400, message: `The following fields are empty: ${errors.join(", ")}` };
-        }
 
         const userInfo = LoadUserInfo(token);
+
+        const updateData: any = {
+            ...(name && { name }),
+            ...(body && { body }),
+            ...(status && { status }),
+            ...(status && {
+                statusColor: HandleStatus({ status }).color,
+                statusName: HandleStatus({ status }).name,
+            }),
+            ...(startTime && { startTime }),
+            ...(expirationDate && { expirationDate }),
+            ...(isExpiration !== undefined && { isExpiration }),
+            ...(estimatetime && { estimatetime }),
+            ...(images && { images }),
+            ...(tags && { tags }),
+            ...(projectId && { project: { connect: { id: projectId } } }),
+            ...(team && { team }),
+            ...(employee && { employee }),
+            ...(priority && { priority }),
+            ...(progress !== undefined && { progress }),
+            priorityName: priorityData.name,
+        };
+
+        if (userInfo?.userId) {
+            updateData.author = { connect: { id: userInfo.userId } };
+        }
+
         const updatedTask = await prisma.tasks.update({
             where: { id },
-            data: {
-                name,
-                body,
-                status,
-                statusColor: HandleStatus({status}).color,
-                statusName: HandleStatus({status}).name,
-                author: { connect: userInfo?.userId },
-                startTime,
-                expirationDate,
-                estimatetime,
-                isExpiration,
-                images: images || [],
-                tags: tags || [],
-                project: projectId ? { connect: { id: projectId } } : undefined,
-                team,
-                employee,
-                priority: priority || EnumData.PriorityType.Low.code,
-                priorityName: priorityData.name,
-                progress,
-            },
+            data: updateData,
         });
 
         // create history
@@ -283,7 +280,8 @@ const UpdateTask = async (
                         project: updatedTask.projectId,
                         team: updatedTask.team,
                         employee: updatedTask.employeeId,
-                    }
+                    },
+                    authorId: userInfo?.userId,
                 }
             })
         }
@@ -295,11 +293,13 @@ const UpdateTask = async (
     }
 }
 
-const DeleteTask = async ({ id }) => {
+const DeleteTask = async ({ id }, token: string) => {
     try {
         if (!id) {
             return { statusCode: 400, message: "Task ID is required for delete"}
         }
+
+        const userInfo = LoadUserInfo(token);
 
         await prisma.taskHistory.deleteMany({
             where: { taskId: id }
@@ -315,7 +315,8 @@ const DeleteTask = async ({ id }) => {
                 data: {
                     taskId: id,
                     action: `Delete task with id: '${id}'`,
-                    changes: {}
+                    changes: {},
+                    authorId: userInfo?.userId,
                 }
             })
         }
