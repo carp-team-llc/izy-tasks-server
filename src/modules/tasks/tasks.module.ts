@@ -5,13 +5,15 @@ import { TaskStatusHandlers } from "../../services/tasks/taskStatusHandlers.serv
 import { ChartService } from "../../services/tasks/chart.service";
 import { TaskNotification } from "../../services/tasks/notification.service";
 import { TaskListService } from "../../services/tasks/tasklist.service";
+import { TaskHistoryService } from "../../services/tasks/taskHistory.service";
 
 const router = express.Router();
 const taskServices = new TasksService();
 const taskStatusHandlers = new TaskStatusHandlers();
 const chartServices = new ChartService();
 const taskNotification = new TaskNotification();
-const taskListServices = new TaskListService
+const taskListServices = new TaskListService();
+const taskHistoryService = new TaskHistoryService();
 
 // #region Task Manager
 
@@ -105,6 +107,12 @@ router.post("/update_task_list", async (req, res) => {
 })
 router.post("/delete_task_list", async (req, res) => {
     await taskListServices.DeleteTaskListService(req, res)
+})
+// #endregion
+
+// #region task history
+router.post("/task_activity", async (req, res) => {
+    await taskHistoryService.TaskActivity(req, res)
 })
 // #endregion
 

@@ -137,7 +137,8 @@ export class TasksService {
     async DeleteTask (req: Request, res: Response) {
         try {
             const { id } = req.body;
-            const result = await DeleteTask({ id })
+            const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+            const result = await DeleteTask({ id }, token)
             return res.status(result.statusCode).json({
                 message: result.message,
             })
