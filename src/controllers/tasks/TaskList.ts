@@ -2,6 +2,30 @@ import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
 import prisma from "../../utils/connection/connection";
 import type { TaskListDTO } from "./dto/tasksList.dto";
 
+const TaskList = async (token: string) => {
+  try {
+    const taskList = await prisma.taskList.findMany({
+      where: {
+        authorId: LoadUserInfo(token)?.userId,
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+    return {
+      statusCode: 201,
+      message: "Success!",
+      data: taskList,
+    };
+  } catch (err) {
+    return {
+      statusCode: 500,
+      message: "Error in fetching task list!",
+    };
+  }
+};
+
 const TaskListPagination = async ({ where, skip, take }: any, token) => {
   try {
     const userInfo = LoadUserInfo(token);
@@ -30,8 +54,8 @@ const TaskListPagination = async ({ where, skip, take }: any, token) => {
         taskList,
         currentPage: Math.ceil(skip / take) + 1,
         totalTasks,
-        totalPages
-    }
+        totalPages,
+      },
     };
   } catch (err) {
     console.error("Err in Task list pagination: ", err);
@@ -214,4 +238,5 @@ export {
   UpdateTaskList,
   DeleteTaskList,
   DetailTaskList,
+  TaskList,
 };

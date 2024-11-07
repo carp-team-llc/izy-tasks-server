@@ -108,6 +108,9 @@ router.post("/update_task_list", async (req, res) => {
 router.post("/delete_task_list", async (req, res) => {
     await taskListServices.DeleteTaskListService(req, res)
 })
+router.post("/choose_task_list", async (req, res) => {
+    await taskListServices.TaskList(req, res)
+})
 // #endregion
 
 // #region task history
