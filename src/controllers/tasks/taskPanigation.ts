@@ -6,23 +6,16 @@ import { LoadUserInfo } from '../../utils/middleware/permission/LoadUserInfo';
 const tasksPanigation = async (variales: tasksVariables, token: string) => {
     const { where, skip, take } = variales;
     const userInfo = LoadUserInfo(token)
-    console.log(userInfo)
     try {
         const tasks = await prisma.tasks.findMany({
             where: {
-                OR: [
+                AND: [
                     { authorId: userInfo?.userId },
                     {
-                        project: {
-                            member: {
-                                some: {
-                                    userId: userInfo?.userId
-                                }
-                            }
-                        }
-                    }
+                        project: null,
+                    },
+                    where
                 ],
-                AND: where,
             },
             orderBy: {
                 createdAt: 'desc',
@@ -32,19 +25,13 @@ const tasksPanigation = async (variales: tasksVariables, token: string) => {
         });
         const totalTasks = await prisma.tasks.count({ 
             where: {
-                OR: [
+                AND: [
                     { authorId: userInfo?.userId },
                     {
-                        project: {
-                            member: {
-                                some: {
-                                    userId: userInfo?.userId
-                                }
-                            }
-                        }
-                    }
+                        project: null,
+                    },
+                    where
                 ],
-                AND: where,
             },
         });
         const totalPages = Math.ceil(totalTasks / take);

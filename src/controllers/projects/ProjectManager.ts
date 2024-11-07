@@ -37,14 +37,27 @@ const ProjectPanigation = async (variable: Variables, token: string) => {
       skip,
       take,
     });
-    const totalTasks = await prisma.project.count({ where });
-    const totalPages = Math.ceil(totalTasks / take);
+    const totalProject = await prisma.project.count({ 
+      where: {
+        AND: [
+          where,
+          {
+            member: {
+              some: {
+                userId: userInfo?.userId
+              }
+            }
+          }
+        ]
+      }
+    });
+    const totalPages = Math.ceil(totalProject / take);
     return {
       statusCode: 201,
       data: {
         project: project,
         currentPage: Math.ceil(skip / take) + 1,
-        totalTasks,
+        totalProject,
         totalPages,
       },
     };
