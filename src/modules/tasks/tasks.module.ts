@@ -21,6 +21,10 @@ router.post("/tasks_list", async (req, res) => {
     await taskServices.tasksPagination(req, res);
 })
 
+router.post("/recent_task", async (req, res) => {
+    await taskServices.recentTaskPagination(req, res);
+})
+
 router.post("/task_detail", async (req, res) => {
     await taskServices.taskDetail(req, res);
 })

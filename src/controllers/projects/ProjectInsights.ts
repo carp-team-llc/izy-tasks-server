@@ -1,12 +1,17 @@
+import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
 import prisma from "../../utils/connection/connection";
 
 export interface ProjectInsight {
   projectId?: string;
 }
 
+export interface TodayTasks {
+  projectId?: string;
+  today?: string;
+}
+
 const TopInsight = async ({ projectId }: ProjectInsight) => {
   try {
-
     const ProjectTask = await prisma.tasks.findMany({
       where: {
         AND: [
@@ -37,20 +42,29 @@ const TopInsight = async ({ projectId }: ProjectInsight) => {
         timeworking: true,
         totalEstimate: true,
       },
-    })
+    });
 
-    const totalTime = ProjectTask.reduce((acc, task) => acc + Number(task.estimatetime), 0);
-    const completedTime = ProjectTask
-      .filter(task => task.status === 'completed')
-      .reduce((acc, task) => acc + Number(task.estimatetime), 0);
+    const totalTime = ProjectTask.reduce(
+      (acc, task) => acc + Number(task.estimatetime),
+      0
+    );
+    const completedTime = ProjectTask.filter(
+      (task) => task.status === "completed"
+    ).reduce((acc, task) => acc + Number(task.estimatetime), 0);
     const timeSpent = totalTime - completedTime;
 
     const totalTask = ProjectTask.length;
-    const totalCompletedTask = ProjectTask.filter(task => task.status === 'completed').length;
+    const totalCompletedTask = ProjectTask.filter(
+      (task) => task.status === "completed"
+    ).length;
     const taskSpent = totalTask - totalCompletedTask;
 
-    const totalLateTask = ProjectTask.filter(task => task.status === 'late').length;
-    const totalCancelTask = ProjectTask.filter(task => task.status === 'late').length;
+    const totalLateTask = ProjectTask.filter(
+      (task) => task.status === "late"
+    ).length;
+    const totalCancelTask = ProjectTask.filter(
+      (task) => task.status === "cancel"
+    ).length;
 
     return {
       statusCode: 201,
@@ -64,8 +78,8 @@ const TopInsight = async ({ projectId }: ProjectInsight) => {
         totalLateTask,
         totalCancelTask,
         projectDeadline: projectInfo.deadline,
-      }
-    }
+      },
+    };
   } catch (error) {
     return {
       statusCode: 500,
@@ -75,4 +89,53 @@ const TopInsight = async ({ projectId }: ProjectInsight) => {
   }
 };
 
-export { TopInsight };
+const TodayTasks = async ({ projectId, today }: TodayTasks, token: string) => {
+  try {
+    const userId = LoadUserInfo(token).userId;
+    const todayTask = await prisma.tasks.findMany({
+      where: {
+        AND: [
+          { employeeId: userId },
+          { startTime: { gte: today } },
+          { projectId: projectId },
+        ],
+      },
+      select: {
+        id: true,
+        name: true,
+        startTime: true,
+        status: true,
+        statusName: true,
+        statusColor: true,
+        employee: {
+          select: {
+            id: true,
+            username: true,
+            profile: {
+              select: {
+                avatar: true,
+              },
+            },
+          },
+        },
+      },
+      take: 10,
+      orderBy: {
+        createdAt: 'desc',
+    },
+    });
+    return {
+      statusCode: 201,
+      message: "Today's tasks retrieved successfully",
+      data: todayTask,
+    };
+  } catch (err) {
+    return {
+      statusCode: 500,
+      message: "Failed to retrieve today's tasks",
+      data: null,
+    };
+  }
+};
+
+export { TopInsight, TodayTasks };

@@ -40,6 +40,9 @@ router.post("/project_role", async (req, res) => {
 router.post("/top_insight", async (req, res) => {
   await projectInsightServices.TopInsightService(req, res);
 })
+router.post("/today_tasks", async (req, res) => {
+  await projectInsightServices.TodayTasksService(req, res);
+})
 // #endregion
 
 export default router;

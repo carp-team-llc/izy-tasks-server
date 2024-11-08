@@ -1,11 +1,7 @@
 import prisma from "../../utils/connection/connection";
 import type { profileDto } from "./dto/user.dto";
 
-
-
-const ProfileDetail = async ({
- id,
-}: profileDto) => {
+const ProfileDetail = async ({ id }: profileDto) => {
   try {
     const errors: string[] = [];
     if (errors.length > 0) {
@@ -17,7 +13,7 @@ const ProfileDetail = async ({
     }
 
     const ProfileDetail = await prisma.profile.findFirst({
-        where: { id },
+      where: { id },
     });
 
     return {
@@ -34,12 +30,14 @@ const ProfileDetail = async ({
     };
   }
 };
+
 const CreateProfile = async ({
   fullName,
   bio,
   dateOfBirth,
   avatar,
   user,
+  socials,
 }: profileDto) => {
   try {
     const errors: string[] = [];
@@ -62,6 +60,18 @@ const CreateProfile = async ({
         user: {
           connect: { id: user },
         },
+        socials:
+          socials?.length > 0
+            ? {
+                create: socials.map((social) => ({
+                  platform: social.platform,
+                  url: social.url,
+                })),
+              }
+            : undefined,
+      },
+      include: {
+        socials: true,
       },
     });
 
@@ -79,6 +89,7 @@ const CreateProfile = async ({
     };
   }
 };
+
 const UpdateProfile = async ({
   id,
   fullName,
@@ -86,6 +97,7 @@ const UpdateProfile = async ({
   dateOfBirth,
   avatar,
   user,
+  socials,
 }: profileDto) => {
   try {
     const errors: string[] = [];
@@ -109,6 +121,18 @@ const UpdateProfile = async ({
         user: {
           connect: { id: user },
         },
+        socials:
+          socials?.length > 0
+            ? {
+                create: socials.map((social) => ({
+                  platform: social.platform,
+                  url: social.url,
+                })),
+              }
+            : undefined,
+      },
+      include: {
+        socials: true,
       },
     });
 
@@ -126,38 +150,36 @@ const UpdateProfile = async ({
     };
   }
 };
-const DeleteProfile = async ({
-    id,
-  }: profileDto) => {
-    try {
-      const errors: string[] = [];
-  
-      if (errors.length > 0) {
-        return {
-          statusCode: 400,
-          message: `The following fields are empty: ${errors.join(", ")}`,
-          data: [],
-        };
-      }
-  
-      const DeleteProfile = await prisma.profile.delete({
-        where: { id },
-      });
-  
+
+const DeleteProfile = async ({ id }: profileDto) => {
+  try {
+    const errors: string[] = [];
+
+    if (errors.length > 0) {
       return {
-        statusCode: 201,
-        message: "Delete Profile successfully!",
-        data: DeleteProfile,
-      };
-    } catch (err) {
-      console.error("Error in create profile: ", err);
-      return {
-        statusCode: 500,
-        message: "Bad request!",
+        statusCode: 400,
+        message: `The following fields are empty: ${errors.join(", ")}`,
         data: [],
       };
     }
-  };
 
+    const DeleteProfile = await prisma.profile.delete({
+      where: { id },
+    });
+
+    return {
+      statusCode: 201,
+      message: "Delete Profile successfully!",
+      data: DeleteProfile,
+    };
+  } catch (err) {
+    console.error("Error in create profile: ", err);
+    return {
+      statusCode: 500,
+      message: "Bad request!",
+      data: [],
+    };
+  }
+};
 
 export { CreateProfile, ProfileDetail, UpdateProfile, DeleteProfile };
