@@ -33,11 +33,13 @@ const HandlePriority = ({ priority }) => {
     return EnumData.PriorityType.Low;
 };
 
-const TaskDetail = async ({ id }) => {
+const TaskDetail = async ({ id }, token: string) => {
     try {
         if (!id) {
             return { statusCode: 400, message: "Task ID is required for tgh" };
+            
         }
+
         const detail = await prisma.tasks.findFirst({
             where: { id },
             include: {
@@ -97,6 +99,14 @@ const TaskDetail = async ({ id }) => {
                 }
             },
         });
+
+        const userId = await LoadUserInfo(token).userId;
+        const taskId = detail.id;
+        const recentTask = await prisma.recentTask.upsert({
+            where: { userId_taskId: { userId, taskId } },
+            update: { openedAt: new Date() },
+            create: { userId, taskId, openedAt: new Date() },
+        })
 
         return {
             statusCode: 201,

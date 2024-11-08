@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { tasks, tasksVariables } from "../../controllers/tasks/dto/tasks.dto";
-import tasksPanigation from "../../controllers/tasks/taskPanigation";
 import { CreateTask, DeleteTask, TaskDetail, UpdateTask } from "../../controllers/tasks/taskManager";
+import { recentTaskPagination, tasksPanigation } from "../../controllers/tasks/taskPanigation";
 
 export class TasksService {
 
@@ -25,9 +25,30 @@ export class TasksService {
         }
     }
 
+    async recentTaskPagination (req: Request, res: Response) {
+        try {
+            const {
+                where,
+                skip,
+                take,
+            }: tasksVariables = req.body;
+            const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+            const tasksList = await recentTaskPagination({
+                where: where,
+                skip: skip,
+                take: take
+            }, token);
+            return res.status(tasksList.statusCode).json(tasksList.data)
+
+        } catch (err) {
+            return res.status(500).json({message: "Internal Server Error!"})
+        }
+    }
+
     async taskDetail (req: Request, res: Response) {
         const id = req.body;
-        const result = await TaskDetail(id);
+        const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+        const result = await TaskDetail(id, token);
         return res.status(result.statusCode).json({
             message: result.message,
             detail: result.detail

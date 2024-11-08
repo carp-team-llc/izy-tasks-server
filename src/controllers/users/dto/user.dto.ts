@@ -1,4 +1,3 @@
-
 export interface profileDto {
   id?: string;
   fullName?: string;
@@ -6,4 +5,12 @@ export interface profileDto {
   dateOfBirth?: Date;
   avatar?: string;
   user?: any;
+  socials?: socialsDTO[];
+}
+
+export interface socialsDTO {
+  platform?: string;
+  profileId?: string;
+  profile?: string;
+  url?: string;
 }
