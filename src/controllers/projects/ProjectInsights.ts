@@ -10,6 +10,12 @@ export interface TodayTasks {
   today?: string;
 }
 
+export interface ProjectActivities {
+  where: {};
+  skip: number;
+  take: number;
+}
+
 const TopInsight = async ({ projectId }: ProjectInsight) => {
   try {
     const ProjectTask = await prisma.tasks.findMany({
@@ -121,8 +127,8 @@ const TodayTasks = async ({ projectId, today }: TodayTasks, token: string) => {
       },
       take: 10,
       orderBy: {
-        createdAt: 'desc',
-    },
+        createdAt: "desc",
+      },
     });
     return {
       statusCode: 201,
@@ -138,4 +144,48 @@ const TodayTasks = async ({ projectId, today }: TodayTasks, token: string) => {
   }
 };
 
-export { TopInsight, TodayTasks };
+const Activity = async (
+  { where, skip, take }: ProjectActivities,
+  projectId: string
+) => {
+  try {
+    const projectActivites = await prisma.projectActivities.findMany({
+      where: {
+        AND: [
+          {
+            projectId,
+          },
+          where,
+        ],
+      },
+      skip,
+      take,
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    const totalActivities = await prisma.projectActivities.count({
+      where: {
+        AND: [
+          {
+            projectId,
+          },
+          where,
+        ],
+      }
+    })
+    return {
+      statusCode: 201,
+      message: "Project activities retrieved successfully",
+      data: projectActivites,
+    }
+  } catch (err) {
+    return {
+      statusCode: 500,
+      message: "Failed to retrieve activity",
+      data: null,
+    };
+  }
+};
+
+export { TopInsight, TodayTasks, Activity };

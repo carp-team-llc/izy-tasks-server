@@ -30,6 +30,7 @@ model User {
   haveProfile             Boolean?            @default(false)
   comment                 Comments[]          @relation("AuthorComments")
   recentTask              RecentTask[]
+  activities              ProjectActivities[]
 }
 
 model Profile {
@@ -95,6 +96,7 @@ model Project {
   deadline              DateTime            @default(now())
   totalEstimate         String?
   projectInsight        ProjectInsight?
+  projectActivities     ProjectActivities[]
 }
 
 model ProjectMember { 
@@ -122,6 +124,19 @@ model ProjectInsight {
   todayTaskCancel       String
   createdAt             DateTime        @default(now())
   updatedAt             DateTime        @updatedAt
+}
+
+model ProjectActivities {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  project       Project?        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId     String?         @db.ObjectId
+  action        String
+  activity      Json
+  actionById    String?         @db.ObjectId
+  actionBy      User?           @relation(fields: [actionById], references: [id], onDelete: Cascade)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+	@@map("ProjectActivities")
 }
 
 model Tasks {
