@@ -1,9 +1,11 @@
 import express from "express";
 import { ProjectService } from "../../services/projects/project.service";
 import { ProjectInsightService } from "../../services/projects/projectInsight.service";
+import { ProjectTaskService } from "../../services/projects/projectTask.service";
 
 const router = express.Router();
 const projectServices = new ProjectService();
+const projectTaskServices = new ProjectTaskService();
 const projectInsightServices = new ProjectInsightService();
 
 // #region project manager
@@ -34,6 +36,12 @@ router.post("/project_role", async (req, res) => {
   await projectServices.RoleListService(req, res);
 })
 
+// #endregion
+
+// #region project task 
+router.post("/create_task", async (req, res) => {
+  await projectTaskServices.CreateProjectTask(req, res);
+})
 // #endregion
 
 // #region insight
