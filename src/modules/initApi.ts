@@ -14,14 +14,32 @@ import { upload } from '../utils/middleware/KeepFileMemory';
 import UploadFile from "../modules/upload/upload.module"
 import timeline from '../modules/timeline/time.module';
 import Comments from '../modules/comments/comments.module';
+import { logToFolder } from './logger';
 
 const api = express.Router();
+
+export function getClientIp(req: express.Request): string {
+    const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress) as string;
+    if (ip.includes('::ffff:')) {
+        return ip.split('::ffff:')[1];
+    }
+    return ip;
+}
 
 const initApi = (app) => {
 
     app.set("json spaces", 2);
     app.use(cors());
     app.use(bodyParser.json());
+
+    app.use((req, res, next) => {
+        const ip = getClientIp(req);
+        const message = `User IP: ${ip} - Endpoint: ${req.originalUrl}`;
+        console.log(message)
+        logToFolder(message, "TrackingIp");
+        next();
+    });
+
     app.use("/api/v1", api);
     api.use("/auth", authRouter);
     api.use("/system/mailservice", mailSystemServices)
