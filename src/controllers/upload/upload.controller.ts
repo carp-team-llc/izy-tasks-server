@@ -110,4 +110,28 @@ const DeleteFileFromCloud = async (fileUrl: string) => {
   }
 };
 
-export { UploadFileToCloud, DeleteFileFromCloud };
+const UploadLogsToCloud = async (filePath: string, destPath: string, folder: string) => {
+  if (!filePath) {
+    console.error("No file path provided.");
+  }
+  if (!destPath) {
+    console.error("No destination path provided.");
+  }
+  if (!folder) {
+    console.error("No folder name provided.");
+    return;
+  }
+  try {
+    const destinationPath = `${process.env.LOGS_URL}/${folder}/${destPath}`;
+    await bucket.upload(filePath, {
+      destination: destinationPath,
+      metadata: {
+        contentType: 'text/plain',
+      },
+    });
+  } catch (err) {
+    console.error("Error uploading logs to cloud:", err);
+  }
+};
+
+export { UploadFileToCloud, DeleteFileFromCloud, UploadLogsToCloud };
