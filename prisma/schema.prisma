@@ -39,8 +39,10 @@ model Profile {
   bio             String?
   dateOfBirth     DateTime?
   avatar          String?       @default("../assets/images/avatars/cat.jpg")
+  userId          String        @db.ObjectId
   user            User          @relation(fields: [id], references: [id], onDelete: Cascade)
-  socials        Socials[]
+  gender          String?
+  socials         Socials[]
 }
 
 model Socials {

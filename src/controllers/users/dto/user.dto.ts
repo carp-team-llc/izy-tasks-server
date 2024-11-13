@@ -4,7 +4,9 @@ export interface profileDto {
   bio?: string;
   dateOfBirth?: Date;
   avatar?: string;
+  userId?: string;
   user?: any;
+  gender?: string;
   socials?: socialsDTO[];
 }
 
