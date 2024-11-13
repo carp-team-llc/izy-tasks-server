@@ -2,6 +2,7 @@ import winston from 'winston';
 import 'winston-daily-rotate-file';
 import path from 'path';
 import fs from 'fs';
+import schedule from 'node-schedule';
 import { UploadLogsToCloud } from '../controllers/upload/upload.controller';
 
 function createLogFolder(folderName: string) {
@@ -22,6 +23,8 @@ const logger = winston.createLogger({
         new winston.transports.Console(),
     ],
 });
+
+const registeredFolders = new Set<string>();
 
 const logToFolder = (message: string, folderName: string) => {
     const logFolderPath = createLogFolder(folderName);
@@ -44,10 +47,24 @@ const logToFolder = (message: string, folderName: string) => {
 
     folderLogger.info(message);
 
-    // // Upload logs to Cloud Storage after 24 hours
-    // const logFilePath = path.join(logFolderPath, 'Server-Logs-' + new Date().toISOString().split('T')[0] + '.log');
-    // const destPath = `Server-Logs-${new Date().toISOString().split('T')[0]}.log`;
-    // UploadLogsToCloud(logFilePath, destPath, folderName);
+    if (!registeredFolders.has(folderName)) {
+        registeredFolders.add(folderName);
+    }
 }
+
+schedule.scheduleJob('59 23 * * *', () => {
+    const today = new Date().toISOString().split('T')[0];
+    registeredFolders.forEach((folderName) => {
+        const logFolderPath = createLogFolder(folderName);
+        const logFilePath = path.join(logFolderPath, `Server-Logs-${today}.log`);
+        const destPath = `Server-Logs-${today}.log`;
+
+        // Kiểm tra nếu file log tồn tại thì thực hiện upload
+        if (fs.existsSync(logFilePath)) {
+            UploadLogsToCloud(logFilePath, destPath, folderName);
+            console.log(`Uploaded ${destPath} from folder ${folderName} to cloud at 23:59`);
+        }
+    });
+});
 
 export { logger, logToFolder };
