@@ -1,3 +1,4 @@
+import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
 import prisma from "../../utils/connection/connection";
 import type { profileDto } from "./dto/user.dto";
 
@@ -31,14 +32,10 @@ const ProfileDetail = async ({ id }: profileDto) => {
   }
 };
 
-const CreateProfile = async ({
-  fullName,
-  bio,
-  dateOfBirth,
-  avatar,
-  user,
-  socials,
-}: profileDto) => {
+const CreateProfile = async (
+  { fullName, bio, dateOfBirth, avatar, gender, socials }: profileDto,
+  token: string
+) => {
   try {
     const errors: string[] = [];
     if (!fullName) errors.push("name");
@@ -51,29 +48,53 @@ const CreateProfile = async ({
       };
     }
 
+    const userInfo = LoadUserInfo(token);
+
+    const checkUser = await prisma.user.findFirst({
+      where: { id: userInfo.userId },
+    });
+
+    if (checkUser.haveProfile) {
+      return {
+        statusCode: 400,
+        message: "You already have a profile!",
+        data: [],
+      };
+    }
+
     const createProfile = await prisma.profile.create({
       data: {
         fullName,
         bio,
         dateOfBirth,
         avatar,
+        userId: userInfo.userId,
         user: {
-          connect: { id: user },
+          connect: { id: userInfo.userId },
         },
-        socials:
-          socials?.length > 0
-            ? {
-                create: socials.map((social) => ({
-                  platform: social.platform,
-                  url: social.url,
-                })),
-              }
-            : undefined,
+        gender,
+        socials: {
+          create: socials?.map((social) => ({
+            platform: social.platform,
+            url: social.url,
+          })),
+        },
       },
       include: {
         socials: true,
       },
     });
+
+    if (createProfile) {
+      await prisma.user.update({
+        where: {
+          id: userInfo.userId,
+        },
+        data: {
+          haveProfile: true,
+        },
+      });
+    }
 
     return {
       statusCode: 201,
@@ -96,6 +117,7 @@ const UpdateProfile = async ({
   bio,
   dateOfBirth,
   avatar,
+  userId,
   user,
   socials,
 }: profileDto) => {
@@ -118,6 +140,7 @@ const UpdateProfile = async ({
         bio,
         dateOfBirth,
         avatar,
+        userId: userId,
         user: {
           connect: { id: user },
         },

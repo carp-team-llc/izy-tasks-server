@@ -44,10 +44,10 @@ const logToFolder = (message: string, folderName: string) => {
 
     folderLogger.info(message);
 
-    // Upload logs to Cloud Storage after 24 hours
-    const logFilePath = path.join(logFolderPath, 'Server-Logs-' + new Date().toISOString().split('T')[0] + '.log');
-    const destPath = `Server-Logs-${new Date().toISOString().split('T')[0]}.log`;
-    UploadLogsToCloud(logFilePath, destPath, folderName);
+    // // Upload logs to Cloud Storage after 24 hours
+    // const logFilePath = path.join(logFolderPath, 'Server-Logs-' + new Date().toISOString().split('T')[0] + '.log');
+    // const destPath = `Server-Logs-${new Date().toISOString().split('T')[0]}.log`;
+    // UploadLogsToCloud(logFilePath, destPath, folderName);
 }
 
 export { logger, logToFolder };

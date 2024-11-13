@@ -1,18 +1,18 @@
 import { Request, Response } from "express";
-import { CreateProfile } from "../../controllers/users/UserManager";
-import { DeleteProfile, ProfileDetail, UpdateProfile } from "../../controllers/users/Profile.controller";
+import { CreateProfile, DeleteProfile, ProfileDetail, UpdateProfile } from "../../controllers/users/Profile.controller";
 
 export class ProfileService {
   async CreateProfileService(req: Request, res: Response) {
     try {
-      const { fullName, bio, dateOfBirth, avatar, user } = req.body;
+      const { fullName, bio, dateOfBirth, avatar, socials } = req.body;
+      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
       const createProfile = await CreateProfile({
         fullName,
         bio,
         dateOfBirth,
         avatar,
-        user,
-      });
+        socials
+      }, token);
       return res.status(createProfile.statusCode).json({
         message: createProfile.message,
         data: createProfile.data
