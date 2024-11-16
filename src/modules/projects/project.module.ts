@@ -2,11 +2,13 @@ import express from "express";
 import { ProjectService } from "../../services/projects/project.service";
 import { ProjectInsightService } from "../../services/projects/projectInsight.service";
 import { ProjectTaskService } from "../../services/projects/projectTask.service";
+import { ProjectAnalyticsService } from '../../services/projects/projectAnalytics.service';
 
 const router = express.Router();
 const projectServices = new ProjectService();
 const projectTaskServices = new ProjectTaskService();
 const projectInsightServices = new ProjectInsightService();
+const projectAnalyticsService = new ProjectAnalyticsService();
 
 // #region project manager
 router.post("/project_list", async (req, res) => {
@@ -26,6 +28,12 @@ router.post("/delete_project", async (req, res) => {
 })
 // #endregion
 
+// #region project analytics
+router.post("/activate_project", async (req, res) => {
+  await projectAnalyticsService.ProjectActivate(req, res);
+})
+// #endregion
+
 // #region project management
 
 router.post("/add_task_project", async (req, res) => {
@@ -41,6 +49,12 @@ router.post("/project_role", async (req, res) => {
 // #region project task 
 router.post("/create_task", async (req, res) => {
   await projectTaskServices.CreateProjectTask(req, res);
+})
+router.post("/update_task", async (req, res) => {
+  await projectTaskServices.UpdateProjectTask(req, res);
+})
+router.post("/change_status", async (req, res) => {
+  await projectTaskServices.ChangeStatusTask(req, res);
 })
 // #endregion
 
