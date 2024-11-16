@@ -129,15 +129,18 @@ model ProjectInsight {
 }
 
 model ProjectActivities {
-  id            String          @id @default(auto()) @map("_id") @db.ObjectId
-  project       Project?        @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId     String?         @db.ObjectId
-  action        String
-  activity      Json
-  actionById    String?         @db.ObjectId
-  actionBy      User?           @relation(fields: [actionById], references: [id], onDelete: Cascade)
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  id                  String          @id @default(auto()) @map("_id") @db.ObjectId 
+  project             Project?        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId           String?         @db.ObjectId
+  actionCode          String?
+  actionName          String?
+  actionEngName       String?
+  action              String
+  activity            Json
+  actionById          String?         @db.ObjectId
+  actionBy            User?           @relation(fields: [actionById], references: [id], onDelete: Cascade)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
 	@@map("ProjectActivities")
 }
 
