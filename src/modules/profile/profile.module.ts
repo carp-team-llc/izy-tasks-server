@@ -15,7 +15,7 @@ const profileService = new ProfileService();
     await profileService.DeleteProfileService(req, res);
   })
   router.post("/profile_detail", async(req, res) => {
-    await profileService.ProfileDetailService(req, res);
+    await profileService.ProfileDetail(req, res);
   })
 // #endregion
 

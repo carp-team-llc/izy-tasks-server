@@ -25,6 +25,10 @@ RUN npx prisma generate
 ENV NODE_ENV=development
 ENV TZ=Asia/Ho_Chi_Minh
 
+# set folder permission
+RUN mkdir -p /usr/src/app/src/modules/logs/TrackingIp && \
+    chmod -R 777 /usr/src/app/src/modules/logs
+
 # Use a non-root user for security.
 USER node
 
