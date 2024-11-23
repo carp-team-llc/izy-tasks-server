@@ -2,7 +2,7 @@ import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
 import prisma from "../../utils/connection/connection";
 import type { profileDto } from "./dto/user.dto";
 
-const ProfileDetail = async ({ id }: profileDto) => {
+const ProfileDetail = async (id: string, token: string) => {
   try {
     const errors: string[] = [];
     if (errors.length > 0) {
@@ -13,9 +13,28 @@ const ProfileDetail = async ({ id }: profileDto) => {
       };
     }
 
+    const loadUserInfo = await LoadUserInfo(token);
+
     const ProfileDetail = await prisma.profile.findFirst({
       where: { id },
+      include: {
+        socials: {
+          select: {
+            id: true,
+            platform: true,
+            url: true,
+          },
+        },
+      },
     });
+
+    if (loadUserInfo.userId !== ProfileDetail.userId) {
+      return {
+        statusCode: 403,
+        message: "Unauthorized to view this profile!",
+        data: [],
+      }
+    }
 
     return {
       statusCode: 201,
