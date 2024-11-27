@@ -108,14 +108,16 @@ export class ProjectTaskService {
       const {
         id,
         statusKey,
+        projectId,
       }: {
         id: string;
         statusKey: string;
+        projectId: string;
       } = req.body;
       const token = req.headers["authorization"]
         .split(" ")[1]
         .replace("Bearer ", "");
-      const projectTask = await ChangeStatus(id, statusKey, token);
+      const projectTask = await ChangeStatus(id, projectId, statusKey, token);
       res.status(200).json({
         message: projectTask.message,
         data: projectTask.data,

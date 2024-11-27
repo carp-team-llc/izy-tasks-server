@@ -15,6 +15,7 @@ import UploadFile from "../modules/upload/upload.module"
 import timeline from '../modules/timeline/time.module';
 import Comments from '../modules/comments/comments.module';
 import { logToFolder } from './logger';
+import moment from 'moment-timezone';
 
 const api = express.Router();
 
@@ -34,8 +35,9 @@ const initApi = (app) => {
 
     app.use((req, res, next) => {
         const ip = getClientIp(req);
-        const message = `User IP: ${ip} - Endpoint: ${req.originalUrl}`;
-        console.log(message)
+        const now = moment().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD HH:mm:ss");
+        const message = `User IP: ${ip} - Method: ${req.method} - Endpoint: ${req.originalUrl}`;
+        console.log(`[${now}] - User IP: ${ip} - Method: ${req.method} - Endpoint: ${req.originalUrl}`)
         logToFolder(message, "TrackingIp");
         next();
     });
