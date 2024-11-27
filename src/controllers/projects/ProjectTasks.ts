@@ -255,7 +255,12 @@ const UpdateTask = async (
   }
 };
 
-const ChangeStatus = async (id: string, statusKey: string, token: string) => {
+const ChangeStatus = async (
+  id: string,
+  projectId: string,
+  statusKey: string,
+  token: string
+) => {
   try {
     if (!id) {
       return { statusCode: 400, message: "Missing required parameter: id" };
@@ -268,6 +273,12 @@ const ChangeStatus = async (id: string, statusKey: string, token: string) => {
     const task = await prisma.tasks.findUnique({
       where: { id },
     });
+    if (task.projectId !== projectId) {
+      return {
+        statusCode: 403,
+        message: "Unauthorized to update task in this project.",
+      };
+    }
     if (
       task.status === EnumData.StatusType.Cancel.code &&
       statusKey !== "New"
@@ -297,7 +308,9 @@ const ChangeStatus = async (id: string, statusKey: string, token: string) => {
       };
     }
     const updatedTask = await prisma.tasks.update({
-      where: { id },
+      where: {
+        id,
+      },
       data: {
         status: statusInfo.code,
         statusName: statusInfo.name,
