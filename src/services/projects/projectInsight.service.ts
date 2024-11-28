@@ -3,6 +3,7 @@ import {
   Activity,
   TodayTasks,
   TopInsight,
+  TotalTaskChart,
 } from "../../controllers/projects/ProjectInsights";
 
 export class ProjectInsightService {
@@ -48,6 +49,21 @@ export class ProjectInsightService {
       res.status(activity.statusCode).json({
         message: activity.message,
         data: activity.data,
+      });
+    } catch {
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+  async TotalChartService(req: Request, res: Response) {
+    try {
+      const { projectId } = req.body;
+      const token = req.headers["authorization"]
+        .split(" ")[1]
+        .replace("Bearer ", "");
+      const totalChart = await TotalTaskChart(projectId, token);
+      res.status(totalChart.statusCode).json({
+        message: totalChart.message,
+        data: totalChart.data,
       });
     } catch {
       res.status(500).json({ message: "Internal Server Error" });

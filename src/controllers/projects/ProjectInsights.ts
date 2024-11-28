@@ -1,6 +1,6 @@
 import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
 import prisma from "../../utils/connection/connection";
-
+import Helper from "../../utils/helper";
 export interface ProjectInsight {
   projectId?: string;
 }
@@ -291,5 +291,70 @@ const Activity = async (
     };
   }
 };
+const TotalTaskChart = async (
+  projectId: string,
+  token: string
+) => {
+  try {
+    const userInfo = LoadUserInfo(token);
 
-export { TopInsight, TodayTasks, Activity };
+    const isMember = await prisma.projectMember.findFirst({
+      where: {
+        AND: [{ projectId }, { userId: userInfo.userId }],
+      },
+    });
+
+    if (!isMember) {
+      return {
+        statusCode: 403,
+        message: "Forbidden: You are not a member of this project",
+      };
+    }
+
+
+    const taskChart = await prisma.tasks.groupBy({
+      by: ["status"],
+      where: {
+        OR: [
+          {
+            projectId
+          },
+        ],
+        status: {
+          in: ["COMPLETED", "CANCEL", "PENDING", "LATE", "NEW", "DOING"],
+        },
+      },
+      _count: {
+        status: true,
+      },
+    });
+
+    const getStatusInfo = taskChart?.map((task) => {
+      return {
+        total: task?._count?.status,
+        name: task?.status,
+      };
+    });
+
+    const processedTaskChart = getStatusInfo.map((task) => {
+      const statusInfo = Helper.HandleStatus({ status: task.name });
+
+      return {
+        ...task,
+        statusInfo,
+      };
+    });
+    return {
+      statusCode: 200,
+      message: "Success!",
+      data: {
+        taskChart: processedTaskChart,
+      },
+    };
+  } catch (err) {
+    console.error(err);
+    return { statusCode: 500, message: err};
+  }
+};
+
+export { TopInsight, TodayTasks, Activity, TotalTaskChart };
