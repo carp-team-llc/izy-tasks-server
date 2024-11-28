@@ -5,18 +5,28 @@ import { TaskStatusHandlers } from "../../services/tasks/taskStatusHandlers.serv
 import { ChartService } from "../../services/tasks/chart.service";
 import { TaskNotification } from "../../services/tasks/notification.service";
 import { TaskListService } from "../../services/tasks/tasklist.service";
+import { TaskHistoryService } from "../../services/tasks/taskHistory.service";
 
 const router = express.Router();
 const taskServices = new TasksService();
 const taskStatusHandlers = new TaskStatusHandlers();
 const chartServices = new ChartService();
 const taskNotification = new TaskNotification();
-const taskListServices = new TaskListService
+const taskListServices = new TaskListService();
+const taskHistoryService = new TaskHistoryService();
 
 // #region Task Manager
 
 router.post("/tasks_list", async (req, res) => {
     await taskServices.tasksPagination(req, res);
+})
+
+router.post("/recent_task", async (req, res) => {
+    await taskServices.recentTaskPagination(req, res);
+})
+
+router.post("/task_detail", async (req, res) => {
+    await taskServices.taskDetail(req, res);
 })
 
 router.post("/create_task", async (req, res) => {
@@ -34,6 +44,14 @@ router.post("/delete_task", async (req, res) => {
 // #endregion
 
 // #region Task Status
+
+router.post("/update_task_status", async (req, res) => {
+    await taskStatusHandlers.UpdateStatus(req, res)
+})
+
+router.post("/complete_task", async (req, res) => {
+    await taskStatusHandlers.CompletedTask(req, res)
+})
 router.post("/cancel_task", async (req, res) => {
     await taskStatusHandlers.CancelTask(req, res)
 })
@@ -82,6 +100,9 @@ router.post("/load_new_notification", async (req, res) => {
 router.post("/task_list_pagination", async (req, res) => {
     await taskListServices.TaskListPaginationService(req, res)
 })
+router.post("/task_list_detail", async (req, res) => {
+    await taskListServices.DetailTaskListService(req, res)
+})
 router.post("/create_task_list", async (req, res) => {
     await taskListServices.CreateTaskListService(req, res)
 })
@@ -90,6 +111,15 @@ router.post("/update_task_list", async (req, res) => {
 })
 router.post("/delete_task_list", async (req, res) => {
     await taskListServices.DeleteTaskListService(req, res)
+})
+router.post("/choose_task_list", async (req, res) => {
+    await taskListServices.TaskList(req, res)
+})
+// #endregion
+
+// #region task history
+router.post("/task_activity", async (req, res) => {
+    await taskHistoryService.TaskActivity(req, res)
 })
 // #endregion
 

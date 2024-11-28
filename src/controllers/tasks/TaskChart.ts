@@ -2,7 +2,7 @@ import { startOfMonth, endOfMonth } from "date-fns";
 import prisma from "../../utils/connection/connection";
 import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
 import Helper from "../../utils/helper";
-import { startOfDay, endOfDay } from 'date-fns';
+import { startOfDay, endOfDay } from "date-fns";
 
 interface GetTasksByStatusAndDateParams {
   status: string[];
@@ -12,7 +12,7 @@ interface GetTasksByStatusAndDateParams {
 interface WeeklyTaskParams {
   fromDate: string;
   toDate: string;
-  status: any;
+  status: string[];
 }
 
 interface MonthlyTaskParams {
@@ -89,7 +89,11 @@ const DailyChart = async (
       };
     });
 
-    const totalTask = taskChart.length;
+    const loadTotalStatus: number[] = getStatusInfo.map((item: any) => {
+      return item?.total;
+    });
+    const totalTask = loadTotalStatus.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
     return {
       statusCode: 200,
       message: "Success!",
@@ -128,7 +132,7 @@ const WeeklyChart = async (
     }
     const userInfo = LoadUserInfo(token);
     const startOfDay = new Date(fromDate);
-    startOfDay.setHours(0, 0, 0, 0); 
+    startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date(toDate);
     endOfDay.setHours(23, 59, 59, 999);
 
@@ -160,6 +164,27 @@ const WeeklyChart = async (
       },
     });
 
+    const totalTask = await prisma.tasks.count({
+      where: {
+        OR: [
+          { authorId: userInfo?.userId },
+          {
+            project: {
+              member: {
+                some: {
+                  userId: userInfo?.userId,
+                },
+              },
+            },
+          },
+        ],
+        createdAt: {
+          gte: fromDate,
+          lte: toDate,
+        },
+      }
+    })
+
     const getStatusInfo = weeklyTotal?.map((task) => {
       return {
         total: task?._count?.status,
@@ -175,14 +200,14 @@ const WeeklyChart = async (
         statusInfo,
       };
     });
-    const totalTask = weeklyTotal.length
+
     return {
       statusCode: 200,
       message: "Success!",
       data: {
         taskChart: processedTaskChart,
         totalTask: totalTask
-      }
+      },
     };
   } catch (err) {
     console.error(err);

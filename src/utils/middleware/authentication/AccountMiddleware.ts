@@ -15,9 +15,10 @@ const AccountMiddleware = async (
 ) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   if (!token) {
-    return res
-      .status(401)
-      .json({ message: "Access denied. No token provided." });
+    return res.status(401).json({
+      message: "Your session has expired, please log in again!",
+      viMessage: "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!",
+    });
   }
   try {
     const token = req.headers["authorization"]
@@ -43,6 +44,8 @@ const AccountMiddleware = async (
         return res.status(400).json({
           message:
             "This account is not activated, please activate this account before trying!",
+          viMessage:
+            "Tài khoản của bạn chưa được kích hoạt, vui lòng kích hoạt tài khoản của bạn trước khi đăng nhập!"
         });
       } else {
         next();

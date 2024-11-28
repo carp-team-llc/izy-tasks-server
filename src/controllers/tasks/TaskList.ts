@@ -2,26 +2,102 @@ import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
 import prisma from "../../utils/connection/connection";
 import type { TaskListDTO } from "./dto/tasksList.dto";
 
-const TaskListPagination = async ({ where, skip, take }: any, token) => {
+const TaskList = async (token: string) => {
   try {
-    const userInfo = LoadUserInfo(token)
-    const taskListPagination = await prisma.taskList.findMany({
+    const taskList = await prisma.taskList.findMany({
       where: {
-        OR: [
-          { authorId: userInfo?.userId },
-        ],
-        AND: where,
+        authorId: LoadUserInfo(token)?.userId,
       },
-      take,
-      skip
+      select: {
+        id: true,
+        name: true,
+      },
     });
     return {
       statusCode: 201,
       message: "Success!",
-      data: taskListPagination
-    }
+      data: taskList,
+    };
+  } catch (err) {
+    return {
+      statusCode: 500,
+      message: "Error in fetching task list!",
+    };
+  }
+};
+
+const TaskListPagination = async ({ where, skip, take }: any, token) => {
+  try {
+    const userInfo = LoadUserInfo(token);
+    const taskList = await prisma.taskList.findMany({
+      where: {
+        OR: [{ authorId: userInfo?.userId }],
+        AND: where,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take,
+      skip,
+    });
+    const totalTasks = await prisma.taskList.count({
+      where: {
+        OR: [{ authorId: userInfo?.userId }],
+        AND: where,
+      },
+    });
+    const totalPages = Math.ceil(totalTasks / take);
+    return {
+      statusCode: 201,
+      message: "Success!",
+      data: {
+        taskList,
+        currentPage: Math.ceil(skip / take) + 1,
+        totalTasks,
+        totalPages,
+      },
+    };
   } catch (err) {
     console.error("Err in Task list pagination: ", err);
+  }
+};
+
+const DetailTaskList = async ({ id }) => {
+  try {
+    if (!id) {
+      return { statusCode: 400, message: "Task ID is required for tgh" };
+    }
+    const detail = await prisma.taskList.findFirst({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        createdAt: true,
+        avatar: true,
+        tasks: {
+          select: {
+            id: true,
+            name: true,
+            status: true,
+            statusName: true,
+            statusColor: true,
+            createdAt: true,
+            updatedAt: true,
+            expirationDate: true,
+          },
+        },
+        authorId: true,
+      },
+    });
+    return {
+      statusCode: 201,
+      message: "success!",
+      detail: detail,
+    };
+  } catch (err) {
+    console.error("Error: ", err);
+    return { statusCode: 500, message: "Internal Server Error" };
   }
 };
 
@@ -156,4 +232,11 @@ const DeleteTaskList = async (id: string) => {
   }
 };
 
-export { TaskListPagination, CreateListTask, UpdateTaskList, DeleteTaskList };
+export {
+  TaskListPagination,
+  CreateListTask,
+  UpdateTaskList,
+  DeleteTaskList,
+  DetailTaskList,
+  TaskList,
+};

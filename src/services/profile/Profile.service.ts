@@ -1,18 +1,18 @@
 import { Request, Response } from "express";
-import { CreateProfile } from "../../controllers/users/UserManager";
-import { DeleteProfile, ProfileDetail, UpdateProfile } from "../../controllers/users/Profile.controller";
+import { CreateProfile, DeleteProfile, ProfileDetail, UpdateProfile } from "../../controllers/users/Profile.controller";
 
 export class ProfileService {
   async CreateProfileService(req: Request, res: Response) {
     try {
-      const { fullName, bio, dateOfBirth, avatar, user } = req.body;
+      const { fullName, bio, dateOfBirth, avatar, socials } = req.body;
+      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
       const createProfile = await CreateProfile({
         fullName,
         bio,
         dateOfBirth,
         avatar,
-        user,
-      });
+        socials
+      }, token);
       return res.status(createProfile.statusCode).json({
         message: createProfile.message,
         data: createProfile.data
@@ -68,26 +68,21 @@ export class ProfileService {
       });
     }
   }
-  async ProfileDetailService(req: Request, res: Response) {
+  async ProfileDetail(req: Request, res: Response) {
     try {
-      const { fullName, bio, dateOfBirth, avatar, user, id } = req.body;
-      const profileDetail = await  ProfileDetail({
-        id,
-        fullName,
-        bio,
-        dateOfBirth,
-        avatar,
-        user,
-      });
-      return res.status(profileDetail.statusCode).json({
-        message: profileDetail.message,
-        data: profileDetail.data
+      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+      const { id } = req.body;
+      const viewProfile = await ProfileDetail(id, token);
+      return res.status(viewProfile.statusCode).json({
+        message: viewProfile.message,
+        data: viewProfile.data
       })
-    } catch {
-      return res.status(500).send({
-        message: "Internal server error!",
-        data: [],
-      });
+    } 
+    catch (err) {
+      res.status(500).json({
+        message: "Internal Server Error",
+        data: {},
+      })
     }
   }
 }

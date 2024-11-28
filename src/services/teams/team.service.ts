@@ -1,7 +1,40 @@
 import { Request, Response } from "express";
-import { CreateTeam, DeleteTeam, UpdateTeam } from "../../controllers/teams/TeamManager";
+import { CreateTeam, DeleteTeam, DetailTeam, TeamPagination, UpdateTeam } from "../../controllers/teams/TeamManager";
 
 export class TeamManagerService {
+
+  async TeamPagination(req: Request, res: Response) {
+    try {
+      const { where, skip, take } = req.body;
+      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+      const createTeam = await TeamPagination({
+        where,
+        skip,
+        take
+      }, token);
+      return res.status(createTeam.statusCode).json({
+        message: createTeam.message,
+        data: createTeam.data,
+      });
+    } catch {
+      return res.status(500).send({ message: "Internal server error!" });
+    }
+  }
+
+  async DetailTeamService(req: Request, res: Response) { // detail team by id
+    try {
+      const { id } = req.body;
+      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+      const createTeam = await DetailTeam({ id }, token);
+      return res.status(createTeam.statusCode).json({
+        message: createTeam.message,
+        data: createTeam.data,
+      });
+    } catch {
+      return res.status(500).send({ message: "Internal server error!" });
+    }
+  }
+
   async CreateTeamService(req: Request, res: Response) {
     try {
       const { name, bio, address, phonenumber, email, avatar, member } = req.body;

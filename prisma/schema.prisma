@@ -8,34 +8,49 @@ datasource db {
 }
 
 model User {
-  id                String          @id @default(auto()) @map("_id") @db.ObjectId
-  username          String          @unique
-  email             String          @unique
-  password          String
-  phone             String?
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  role              String?
-  isAdmin           Boolean         @default(false)
-  isVerify          Boolean         @default(false)
-  verificationToken String?
-  profile           Profile?
-  team              TeamMember[]
-  project           ProjectMember[]
-  assignedTasks     Tasks[]         @relation("AssignedTasks")
-  authoredTasks     Tasks[]         @relation("AuthoredTasks")
-  history           TaskHistory[]
-  taskListId        String?         @db.ObjectId
-  taskList          TaskList[]
+  id                      String              @id @default(auto()) @map("_id") @db.ObjectId
+  username                String              @unique
+  email                   String              @unique
+  password                String
+  phone                   String?
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+  role                    String?
+  isAdmin                 Boolean             @default(false)
+  isVerify                Boolean             @default(false)
+  verificationToken       String?
+  profile                 Profile?
+  team                    TeamMember[]
+  project                 ProjectMember[]
+  assignedTasks           Tasks[]             @relation("AssignedTasks")
+  authoredTasks           Tasks[]             @relation("AuthoredTasks")
+  history                 TaskHistory[]
+  taskListId              String?             @db.ObjectId
+  taskList                TaskList[]
+  haveProfile             Boolean?            @default(false)
+  comment                 Comments[]          @relation("AuthorComments")
+  recentTask              RecentTask[]
+  activities              ProjectActivities[]
 }
 
 model Profile {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  fullName    String
-  bio         String?
-  dateOfBirth DateTime?
-  avatar      String?   @default("../assets/images/avatars/cat.jpg")
-  user        User      @relation(fields: [id], references: [id], onDelete: Cascade)
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  fullName        String
+  bio             String?
+  dateOfBirth     DateTime?
+  avatar          String?       @default("../assets/images/avatars/cat.jpg")
+  userId          String        @db.ObjectId
+  user            User          @relation(fields: [id], references: [id], onDelete: Cascade)
+  gender          String?
+  socials         Socials[]
+}
+
+model Socials {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  platform        String?
+  profileId       String?       @db.ObjectId
+  profile         Profile?      @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  url             String?
 }
 
 model Team {
@@ -49,15 +64,16 @@ model Team {
   updatedAt   DateTime     @updatedAt
   avatar      String?      @default("../assets/images/avatars/cat.jpg")
   member      TeamMember[]
+  project     Project[]
 }
 
 model TeamMember {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String   @db.ObjectId
-  team        Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  teamId      String   @db.ObjectId
-  joinedAt    DateTime @default(now())
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String          @db.ObjectId
+  team        Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId      String          @db.ObjectId
+  joinedAt    DateTime        @default(now())
   role        String?
   roleCode    String?
   roleName    String?
@@ -66,31 +82,66 @@ model TeamMember {
 }
 
 model Project {
-  id            String          @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  description   String
-  createdAt     DateTime        @default(now())
-  timeworking   String?
-  permission    Json?
-  member        ProjectMember[]
-  tasks         Tasks[]
-  avatar        String?         @default("../assets/images/avatars/cat.jpg")
-  deadline      DateTime        @default(now())
-  totalEstimate String?
+  id                    String              @id @default(auto()) @map("_id") @db.ObjectId
+  name                  String
+  description           String
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  timeworking           Float?  
+  permission            Json?
+  member                ProjectMember[]
+  tasks                 Tasks[]
+  teamId                String?             @db.ObjectId
+  team                  Team?               @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  avatar                String?             @default("../assets/images/avatars/cat.jpg")
+  startTime             DateTime
+  deadline              DateTime            @default(now())
+  totalEstimate         String?
+  projectInsight        ProjectInsight?
+  projectActivities     ProjectActivities[]
 }
 
-model ProjectMember {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String   @db.ObjectId
-  project     Project  @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  teamId      String   @db.ObjectId
-  joinedAt    DateTime @default(now())
-  role        String?
-  roleCode    String?
-  roleName    String?
-  roleEngName String?
-  permission  String?
+model ProjectMember { 
+  id                    String          @id @default(auto()) @map("_id") @db.ObjectId
+  user                  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                String          @db.ObjectId
+  projectId             String?         @db.ObjectId
+  project               Project?        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  teamId                String?         @db.ObjectId
+  joinedAt              DateTime        @default(now())
+  role                  String?
+  roleCode              String?
+  roleName              String?
+  roleEngName           String?
+  permission            String?
+}
+
+model ProjectInsight {
+  id                    String          @id @default(auto()) @map("_id") @db.ObjectId
+  project               Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId             String          @unique @db.ObjectId
+  todayTimeSpent        String
+  todayTaskSpent        String
+  todayTaskLate         String
+  todayTaskCancel       String
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+}
+
+model ProjectActivities {
+  id                  String          @id @default(auto()) @map("_id") @db.ObjectId 
+  project             Project?        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId           String?         @db.ObjectId
+  actionCode          String?
+  actionName          String?
+  actionEngName       String?
+  action              String
+  activity            Json
+  actionById          String?         @db.ObjectId
+  actionBy            User?           @relation(fields: [actionById], references: [id], onDelete: Cascade)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+	@@map("ProjectActivities")
 }
 
 model Tasks {
@@ -100,10 +151,11 @@ model Tasks {
   status         String
   statusColor    String
   statusName     String
-  createdAt      DateTime      @default(now())
+  createdAt      DateTime      @default(now()) 
   estimatetime   String?
   updatedAt      DateTime      @updatedAt
   isExpiration   Boolean       @default(false)
+  startTime      DateTime
   expirationDate DateTime
   images         String[]
   tags           String[]
@@ -115,14 +167,16 @@ model Tasks {
   priority       String?
   priorityName   String?
   progress       Float?
-  employeeId     String?       @db.ObjectId
-  employee       User?         @relation("AssignedTasks", fields: [employeeId], references: [id])
-  authorId       String?       @db.ObjectId
-  author         User?         @relation("AuthoredTasks", fields: [authorId], references: [id])
-  sprintId       String?       @db.ObjectId
-  sprint         Sprint?       @relation(fields: [sprintId], references: [id], onDelete: Cascade)
-  taskListId     String?       @db.ObjectId
-  taskList       TaskList?     @relation(fields: [taskListId], references: [id], onDelete: Cascade)
+  employeeId     String?        @db.ObjectId
+  employee       User?          @relation("AssignedTasks", fields: [employeeId], references: [id])
+  authorId       String?        @db.ObjectId
+  author         User?          @relation("AuthoredTasks", fields: [authorId], references: [id])
+  sprintId       String?        @db.ObjectId
+  sprint         Sprint?        @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  taskListId     String?        @db.ObjectId
+  taskList       TaskList?      @relation(fields: [taskListId], references: [id], onDelete: Cascade)
+  comments       Comments[]     @relation("TaskComments")
+  recentTask     RecentTask[]
 }
 
 model TaskHistory {
@@ -136,11 +190,22 @@ model TaskHistory {
   author    User?    @relation(fields: [authorId], references: [id], onDelete: Cascade)
 }
 
+model RecentTask {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  openedAt      DateTime
+  taskId        String        @db.ObjectId
+  userId        String        @db.ObjectId
+  user          User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task          Tasks?        @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  @@unique([userId, taskId])
+}
+
 model TaskList {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   avatar      String?  @default("../assets/images/avatars/cat.jpg")
   tasks       Tasks[]
   authorId    String   @db.ObjectId
@@ -155,4 +220,15 @@ model Sprint {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   tasks         Tasks[]
+}
+
+model Comments {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  content       String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  taskId        String      @db.ObjectId
+  task          Tasks       @relation("TaskComments", fields: [taskId], references: [id])
+  userId        String      @db.ObjectId
+  user          User        @relation("AuthorComments", fields: [userId], references: [id])
 }

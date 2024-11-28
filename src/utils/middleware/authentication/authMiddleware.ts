@@ -10,7 +10,10 @@ export interface CustomRequest extends Request {
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers['authorization']?.split(' ')[1];
     if (!token) {
-        return res.status(401).json({ message: 'Access denied. No token provided.' });
+        return res.status(401).json({ 
+            message: 'Your session has expired, please log in again!', 
+            viMessage: 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!' 
+        });
     }
     try {
         const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
@@ -23,9 +26,15 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     } catch (err: any) {
         console.error(err)
         if (err.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: 'Token has expired' });
+            return res.status(401).json({ 
+                message: 'Your session has expired, please log in again!', 
+                viMessage: 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!' 
+            });
         }
-        res.status(401).json({ message: 'Please authenticate' });
+        res.status(401).json({ 
+            message: 'Your session has expired, please log in again!', 
+            viMessage: 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!' 
+        });
     }
 };
 

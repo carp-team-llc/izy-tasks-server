@@ -8,12 +8,14 @@ export class tasks {
     statusColor: string;
     statusName: string;
     createdAt?: string;
+    startTime: Date;
     expirationDate: Date;
     isExpiration: boolean;
     images: string[];
     tags?: string[];
     projectId?: string;
     team?: string;
+    taskListId?: string;
     priority?: string;
     priorityName?: string;
     progress?: number;

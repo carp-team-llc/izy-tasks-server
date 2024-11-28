@@ -6,47 +6,38 @@ import { LoadUserInfo } from '../../utils/middleware/permission/LoadUserInfo';
 const tasksPanigation = async (variales: tasksVariables, token: string) => {
     const { where, skip, take } = variales;
     const userInfo = LoadUserInfo(token)
-    console.log(userInfo)
     try {
         const tasks = await prisma.tasks.findMany({
             where: {
-                OR: [
+                AND: [
                     { authorId: userInfo?.userId },
                     {
-                        project: {
-                            member: {
-                                some: {
-                                    userId: userInfo?.userId
-                                }
-                            }
-                        }
-                    }
+                        project: null,
+                    },
+                    where
                 ],
-                AND: where,
+            },
+            orderBy: {
+                createdAt: 'desc',
             },
             skip,
             take,
         });
         const totalTasks = await prisma.tasks.count({ 
             where: {
-                OR: [
+                AND: [
                     { authorId: userInfo?.userId },
                     {
-                        project: {
-                            member: {
-                                some: {
-                                    userId: userInfo?.userId
-                                }
-                            }
-                        }
-                    }
+                        project: null,
+                    },
+                    where
                 ],
-                AND: where,
             },
         });
         const totalPages = Math.ceil(totalTasks / take);
         return {
             statusCode: 200,
+            message: "Tasks successfully fetched",
             data: {
                 tasks,
                 currentPage: Math.ceil(skip / take) + 1,
@@ -59,4 +50,56 @@ const tasksPanigation = async (variales: tasksVariables, token: string) => {
     }
 }
 
-export default tasksPanigation;
+const recentTaskPagination = async (variable: tasksVariables, token: string) => {
+    const { where, skip, take } = variable;
+    const userId = LoadUserInfo(token)?.userId;
+    try {
+        const recentTask = await prisma.recentTask.findMany({
+            where: {
+                AND: [
+                    { userId: userId },
+                    where
+                ],
+            },
+            include: {
+                task: {
+                    select: {
+                        id: true,
+                        name: true,
+                        status: true,
+                        statusColor: true,
+                        statusName: true,
+                        updatedAt: true,
+                        expirationDate: true,
+                    }
+                }
+            },
+            orderBy: {
+                openedAt: 'desc',
+            },
+        })
+        const totalRecent = await prisma.recentTask.count({
+            where: {
+                AND: [
+                    { userId: userId },
+                    where
+                ],
+            },
+        })
+        const totalPages = Math.ceil(totalRecent / take);
+        return {
+            statusCode: 200,
+            message: "Recent Tasks successfully fetched",
+            data: {
+                recentTask,
+                currentPage: Math.ceil(skip / take) + 1,
+                totalTasks: totalRecent,
+                totalPages
+            }
+        }
+    } catch (err) {
+        return {statusCode: 500, message: "Bad request!"}
+    }
+}
+
+export { tasksPanigation, recentTaskPagination } ;

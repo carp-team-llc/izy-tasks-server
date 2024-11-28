@@ -2,7 +2,6 @@ import { tasks } from "./dto/tasks.dto";
 import prisma from '../../utils/connection/connection';
 import { EnumData } from "../../constant/enumData";
 import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
-import moment from "moment-timezone";
 
 const HandleStatus = ({status}) => {
     const statusInfo = EnumData.StatusType[status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()];
@@ -34,17 +33,105 @@ const HandlePriority = ({ priority }) => {
     return EnumData.PriorityType.Low;
 };
 
+const TaskDetail = async ({ id }, token: string) => {
+    try {
+        if (!id) {
+            return { statusCode: 400, message: "Task ID is required for tgh" };
+            
+        }
+
+        const detail = await prisma.tasks.findFirst({
+            where: { id },
+            include: {
+                project: {
+                    select: {
+                        name: true,
+                        team: {
+                            select: {
+                                name: true,
+                            },
+                        },
+                    },
+                },
+                taskList: {
+                    select: {
+                        name: true,
+                    },
+                },
+                employee: {
+                    select: {
+                        username: true,
+                        profile: {
+                            select: {
+                                avatar: true,
+                            },
+                        }
+                    },
+                },
+                author: {
+                    select: {
+                        username: true,
+                        profile: {
+                            select: {
+                                avatar: true,
+                            },
+                        }
+                    },
+                },
+                comments: {
+                    select: {
+                        id: true,
+                        content: true,
+                        createdAt: true,
+                        user: {
+                            select: {
+                                username: true,
+                                profile: {
+                                    select: {
+                                        avatar: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    orderBy: { createdAt: "desc" },
+                    take: 5,
+                }
+            },
+        });
+
+        const userId = await LoadUserInfo(token).userId;
+        const taskId = detail.id;
+        const recentTask = await prisma.recentTask.upsert({
+            where: { userId_taskId: { userId, taskId } },
+            update: { openedAt: new Date() },
+            create: { userId, taskId, openedAt: new Date() },
+        })
+
+        return {
+            statusCode: 201,
+            message: "success!",
+            detail: detail
+        }
+    } catch (err) {
+        console.error('Error: ', err);
+        return { statusCode: 500, message: "Internal Server Error" };
+    }
+}
+
 const CreateTask = async (
     {
         name,
         body,
         author,
+        startTime,
         expirationDate,
-        isExpiration,
+        isExpiration, 
         estimatetime,
         images,
         tags,
         projectId,
+        taskListId,
         team,
         employee,
         priority,
@@ -73,6 +160,7 @@ const CreateTask = async (
                 author:  {
                     connect: { id: userInfo.userId }
                 },
+                startTime,
                 expirationDate,
                 isExpiration,
                 estimatetime,
@@ -80,6 +168,7 @@ const CreateTask = async (
                 tags: tags || [],
                 project: projectId ? { connect: { id: projectId } } : undefined,
                 team: team || null,
+                taskList: taskListId ? { connect: { id: taskListId } } : undefined,
                 employee: {
                     connect: { id: employee || userInfo.userId }
                 },
@@ -128,6 +217,7 @@ const UpdateTask = async (
         body,
         status,
         author,
+        startTime,
         expirationDate,
         isExpiration,
         estimatetime,
@@ -146,40 +236,38 @@ const UpdateTask = async (
             return { statusCode: 400, message: "Task ID is required for update" };
         }
         const priorityData = HandlePriority({ priority: priority || EnumData.PriorityType.Low.code });
-        const errors: string[] = [];
-        if (!name) errors.push("name");
-        if (!body) errors.push("body");
-        if (!status) errors.push("status");
-        if (!author) errors.push("author");
-        if (!expirationDate) errors.push("expirationDate");
-        if (!estimatetime) errors.push("estimatetime");
-
-        if (errors.length > 0) {
-            return { statusCode: 400, message: `The following fields are empty: ${errors.join(", ")}` };
-        }
 
         const userInfo = LoadUserInfo(token);
+
+        const updateData: any = {
+            ...(name && { name }),
+            ...(body && { body }),
+            ...(status && { status }),
+            ...(status && {
+                statusColor: HandleStatus({ status }).color,
+                statusName: HandleStatus({ status }).name,
+            }),
+            ...(startTime && { startTime }),
+            ...(expirationDate && { expirationDate }),
+            ...(isExpiration !== undefined && { isExpiration }),
+            ...(estimatetime && { estimatetime }),
+            ...(images && { images }),
+            ...(tags && { tags }),
+            ...(projectId && { project: { connect: { id: projectId } } }),
+            ...(team && { team }),
+            ...(employee && { employee }),
+            ...(priority && { priority }),
+            ...(progress !== undefined && { progress }),
+            priorityName: priorityData.name,
+        };
+
+        if (userInfo?.userId) {
+            updateData.author = { connect: { id: userInfo.userId } };
+        }
+
         const updatedTask = await prisma.tasks.update({
             where: { id },
-            data: {
-                name,
-                body,
-                status,
-                statusColor: HandleStatus({status}).color,
-                statusName: HandleStatus({status}).name,
-                author: { connect: userInfo?.userId },
-                expirationDate,
-                estimatetime,
-                isExpiration,
-                images: images || [],
-                tags: tags || [],
-                project: projectId ? { connect: { id: projectId } } : undefined,
-                team,
-                employee,
-                priority: priority || EnumData.PriorityType.Low.code,
-                priorityName: priorityData.name,
-                progress,
-            },
+            data: updateData,
         });
 
         // create history
@@ -202,7 +290,8 @@ const UpdateTask = async (
                         project: updatedTask.projectId,
                         team: updatedTask.team,
                         employee: updatedTask.employeeId,
-                    }
+                    },
+                    authorId: userInfo?.userId,
                 }
             })
         }
@@ -214,11 +303,13 @@ const UpdateTask = async (
     }
 }
 
-const DeleteTask = async ({ id }) => {
+const DeleteTask = async ({ id }, token: string) => {
     try {
         if (!id) {
             return { statusCode: 400, message: "Task ID is required for delete"}
         }
+
+        const userInfo = LoadUserInfo(token);
 
         await prisma.taskHistory.deleteMany({
             where: { taskId: id }
@@ -234,7 +325,8 @@ const DeleteTask = async ({ id }) => {
                 data: {
                     taskId: id,
                     action: `Delete task with id: '${id}'`,
-                    changes: {}
+                    changes: {},
+                    authorId: userInfo?.userId,
                 }
             })
         }
@@ -246,4 +338,4 @@ const DeleteTask = async ({ id }) => {
     }
 }
 
-export { CreateTask, UpdateTask, DeleteTask }
+export { TaskDetail, CreateTask, UpdateTask, DeleteTask }

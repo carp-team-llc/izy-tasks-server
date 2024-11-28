@@ -6,11 +6,14 @@ import {
 import {
   CreateProject,
   DeleteProject,
+  DetailProject,
   ProjectPanigation,
   UpdateProject,
 } from "../../controllers/projects/ProjectManager";
-import { AddTask, RoleList } from "../../controllers/projects/ProjectManagement";
-import { permission } from "process";
+import {
+  AddTask,
+  RoleList,
+} from "../../controllers/projects/ProjectManagement";
 
 export class ProjectService {
   // #region project manager
@@ -18,12 +21,28 @@ export class ProjectService {
   async ProjectList(req: Request, res: Response) {
     try {
       const { where, skip, take }: Variables = req.body;
+      const token = req.headers["authorization"]
+        .split(" ")[1]
+        .replace("Bearer ", "");
       const Projects = await ProjectPanigation({
         where: where,
         skip: skip,
         take: take,
-      });
+      }, token);
       return res.status(Projects.statusCode).json(Projects.data);
+    } catch {
+      return res.status(500).json({ message: "Internal Server Error!" });
+    }
+  }
+
+  async DetailProjectService(req: Request, res: Response) {
+    try {
+      const { id } = req.body;
+      const token = req.headers["authorization"]
+        .split(" ")[1]
+        .replace("Bearer ", "");
+      const project = await DetailProject(id, token);
+      return res.status(project.statusCode).json(project.data);
     } catch {
       return res.status(500).json({ message: "Internal Server Error!" });
     }
@@ -31,19 +50,36 @@ export class ProjectService {
 
   async CreateProjectService(req: Request, res: Response) {
     try {
-      const { name, description, member, tasks, avatar, deadline, permission, timeworking }: ProjectDto =
-        req.body;
-      const createProject = await CreateProject({
-        name: name,
-        description: description,
-        member: member,
-        permission: permission,
-        timeworking: timeworking,
-
-        tasks: tasks,
-        avatar: avatar,
-        deadline: deadline,
-      });
+      const {
+        name,
+        description,
+        member,
+        tasks,
+        avatar,
+        startTime,
+        deadline,
+        teamId,
+        permission,
+        timeworking,
+      }: ProjectDto = req.body;
+      const token = req.headers["authorization"]
+        .split(" ")[1]
+        .replace("Bearer ", "");
+      const createProject = await CreateProject(
+        {
+          name: name,
+          description: description,
+          member: member,
+          permission: permission,
+          timeworking: timeworking,
+          teamId: teamId,
+          tasks: tasks,
+          avatar: avatar,
+          startTime: startTime,
+          deadline: deadline,
+        },
+        token
+      );
       return res.json(createProject);
     } catch {
       return res.status(500).json({ message: "Internal Server Error!" });
@@ -60,20 +96,30 @@ export class ProjectService {
         timeworking,
         member,
         tasks,
+        teamId,
         avatar,
+        startTime,
         deadline,
       }: ProjectDto = req.body;
-      const updateProject = await UpdateProject({
-        id,
-        name,
-        description,
-        timeworking,
-        permission,
-        member,
-        tasks,
-        avatar,
-        deadline,
-      });
+      const token = req.headers["authorization"]
+        .split(" ")[1]
+        .replace("Bearer ", "");
+      const updateProject = await UpdateProject(
+        {
+          id,
+          name,
+          description,
+          timeworking,
+          permission,
+          member,
+          tasks,
+          teamId,
+          avatar,
+          startTime,
+          deadline,
+        },
+        token
+      );
       return res.json(updateProject);
     } catch {
       return res.status(500).json({ message: "Internal Server Error!" });
@@ -83,7 +129,10 @@ export class ProjectService {
   async DeleteProjectServices(req: Request, res: Response) {
     try {
       const { id } = req.body;
-      const deleteProject = await DeleteProject(id);
+      const token = req.headers["authorization"]
+        .split(" ")[1]
+        .replace("Bearer ", "");
+      const deleteProject = await DeleteProject(id, token);
       return res.json(deleteProject);
     } catch {
       return res.status(500).json({ message: "Internal Server Error!" });
@@ -109,8 +158,8 @@ export class ProjectService {
       const showRole = RoleList();
       return res.status(showRole.statusCode).json({
         message: showRole.message,
-        data: showRole.data
-      })
+        data: showRole.data,
+      });
     } catch {
       return res.status(500).json({ message: "Internal Server Error!" });
     }

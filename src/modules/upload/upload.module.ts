@@ -8,4 +8,8 @@ router.post('/upload', async(req, res) => {
   await uploadFileService.UploadFile(req, res);
 })
 
+router.post('/delete', async(req, res) => {
+  await uploadFileService.DeleteFile(req, res);
+})
+
 export default router;

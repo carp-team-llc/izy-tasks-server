@@ -1,4 +1,10 @@
 
+export interface pagination {
+  where: any,
+  skip: number,
+  take: number,
+}
+
 export interface TeamMemberDTO {
   userId?: string;
   teamId?: string;
