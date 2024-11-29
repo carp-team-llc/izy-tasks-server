@@ -291,6 +291,7 @@ const Activity = async (
     };
   }
 };
+
 const TotalTaskChart = async (
   projectId: string,
   token: string

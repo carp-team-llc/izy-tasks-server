@@ -55,7 +55,7 @@ export class ProjectInsightService {
       res.status(500).json({ message: "Internal Server Error" });
     }
   }
-
+  
   async TotalChartService(req: Request, res: Response) {
     try {
       const { projectId } = req.body;

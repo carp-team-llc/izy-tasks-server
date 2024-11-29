@@ -67,12 +67,21 @@ router.post("/top_insight", async (req, res) => {
 router.post("/today_tasks", async (req, res) => {
   await projectInsightServices.TodayTasksService(req, res);
 })
+<<<<<<< HEAD
 router.post("/total_tasks_chart", async (req, res) => {
   await projectInsightServices.TotalChartService(req, res);
 })
 router.post("/project_workload", async (req, res) => {
   await projectInsightServices.ProjectWorkloadService(req, res);
 });
+=======
+router.post("/project_workload", async (req, res) => {
+  await projectInsightServices.ProjectWorkloadService(req, res);
+})
+router.post("/total_tasks_chart", async (req, res) => {
+  await projectInsightServices.TotalChartService(req, res);
+})
+>>>>>>> aa323f78a7a3b212fafbbb43ef5204f1eacfa143
 // #endregion
 
 // #region members
