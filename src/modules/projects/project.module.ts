@@ -67,9 +67,12 @@ router.post("/top_insight", async (req, res) => {
 router.post("/today_tasks", async (req, res) => {
   await projectInsightServices.TodayTasksService(req, res);
 })
+router.post("/total_tasks_chart", async (req, res) => {
+  await projectInsightServices.TotalChartService(req, res);
+})
 router.post("/project_workload", async (req, res) => {
   await projectInsightServices.ProjectWorkloadService(req, res);
-})
+});
 // #endregion
 
 // #region members
