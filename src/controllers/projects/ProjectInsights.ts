@@ -292,4 +292,73 @@ const Activity = async (
   }
 };
 
-export { TopInsight, TodayTasks, Activity };
+const ProjectWorkload = async (
+  token: string,
+  projectId: string,
+  status?: string[],
+  fromDate?: string,
+  toDate?: string
+) => {
+  try {
+    const errors: string[] = [];
+    if (!projectId) errors.push("projectId");
+    if (errors.length > 0) {
+      return {
+        statusCode: 400,
+        message: `The following fields are empty: ${errors.join(", ")}`,
+      };
+    }
+
+    const getProjectMembers = await prisma.projectMember.findMany({
+      where: {
+        projectId
+      },
+      select: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+          },
+        }
+      }
+    });
+
+    const CountTaskById = await Promise.all(
+      getProjectMembers.map(async (item) => {
+        const totalTask = await prisma.tasks.count({
+          where: {
+            projectId,
+            AND: [
+              { employeeId: item.user.id },
+              {
+                createdAt: {
+                  gte: fromDate || "1970-11-10T08:05:05.000Z",
+                  lte: toDate || new Date().toISOString(),
+                },
+              },
+            ],
+          },
+        });
+        return {
+          userId: item.user.id,
+          username: item.user.username,
+          totalTasks: totalTask,
+        };
+      })
+    );
+
+    return {
+      statusCode: 201,
+      message: "Project workload retrieved successfully",
+      data: CountTaskById,
+    }
+  } catch (err) {
+    return {
+      statusCode: 500,
+      message: "Failed to retrieve project workload",
+      data: null,
+    };
+  }
+};
+
+export { TopInsight, TodayTasks, Activity, ProjectWorkload };
