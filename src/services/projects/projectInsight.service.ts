@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import {
   Activity,
+  ProjectWorkload,
   TodayTasks,
   TopInsight,
   TotalTaskChart,
@@ -54,6 +55,7 @@ export class ProjectInsightService {
       res.status(500).json({ message: "Internal Server Error" });
     }
   }
+  
   async TotalChartService(req: Request, res: Response) {
     try {
       const { projectId } = req.body;
@@ -67,6 +69,27 @@ export class ProjectInsightService {
       });
     } catch {
       res.status(500).json({ message: "Internal Server Error" });
+    }
+  
+  async ProjectWorkloadService(req: Request, res: Response) {
+    try {
+      const { projectId, status, fromDate, toDate } = req.body;
+      const token = req.headers["authorization"]
+        .split(" ")[1]
+        .replace("Bearer ", "");
+      const projectWorkload = await ProjectWorkload(
+        token,
+        projectId,
+        status,
+        fromDate,
+        toDate
+      );
+      res.status(projectWorkload.statusCode).json({
+        message: projectWorkload.message,
+        data: projectWorkload.data,
+      })
+    } catch (err) {
+       res.status(500).json({ message: "Internal Server Error" });
     }
   }
 }

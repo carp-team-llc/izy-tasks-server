@@ -32,7 +32,6 @@ const initApi = (app) => {
     app.set("json spaces", 2);
     app.use(cors());
     app.use(bodyParser.json());
-
     app.use((req, res, next) => {
         const ip = getClientIp(req);
         const now = moment().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD HH:mm:ss");
@@ -41,8 +40,8 @@ const initApi = (app) => {
         logToFolder(message, "TrackingIp");
         next();
     });
-
     app.use("/api/v1", api);
+
     api.use("/auth", authRouter);
     api.use("/system/mailservice", mailSystemServices)
     api.use("/task", authMiddleware, AccountMiddleware, taskService);
