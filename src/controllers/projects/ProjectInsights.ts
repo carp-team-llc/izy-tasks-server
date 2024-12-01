@@ -298,7 +298,6 @@ const TotalTaskChart = async (
 ) => {
   try {
     const userInfo = LoadUserInfo(token);
-
     const isMember = await prisma.projectMember.findFirst({
       where: {
         AND: [{ projectId }, { userId: userInfo.userId }],

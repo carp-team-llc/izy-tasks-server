@@ -34,6 +34,9 @@ router.post("/delete_project", async (req, res) => {
 router.post("/activate_project", async (req, res) => {
   await projectAnalyticsService.ProjectActivate(req, res);
 })
+router.post("/task_calender", async (req, res) => {
+  await projectAnalyticsService.TaskCalenderService(req, res);
+});
 // #endregion
 
 // #region project management

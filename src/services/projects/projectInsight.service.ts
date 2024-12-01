@@ -70,7 +70,8 @@ export class ProjectInsightService {
     } catch {
       res.status(500).json({ message: "Internal Server Error" });
     }
-  
+  }
+
   async ProjectWorkloadService(req: Request, res: Response) {
     try {
       const { projectId, status, fromDate, toDate } = req.body;
@@ -89,7 +90,7 @@ export class ProjectInsightService {
         data: projectWorkload.data,
       })
     } catch (err) {
-       res.status(500).json({ message: "Internal Server Error" });
+      res.status(500).json({ message: "Internal Server Error" });
     }
   }
 }
