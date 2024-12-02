@@ -71,4 +71,15 @@ const ForgotPasswordMail = async (email: string) => {
   }
 };
 
+const ResendEmailVerify = async () => {
+  try {
+
+  } catch (err) {
+    return {
+      statusCode: 500,
+      message: "Error when resend mail!"
+    }
+  }
+}
+
 export { SendMailSystem, ForgotPasswordMail };
