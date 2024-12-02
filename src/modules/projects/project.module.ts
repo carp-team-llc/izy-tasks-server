@@ -4,6 +4,7 @@ import { ProjectInsightService } from "../../services/projects/projectInsight.se
 import { ProjectTaskService } from "../../services/projects/projectTask.service";
 import { ProjectAnalyticsService } from '../../services/projects/projectAnalytics.service';
 import { ProjectMemberService } from "../../services/projects/projectMember.service";
+import { ProjectNotificationsService } from "../../services/projects/projectNotifications.service";
 
 const router = express.Router();
 const projectServices = new ProjectService();
@@ -11,6 +12,7 @@ const projectTaskServices = new ProjectTaskService();
 const projectInsightServices = new ProjectInsightService();
 const projectAnalyticsService = new ProjectAnalyticsService();
 const projectMemberService = new ProjectMemberService();
+const projectNotificationsService = new ProjectNotificationsService();
 
 // #region project manager
 router.post("/project_list", async (req, res) => {
@@ -61,6 +63,9 @@ router.post("/update_task", async (req, res) => {
 router.post("/change_status", async (req, res) => {
   await projectTaskServices.ChangeStatusTask(req, res);
 })
+router.post("/project_task_list", async (req, res) => {
+  await projectTaskServices.ProjectTaskList(req, res);
+})
 // #endregion
 
 // #region insight
@@ -83,5 +88,12 @@ router.post("/members", async (req, res) => {
   await projectMemberService.ProjectMemberList(req, res);
 })
 // #endregion
+
+// #region Notifications
+router.post("/project_notifications", async (req, res) => {
+  await projectNotificationsService.NotificationsList(req, res);
+})
+// #endregion
+
 
 export default router;
