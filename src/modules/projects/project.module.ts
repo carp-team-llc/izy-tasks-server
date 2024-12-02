@@ -61,6 +61,9 @@ router.post("/update_task", async (req, res) => {
 router.post("/change_status", async (req, res) => {
   await projectTaskServices.ChangeStatusTask(req, res);
 })
+router.post("/project_task_list", async (req, res) => {
+  await projectTaskServices.ProjectTaskList(req, res);
+})
 // #endregion
 
 // #region insight

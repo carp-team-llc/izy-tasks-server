@@ -360,5 +360,26 @@ const ChangeStatus = async (
     return { statusCode: 500, message: "Error in change status!" };
   }
 };
+const ProjectTaskList = async (projectId, token) => {
+  try {
+    if (!projectId) {
+      return { statusCode: 400, message: "Task ID is required for tgh" };
+    }
+    const userInfo = LoadUserInfo(token);
+    const tasklist = await prisma.tasks.findMany({
+      where: {
+        AND: [{ authorId: userInfo?.userId }, { projectId }],
+      },
+    });
+    return {
+      statusCode: 201,
+      message: "success!",
+      data: tasklist,
+    };
+  } catch (err) {
+    console.error("Error: ", err);
+    return { statusCode: 500, message: "Internal Server Error" };
+  }
+};
 
-export { CreateTask, UpdateTask, ChangeStatus };
+export { CreateTask, UpdateTask, ChangeStatus, ProjectTaskList };
