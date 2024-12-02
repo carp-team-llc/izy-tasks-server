@@ -1,6 +1,7 @@
 import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
 import prisma from "../../utils/connection/connection";
 import Helper from "../../utils/helper";
+import IsMember from "../../utils/middleware/permission/IsMember";
 export interface ProjectInsight {
   projectId?: string;
 }
@@ -197,6 +198,15 @@ const TodayTasks = async (
       };
     }
     const userId = LoadUserInfo(token).userId;
+
+    const checkMember = IsMember(projectId, userId);
+    if (!checkMember) {
+      return {
+        statusCode: 403,
+        message: "Forbidden: You are not a member of this project",
+      };
+    }
+
     const todayTask = await prisma.tasks.findMany({
       where: {
         AND: [
@@ -298,19 +308,14 @@ const TotalTaskChart = async (
 ) => {
   try {
     const userInfo = LoadUserInfo(token);
-    const isMember = await prisma.projectMember.findFirst({
-      where: {
-        AND: [{ projectId }, { userId: userInfo.userId }],
-      },
-    });
 
-    if (!isMember) {
+    const checkMember = IsMember(projectId, userInfo.userId);
+    if (!checkMember) {
       return {
         statusCode: 403,
         message: "Forbidden: You are not a member of this project",
       };
     }
-
 
     const taskChart = await prisma.tasks.groupBy({
       by: ["status"],
