@@ -1,7 +1,6 @@
 import express from "express";
 import initApi from "./src/modules/initApi";
-import { connectRedis } from "./src/utils/configs/redis.client";
-import Monitor from "./src/utils/monitor/Monitor";
+import Monitor from "./src/utils/monitor/monitor";
 
 const app = express();
 const PORT = process.env.PORT || 4080;

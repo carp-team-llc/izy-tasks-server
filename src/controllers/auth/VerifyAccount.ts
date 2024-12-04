@@ -1,5 +1,4 @@
 
-import { WelcomeNewUser } from "../../constant/MailForm";
 import prisma from "../../utils/connection/connection";
 
 const VerifyAccount = async (token: string) => {

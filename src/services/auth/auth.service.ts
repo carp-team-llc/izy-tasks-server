@@ -6,6 +6,7 @@ import userRegister from '../../controllers/auth/Register';
 import usersPanigaiton from '../../controllers/auth/UsersPanigation';
 import VerifyAccount from '../../controllers/auth/VerifyAccount';
 import { WelcomeNewUser } from '../../constant/MailForm';
+import { ResendVerificationEmail } from '../../controllers/auth/ResendMail';
 
 export class AuthService{
 
@@ -60,11 +61,22 @@ export class AuthService{
         const verifyEmail = await VerifyAccount(String(token))
         if (verifyEmail.statusCode === 201) {
             res.status(201).send(WelcomeNewUser(verifyEmail.data.toString()));
+        } else if (verifyEmail.statusCode === 409) {
+            res.status(409).json({ error: verifyEmail.message })
         } else {
             res.status(verifyEmail.statusCode).json({
                 message: verifyEmail.message,
                 data: verifyEmail.data,
             });
         }
+    }
+
+    async ResendVerificationEmail(req: Request, res: Response) {
+        const { email } = req.body;
+        const resendEmail = await ResendVerificationEmail(email);
+        return res.status(resendEmail.statusCode).json({
+            message: resendEmail.message,
+            data: resendEmail.data,
+        });
     }
 }

@@ -21,4 +21,8 @@ router.get("/authentication/verify_email", async(req, res) => {
     await authService.VerifyEmail(req, res);
 });
 
+router.post("/authentication/resend_verify_email", async(req, res) => { 
+    await authService.ResendVerificationEmail(req, res);
+});
+
 export default router;
