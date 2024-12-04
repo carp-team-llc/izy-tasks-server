@@ -34,5 +34,14 @@ export const EnumData = {
     Member: { code: "MEMBER", name: "Thành viên", engName: "Member", PERMISSION: "LOW" },
     Moderator: { code: "MOD", name: "Kiểm duyệt viên", engName: "Moderator", PERMISSION: "MEDIUM" },
     Administrator: { code: "ADMIN", name: "Quản trị viên", engName: "Administrator", PERMISSION: "HIGH" }
+  },
+  ErrorCode: {
+    NonVerify: { code: "NONVERIFY", name: "Chưa xác minh", engName: "Non verify" },
+    PermissionDenied: { code: "PERMISSION_DENIED", name: "Quyền truy cập bị từ chối", engName: "Permission denied" },
+    NotFound: { code: "NOT_FOUND", name: "Không tìm thấy", engName: "Not found" },
+    InternalError: { code: "INTERNAL_ERROR", name: "L��i nội bộ", engName: "Internal error" },
+    BadRequest: { code: "BAD_REQUEST", name: "Yêu cầu không hợp lệ", engName: "Bad request" },
+    Unauthorized: { code: "UNAUTHORIZED", name: "Chưa đăng nhập", engName: "Unauthorized" },
+    PasswordIncorrect: { code: "PASSWORD_INCORRECT", name: "Sai mật khẩu", engName: "Password incorrect" },
   }
 }

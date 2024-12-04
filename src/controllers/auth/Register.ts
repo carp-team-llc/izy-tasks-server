@@ -5,9 +5,8 @@ import prisma from '../../utils/connection/connection';
 import { SendMailSystem } from '../mail/SendMail';
 import { ActivateAccountEmailForm } from '../../constant/MailForm';
 
-const userRegister = async ({ username, email, password, phone, taskListId }: UserAuth) => {
+const userRegister = async ({ username, email, password, phone }: UserAuth) => {
     try {
-
         if (!username || !email || !password || !phone) {
             return { statusCode: 400, message: "Information is not complete, please enter complete information before trying again!" };
         }

@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import prisma from '../../utils/connection/connection';
 import { UserLogin } from './dto';
+import { EnumData } from '../../constant/enumData';
 
 const userLogin = async ({email, password}: UserLogin) => {
     try {
@@ -13,19 +14,35 @@ const userLogin = async ({email, password}: UserLogin) => {
 
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) {
-            return { statusCode: 404, message: "User not found" };
+            return { 
+                statusCode: 404,
+                errorCode: EnumData.ErrorCode.NotFound.code,
+                errorName: EnumData.ErrorCode.NotFound.name,
+                errorEngName: EnumData.ErrorCode.NotFound.engName,
+                message: "User not found" 
+            };
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            return { 
+                statusCode: 401,
+                errorCode: EnumData.ErrorCode.PasswordIncorrect.code,
+                errorName: EnumData.ErrorCode.PasswordIncorrect.name,
+                errorEngName: EnumData.ErrorCode.PasswordIncorrect.engName,
+                message: "Password is incorrect" 
+            };
         }
 
         if (!user?.isVerify) {
             return {
                 statusCode: 401,
-                message: "Please verify account before login!"
+                errorCode: EnumData.ErrorCode.NonVerify.code,
+                errorName: EnumData.ErrorCode.NonVerify.name,
+                errorEngName: EnumData.ErrorCode.NonVerify.engName,
+                message: "Please verify account before login!",
+                email: email
             }
-        }
-
-        const passwordMatch = await bcrypt.compare(password, user.password);
-        if (!passwordMatch) {
-            return { statusCode: 401, message: "Password is incorrect" };
         }
 
         const token = jwt.sign({ 
@@ -50,10 +67,8 @@ const userLogin = async ({email, password}: UserLogin) => {
         };
 
     } catch (error) {
-
         console.error('Error in userLogin:', error);
         return {statusCode: 500, message: "Bad Request!"}
-
     }
 }
 
