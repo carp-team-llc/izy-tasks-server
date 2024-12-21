@@ -7,6 +7,7 @@ import usersPanigaiton from '../../controllers/auth/UsersPanigation';
 import VerifyAccount from '../../controllers/auth/VerifyAccount';
 import { WelcomeNewUser } from '../../constant/MailForm';
 import { ResendVerificationEmail } from '../../controllers/auth/ResendMail';
+import { ChangePassword, ForgotPassword, HandleRessetPasswordRequest } from '../../controllers/auth/ForgotPassword';
 
 export class AuthService{
 
@@ -79,4 +80,33 @@ export class AuthService{
             data: resendEmail.data,
         });
     }
+
+    async ForgotPassword(req: Request, res: Response) {
+        const { email } = req.body;
+        const result = await ForgotPassword(email);
+        return res.status(result.statusCode).json({
+            message: result.message,
+        });
+    }
+
+    async CheckResetPasswordRequest(req: Request, res: Response) {
+        try {
+            const { email, token, resetPasswordCreatedAt, resetPasswordExpires } = req.body;
+            const result = await HandleRessetPasswordRequest(email, token, resetPasswordCreatedAt, resetPasswordExpires);
+            return res.status(result.statusCode).json({
+                message: result.message,
+            });
+        } catch (err) {
+            return res.status(400).json("Bad request!")
+        }
+    }
+
+    async NewPassword(req: Request, res: Response) {
+        const { email, token, newPassword } = req.body;
+        const result = await ChangePassword(email, token, newPassword);
+        return res.status(result.statusCode).json({
+            messge: result.message,
+        })
+    }
+
 }

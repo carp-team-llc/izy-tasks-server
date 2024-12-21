@@ -7,14 +7,15 @@
     "start:dev": "cross-env NODE_ENV=development TZ=Asia/Ho_Chi_Minh ts-node-dev --respawn App.ts",
     "build": "tsc",
     "studio": "dotenv -e .env.development -- npx prisma studio --port 5556",
-    "generate": "cd prisma & npx prisma generate"
+    "generate": "cd prisma & npx prisma generate",
+    "db:push": "dotenv -e .env.development -- npx prisma db push"
   },
   "author": "ca",
   "license": "MIT",
   "dependencies": {
     "@azure/msal-node": "^2.14.0",
     "@microsoft/microsoft-graph-client": "^3.0.7",
-    "@prisma/client": "^5.22.0",
+    "@prisma/client": "^6.0.1",
     "@types/body-parser": "^1.19.5",
     "@types/node": "^20.14.2",
     "@types/nodemailer": "^6.4.15",
@@ -40,7 +41,7 @@
     "node-schedule": "^2.1.1",
     "nodemailer": "^6.9.15",
     "nodemon": "^3.1.3",
-    "prisma": "^5.22.0",
+    "prisma": "^6.0.1",
     "redis": "^4.7.0",
     "request-ip": "^3.3.0",
     "winston": "^3.17.0",
