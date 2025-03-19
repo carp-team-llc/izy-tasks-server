@@ -23,6 +23,7 @@ const ResendVerificationEmail = async (email?: string, password?: string) => {
     });
     const verificationLink = `${process.env.IP_HOST_SSL}/api/v1/auth/authentication/verify_email?token=${newVerificationToken}`;
     const sendActivateMail = await SendMailSystem({
+      from: "authentication@calangthang.net",
       to: email,
       subject: "Activate your account!",
       text: "Hi, we are Carp Team!",

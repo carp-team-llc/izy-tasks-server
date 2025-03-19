@@ -40,6 +40,7 @@ const userRegister = async ({ username, email, password, phone }: UserAuth) => {
         const verificationLink = `${process.env.IP_HOST_SSL}/api/v1/auth/authentication/verify_email?token=${newUser.verificationToken}`;
 
         const sendActivateMail = await SendMailSystem({
+            from: "authentication@calangthang.net",
             to: email,
             subject: "Activate your account!",
             text: "Hi, we are Carp Team!",

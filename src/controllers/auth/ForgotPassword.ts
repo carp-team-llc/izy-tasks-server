@@ -45,6 +45,7 @@ const ForgotPassword = async (email: string) => {
       resetRequestTime.toISOString()
     )}&expiresAt=${encodeURIComponent(resetExpires)}`;
     const sendActivateMail = await SendMailSystem({
+      from: "authentication@calangthang.net",
       to: email,
       subject: "Activate your account!",
       text: "Hi, we are Carp Team!",
