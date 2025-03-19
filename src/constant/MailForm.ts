@@ -58,7 +58,7 @@ function GeneratePasswordResetEmail(userName: string, content: string): string {
         <p>If you are having trouble clicking the "Reset Password" button, copy and paste the following link into your browser:</p>
         <p>${content}</p>
       </div>
-    </div>
+    </div
   </body>
   </html>
   `;
