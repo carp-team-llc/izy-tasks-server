@@ -1,8 +1,9 @@
+import SendMail from "src/utils/mail/mail.config";
 import { GeneratePasswordResetEmail } from "../../constant/MailForm";
 import type { MailDTO } from "../../utils/mail/mail.dto";
-import { SendMail } from "../../utils/mail/mail.service";
 
 const SendMailSystem = async ({
+  from,
   to,
   subject,
   text,
@@ -23,6 +24,7 @@ const SendMailSystem = async ({
       : html;
 
     const sendMail = await SendMail({
+      from,
       to,
       subject,
       text,
@@ -45,6 +47,7 @@ const SendMailSystem = async ({
 const ForgotPasswordMail = async (email: string) => {
   try {
     const sendMail = await SendMailSystem({
+      from: "authentication@calangthang.net",
       to: email,
       subject: "Reset your password!",
       text: "Hi, we are Carp Team!",
