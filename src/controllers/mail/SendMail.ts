@@ -1,4 +1,4 @@
-import SendMail from "src/utils/mail/mail.config";
+import SendMail from "../../utils/mail/mail.config";
 import { GeneratePasswordResetEmail } from "../../constant/MailForm";
 import type { MailDTO } from "../../utils/mail/mail.dto";
 
