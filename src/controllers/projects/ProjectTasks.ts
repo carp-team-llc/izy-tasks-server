@@ -46,8 +46,6 @@ const HandlePriority = ({ priority }) => {
   return EnumData.PriorityType.Low;
 };
 
-
-
 const CreateTask = async (
   {
     name,
@@ -362,6 +360,7 @@ const ChangeStatus = async (
     return { statusCode: 500, message: "Error in change status!" };
   }
 };
+
 const ProjectTaskList = async (projectId, token) => {
   try {
     if (!projectId) {

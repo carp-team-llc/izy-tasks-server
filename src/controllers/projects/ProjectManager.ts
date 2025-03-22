@@ -28,28 +28,51 @@ const ProjectPanigation = async (variable: Variables, token: string) => {
           {
             member: {
               some: {
-                userId: userInfo?.userId
-              }
-            }
+                userId: userInfo?.userId,
+              },
+            },
+          },
+        ],
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+        timeworking: true,
+        teamId: true,
+        avatar: true,
+        startTime: true,
+        deadline: true,
+        totalEstimate: true,
+        member: {
+          where: {
+            userId: userInfo?.userId,
+          },
+          select: {
+            id: true,
+            permission: true
           }
-        ]
+        }
       },
       skip,
       take,
     });
-    const totalProject = await prisma.project.count({ 
+
+    const totalProject = await prisma.project.count({
       where: {
         AND: [
           where,
           {
             member: {
               some: {
-                userId: userInfo?.userId
-              }
-            }
-          }
-        ]
-      }
+                userId: userInfo?.userId,
+              },
+            },
+          },
+        ],
+      },
     });
     const totalPages = Math.ceil(totalProject / take);
     return {
@@ -67,10 +90,7 @@ const ProjectPanigation = async (variable: Variables, token: string) => {
   }
 };
 
-const DetailProject = async (
-  id: string,
-  token: string
-) => {
+const DetailProject = async (id: string, token: string) => {
   try {
     if (!id) {
       return {
@@ -96,7 +116,7 @@ const DetailProject = async (
 
     const detailProject = await prisma.project.findFirst({
       where: {
-        id
+        id,
       },
       select: {
         id: true,
@@ -111,13 +131,13 @@ const DetailProject = async (
         timeworking: true,
         totalEstimate: true,
         member: true,
-      }
-    })
-    
+      },
+    });
+
     return {
       statusCode: 200,
       data: detailProject,
-    }
+    };
   } catch (err) {
     console.log(err);
     return { statusCode: 500, message: "Bad request!" };
