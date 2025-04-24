@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import { CreateProfile, ProfileDetail } from "../../controllers/users/Profile.controller";
+import { AuthGuard } from "src/utils/middleware/authentication/AuthGuard";
 
 export class UserService {
 
   async CreateProfileService(req: Request, res: Response) {
     try {
       const { fullName, bio, dateOfBirth, avatar, user, socials, gender } = req.body;
-      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+      const token = AuthGuard(req);
       const createProfile = await CreateProfile({
         fullName,
         bio,

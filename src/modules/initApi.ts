@@ -1,6 +1,9 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import moment from 'moment-timezone';
+import cookieParser from "cookie-parser";
+
 import authRouter from '../modules/auth/auth.module';
 import taskService from "../modules/tasks/tasks.module";
 import projectServices from '../modules/projects/project.module';
@@ -15,7 +18,6 @@ import UploadFile from "../modules/upload/upload.module"
 import timeline from '../modules/timeline/time.module';
 import Comments from '../modules/comments/comments.module';
 import { logToFolder } from './logger';
-import moment from 'moment-timezone';
 
 const api = express.Router();
 
@@ -30,7 +32,11 @@ export function getClientIp(req: express.Request): string {
 const initApi = (app) => {
 
     app.set("json spaces", 2);
-    app.use(cors());
+    app.use(cookieParser());
+    app.use(cors({
+        origin: ["http://localhost:5173", "https://izytask.xyz"],
+        credentials: true,
+    }));
     app.use(bodyParser.json());
     app.use((req, res, next) => {
         const ip = getClientIp(req);

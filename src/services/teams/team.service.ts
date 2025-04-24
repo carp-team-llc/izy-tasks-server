@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import { CreateTeam, DeleteTeam, DetailTeam, TeamPagination, UpdateTeam } from "../../controllers/teams/TeamManager";
+import { AuthGuard } from "src/utils/middleware/authentication/AuthGuard";
 
 export class TeamManagerService {
 
   async TeamPagination(req: Request, res: Response) {
     try {
       const { where, skip, take } = req.body;
-      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+      const token = AuthGuard(req);
       const createTeam = await TeamPagination({
         where,
         skip,
@@ -24,7 +25,7 @@ export class TeamManagerService {
   async DetailTeamService(req: Request, res: Response) { // detail team by id
     try {
       const { id } = req.body;
-      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+      const token = AuthGuard(req);
       const createTeam = await DetailTeam({ id }, token);
       return res.status(createTeam.statusCode).json({
         message: createTeam.message,

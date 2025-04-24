@@ -3,7 +3,6 @@ import { Request, Response } from 'express';
 import { UserAuth, UserLogin, UserPagination } from '../../controllers/auth/dto/authInfo.dto';
 import userLogin from '../../controllers/auth/Login';
 import userRegister from '../../controllers/auth/Register';
-import usersPanigaiton from '../../controllers/auth/UsersPanigation';
 import VerifyAccount from '../../controllers/auth/VerifyAccount';
 import { WelcomeNewUser } from '../../constant/MailForm';
 import { ResendVerificationEmail } from '../../controllers/auth/ResendMail';
@@ -15,10 +14,30 @@ export class AuthService{
         try {
             const {email, password}: UserLogin = req.body;
             const login = await userLogin({ email, password });
+            const token = login.accessToken;
+            res.cookie('token', token, {
+                httpOnly: true, // để ngăn trình duyệt truy cập cookie
+                secure: process.env.NODE_ENV === 'production', // chỉ truy cập qua HTTPS trong môi trường production
+                sameSite: 'lax', // ngăn trình duyệt truy cập cookie từ nguồn khác nhưng vẫn cho phép truy cập từ cùng một nguồn
+                maxAge: 30 * 24 * 60 * 60 * 1000, // 30 ngày
+            })
             return res.status(login.statusCode).json(login);
         } catch (error) {
             console.error('Error in userLogin:', error);
             return res.status(500).json({ statusCode: 500, message: "Internal Server Error" });
+        }
+    }
+
+    async userLogout(req: Request, res: Response) {
+        try {
+            res.clearCookie('token', {
+                httpOnly: true,
+                sameSite: 'lax',
+                secure: process.env.NODE_ENV === 'production'
+            });
+            return res.status(200).json({ statusCode: 200, message: "Logout successfully!" });
+        } catch (err) {
+            return res.status(500).json({ statusCode: 500, message: "Internal Server Error" })
         }
     }
 
@@ -40,20 +59,6 @@ export class AuthService{
         } catch (error) {
             console.error('Error in userLogin:', error);
             return res.status(500).json({ statusCode: 500, message: "Internal Server Error" });
-        }
-    }
-
-    async userListPanigation(req: Request, res: Response) {
-        try {
-            const {where, take = 0, skip = 10}: UserPagination = req.body;
-            const usersList = await usersPanigaiton({
-                where,
-                take,
-                skip
-            });
-            return res.status(usersList.statusCode).json(usersList.data)
-        } catch (err) {
-            return res.status(500).json({message: "Internal Server Error!"})
         }
     }
 

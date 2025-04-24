@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { tasks, tasksVariables } from "../../controllers/tasks/dto/tasks.dto";
 import { CreateTask, DeleteTask, TaskDetail, UpdateTask } from "../../controllers/tasks/taskManager";
 import { recentTaskPagination, tasksPanigation } from "../../controllers/tasks/taskPanigation";
+import { AuthGuard } from "../../utils/middleware/authentication/AuthGuard";
 
 export class TasksService {
 
@@ -12,7 +13,7 @@ export class TasksService {
                 skip,
                 take,
             }: tasksVariables = req.body;
-            const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+            const token = AuthGuard(req);
             const tasksList = await tasksPanigation({
                 where: where,
                 skip: skip,
@@ -32,7 +33,7 @@ export class TasksService {
                 skip,
                 take,
             }: tasksVariables = req.body;
-            const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+            const token = AuthGuard(req);
             const tasksList = await recentTaskPagination({
                 where: where,
                 skip: skip,
@@ -47,7 +48,7 @@ export class TasksService {
 
     async taskDetail (req: Request, res: Response) {
         const id = req.body;
-        const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+        const token = AuthGuard(req);
         const result = await TaskDetail(id, token);
         return res.status(result.statusCode).json({
             message: result.message,
@@ -76,7 +77,7 @@ export class TasksService {
                 team,
                 employee
             }: tasks = req.body;
-            const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+            const token = AuthGuard(req);
             const result = await CreateTask({
                 name,
                 body,
@@ -125,7 +126,7 @@ export class TasksService {
                 team,
                 employee
             }: tasks = req.body;
-            const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+            const token = AuthGuard(req);
 
             const result = await UpdateTask({
                 id,
@@ -158,7 +159,7 @@ export class TasksService {
     async DeleteTask (req: Request, res: Response) {
         try {
             const { id } = req.body;
-            const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+            const token = AuthGuard(req);
             const result = await DeleteTask({ id }, token)
             return res.status(result.statusCode).json({
                 message: result.message,

@@ -1,12 +1,13 @@
 
 import { Request, Response } from "express";
 import { CreateComments, DeleteComment, UpdateComment } from "../../controllers/comments/comments.controller";
+import { AuthGuard } from "src/utils/middleware/authentication/AuthGuard";
 
 export class CommentsService {
   async CreateComment (req: Request, res: Response) {
     try {
       const { content, taskId, userId } = req.body;
-      const token = req.headers.authorization?.split(' ')[1];
+      const token = AuthGuard(req);
       const result = await CreateComments({ content, taskId }, token);
       return res.json(result);
     } catch (error) {

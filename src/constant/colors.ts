@@ -5,6 +5,7 @@ export const color = {
   late: "#d92a02",
   new: "#06a2c9",
   doing: "#ff5482",
+  review: "#FF6900",
 
   low: "#0eb53b",
   normal: "#06a2c9",

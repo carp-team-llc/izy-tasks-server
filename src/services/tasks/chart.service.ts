@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
 import { DailyChart, WeeklyChart, MonthlyChart } from "../../controllers/tasks/TaskChart";
+import { AuthGuard } from "src/utils/middleware/authentication/AuthGuard";
 
 export class ChartService {
   async DailyChart(req: Request, res: Response) {
     try {
       const { createdAt, status } = req.body;
-      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+      const token = AuthGuard(req);
       const dailyChart = await DailyChart({
         createdAt,
         status,
@@ -23,7 +24,7 @@ export class ChartService {
   async WeeklyChart(req: Request, res: Response) {
     try {
       const { fromDate, toDate, status } = req.body;
-      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+      const token = AuthGuard(req);
       const weeklyChart = await WeeklyChart({
         fromDate,
         toDate,
@@ -42,7 +43,7 @@ export class ChartService {
   async MonthlyChart(req: Request, res: Response) {
     try {
       const { status, month, } = req.body;
-      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+      const token = AuthGuard(req);
       const monthlyChart = await MonthlyChart({
         month,
         status
