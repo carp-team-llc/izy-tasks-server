@@ -101,8 +101,8 @@ const TaskDetail = async ({ id }, token: string) => {
         });
 
         const userId = await LoadUserInfo(token).userId;
-        const taskId = detail.id;
-        const recentTask = await prisma.recentTask.upsert({
+        const taskId = detail?.id;
+        await prisma.recentTask.upsert({
             where: { userId_taskId: { userId, taskId } },
             update: { openedAt: new Date() },
             create: { userId, taskId, openedAt: new Date() },
@@ -123,7 +123,6 @@ const CreateTask = async (
     {
         name,
         body,
-        author,
         startTime,
         expirationDate,
         isExpiration, 

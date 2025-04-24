@@ -9,6 +9,10 @@ router.post("/login", async (req, res) => {
     await authService.userLogin(req, res);
 });
 
+router.post("/logout", async (req, res) => {
+    await authService.userLogout(req, res);
+});
+
 router.post("/register", async (req, res) => {
     await authService.userRegister(req, res);
 });

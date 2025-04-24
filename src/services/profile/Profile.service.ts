@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
 import { CreateProfile, DeleteProfile, ProfileDetail, UpdateProfile } from "../../controllers/users/Profile.controller";
+import { AuthGuard } from "src/utils/middleware/authentication/AuthGuard";
 
 export class ProfileService {
   async CreateProfileService(req: Request, res: Response) {
     try {
       const { fullName, bio, dateOfBirth, avatar, socials } = req.body;
-      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+      const token = AuthGuard(req);
       const createProfile = await CreateProfile({
         fullName,
         bio,
@@ -70,7 +71,7 @@ export class ProfileService {
   }
   async ProfileDetail(req: Request, res: Response) {
     try {
-      const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+      const token = AuthGuard(req);
       const { id } = req.body;
       const viewProfile = await ProfileDetail(id, token);
       return res.status(viewProfile.statusCode).json({

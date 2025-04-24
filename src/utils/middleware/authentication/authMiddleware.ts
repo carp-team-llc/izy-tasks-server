@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { AuthGuard } from './AuthGuard';
 
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 
@@ -8,7 +9,7 @@ export interface CustomRequest extends Request {
 }
 
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers['authorization']?.split(' ')[1];
+    const token = AuthGuard(req);
     if (!token) {
         return res.status(401).json({ 
             message: 'Your session has expired, please log in again!', 
@@ -16,7 +17,7 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
         });
     }
     try {
-        const token = req.headers['authorization'].split(' ')[1].replace('Bearer ', '');
+        const token = AuthGuard(req);
         if (!token) {
             throw new Error();
         }
