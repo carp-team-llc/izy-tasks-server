@@ -7,8 +7,20 @@ import VerifyAccount from '../../controllers/auth/VerifyAccount';
 import { WelcomeNewUser } from '../../constant/MailForm';
 import { ResendVerificationEmail } from '../../controllers/auth/ResendMail';
 import { ChangePassword, ForgotPassword, HandleRessetPasswordRequest } from '../../controllers/auth/ForgotPassword';
+import { AuthGuard } from '../../utils/middleware/authentication/AuthGuard';
 
 export class AuthService{
+
+    async me (req: Request, res: Response) {
+        const token  = AuthGuard(req);
+        if (!token) {
+            res.status(401).json({ statusCode: 401, message: "Unauthorized", isLogin: false });
+        }
+        res.status(200).json({
+            message: "User information",
+            isLogin: true,
+        })
+    }
 
     async userLogin(req: Request, res: Response) {
         try {

@@ -7,6 +7,7 @@ import {
   TaskListPagination,
   UpdateTaskList,
 } from "../../controllers/tasks/TaskList";
+import { AuthGuard } from "../../utils/middleware/authentication/AuthGuard";
 
 export class TaskListService {
   async TaskList(req: Request, res: Response) {
@@ -26,9 +27,7 @@ export class TaskListService {
 
   async TaskListPaginationService(req: Request, res: Response) {
     const { where, skip, take } = req.body;
-    const token = req.headers["authorization"]
-      .split(" ")[1]
-      .replace("Bearer ", "");
+    const token = AuthGuard(req);
     const taskListPagination = await TaskListPagination(
       {
         where,
@@ -54,9 +53,7 @@ export class TaskListService {
 
   async CreateTaskListService(req: Request, res: Response) {
     const { name, description, avatar, tasks } = req.body;
-    const token = req.headers["authorization"]
-      .split(" ")[1]
-      .replace("Bearer ", "");
+    const token = AuthGuard(req);
     const createTaskList = await CreateListTask(
       {
         name: name,

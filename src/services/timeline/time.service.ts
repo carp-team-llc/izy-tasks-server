@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ProjectTimline, TeamTimline } from '../../controllers/timeline/timeline.controller';
-import { AuthGuard } from 'src/utils/middleware/authentication/AuthGuard';
+import { AuthGuard } from '../../utils/middleware/authentication/AuthGuard';
 
 export class TimelineService {
   async TimelineTeam (req: Request, res: Response) {

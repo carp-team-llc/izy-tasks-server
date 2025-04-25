@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { NotificationList } from "../../controllers/tasks/TaskNotifycation";
-import { AuthGuard } from "src/utils/middleware/authentication/AuthGuard";
+import { AuthGuard } from "../../utils/middleware/authentication/AuthGuard";
 
 export class TaskNotification {
   async NotificationList(req: Request, res: Response) {

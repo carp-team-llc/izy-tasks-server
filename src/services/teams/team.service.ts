@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { CreateTeam, DeleteTeam, DetailTeam, TeamPagination, UpdateTeam } from "../../controllers/teams/TeamManager";
-import { AuthGuard } from "src/utils/middleware/authentication/AuthGuard";
+import { AuthGuard } from "../../utils/middleware/authentication/AuthGuard";
 
 export class TeamManagerService {
 
