@@ -12,9 +12,7 @@ import { AuthGuard } from "../../utils/middleware/authentication/AuthGuard";
 export class TaskListService {
   async TaskList(req: Request, res: Response) {
     try {
-      const token = req.headers["authorization"]
-        .split(" ")[1]
-        .replace("Bearer ", "");
+      const token = AuthGuard(req)
       const result = await TaskList(token);
       res.status(result.statusCode).json({
         message: result.message,

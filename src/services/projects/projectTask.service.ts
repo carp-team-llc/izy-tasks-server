@@ -6,6 +6,7 @@ import {
   ProjectTaskList,
   UpdateTask,
 } from "../../controllers/projects/ProjectTasks";
+import { AuthGuard } from "../../utils/middleware/authentication/AuthGuard";
 
 export class ProjectTaskService {
   async CreateProjectTask(req: Request, res: Response) {
@@ -25,9 +26,7 @@ export class ProjectTaskService {
         priority,
         progress,
       }: ProjectTask = req.body;
-      const token = req.headers["authorization"]
-        .split(" ")[1]
-        .replace("Bearer ", "");
+      const token = AuthGuard(req)
       const projectTask = await CreateTask(
         {
           name,
@@ -73,9 +72,7 @@ export class ProjectTaskService {
         priority,
         progress,
       }: ProjectTask = req.body;
-      const token = req.headers["authorization"]
-        .split(" ")[1]
-        .replace("Bearer ", "");
+      const token = AuthGuard(req)
       const projectTask = await UpdateTask(
         {
           name,
@@ -115,9 +112,7 @@ export class ProjectTaskService {
         statusKey: string;
         projectId: string;
       } = req.body;
-      const token = req.headers["authorization"]
-        .split(" ")[1]
-        .replace("Bearer ", "");
+      const token = AuthGuard(req)
       const projectTask = await ChangeStatus(id, projectId, statusKey, token);
       res.status(200).json({
         message: projectTask.message,
@@ -136,9 +131,7 @@ export class ProjectTaskService {
         id: string;
         projectId: string;
       } = req.body;
-      const token = req.headers["authorization"]
-        .split(" ")[1]
-        .replace("Bearer ", "");
+      const token = AuthGuard(req)
       const projectTask = await ProjectTaskList(projectId, token);
       res.status(200).json({
         message: projectTask.message,
