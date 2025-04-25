@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { DailyChart, WeeklyChart, MonthlyChart } from "../../controllers/tasks/TaskChart";
-import { AuthGuard } from "src/utils/middleware/authentication/AuthGuard";
+import { AuthGuard } from "../../utils/middleware/authentication/AuthGuard";
 
 export class ChartService {
   async DailyChart(req: Request, res: Response) {

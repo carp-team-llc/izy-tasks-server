@@ -5,6 +5,10 @@ import { AuthService } from "../../services/auth/auth.service";
 const router = express.Router();
 const authService = new AuthService();
 
+router.post("/me", async (req, res) => {
+    await authService.me(req, res);
+});
+
 router.post("/login", async (req, res) => {
     await authService.userLogin(req, res);
 });

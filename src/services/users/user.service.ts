@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { CreateProfile, ProfileDetail } from "../../controllers/users/Profile.controller";
-import { AuthGuard } from "src/utils/middleware/authentication/AuthGuard";
+import { AuthGuard } from "../../utils/middleware/authentication/AuthGuard";
 
 export class UserService {
 

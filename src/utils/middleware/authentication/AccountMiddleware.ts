@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import prisma from "../../connection/connection";
+import { AuthGuard } from "./AuthGuard";
 
 export interface CustomRequest extends Request {
   token: string | JwtPayload;
@@ -13,7 +14,7 @@ const AccountMiddleware = async (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.headers["authorization"]?.split(" ")[1];
+  const token = AuthGuard(req);
   if (!token) {
     return res.status(401).json({
       message: "Your session has expired, please log in again!",
@@ -21,9 +22,7 @@ const AccountMiddleware = async (
     });
   }
   try {
-    const token = req.headers["authorization"]
-      .split(" ")[1]
-      .replace("Bearer ", "");
+    const token = AuthGuard(req);
     if (!token) {
       throw new Error();
     }

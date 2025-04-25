@@ -1,7 +1,7 @@
 
 import { Request, Response } from "express";
 import { CreateComments, DeleteComment, UpdateComment } from "../../controllers/comments/comments.controller";
-import { AuthGuard } from "src/utils/middleware/authentication/AuthGuard";
+import { AuthGuard } from "../../utils/middleware/authentication/AuthGuard";
 
 export class CommentsService {
   async CreateComment (req: Request, res: Response) {
