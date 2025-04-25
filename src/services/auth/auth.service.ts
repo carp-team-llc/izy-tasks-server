@@ -14,7 +14,7 @@ export class AuthService{
     async me (req: Request, res: Response) {
         const token  = AuthGuard(req);
         if (!token) {
-            res.status(401).json({ statusCode: 401, message: "Unauthorized", isLogin: false });
+            return res.status(401).json({ statusCode: 401, message: "Unauthorized", isLogin: false });
         }
         res.status(200).json({
             message: "User information",
