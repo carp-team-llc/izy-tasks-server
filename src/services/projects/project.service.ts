@@ -14,6 +14,7 @@ import {
   AddTask,
   RoleList,
 } from "../../controllers/projects/ProjectManagement";
+import { AuthGuard } from "../../utils/middleware/authentication/AuthGuard";
 
 export class ProjectService {
   // #region project manager
@@ -21,9 +22,7 @@ export class ProjectService {
   async ProjectList(req: Request, res: Response) {
     try {
       const { where, skip, take }: Variables = req.body;
-      const token = req.headers["authorization"]
-        .split(" ")[1]
-        .replace("Bearer ", "");
+      const token = AuthGuard(req)
       const Projects = await ProjectPanigation({
         where: where,
         skip: skip,
@@ -38,9 +37,7 @@ export class ProjectService {
   async DetailProjectService(req: Request, res: Response) {
     try {
       const { id } = req.body;
-      const token = req.headers["authorization"]
-        .split(" ")[1]
-        .replace("Bearer ", "");
+      const token = AuthGuard(req)
       const project = await DetailProject(id, token);
       return res.status(project.statusCode).json(project.data);
     } catch {
@@ -62,9 +59,7 @@ export class ProjectService {
         permission,
         timeworking,
       }: ProjectDto = req.body;
-      const token = req.headers["authorization"]
-        .split(" ")[1]
-        .replace("Bearer ", "");
+      const token = AuthGuard(req)
       const createProject = await CreateProject(
         {
           name: name,
@@ -101,9 +96,7 @@ export class ProjectService {
         startTime,
         deadline,
       }: ProjectDto = req.body;
-      const token = req.headers["authorization"]
-        .split(" ")[1]
-        .replace("Bearer ", "");
+      const token = AuthGuard(req)
       const updateProject = await UpdateProject(
         {
           id,
@@ -129,9 +122,7 @@ export class ProjectService {
   async DeleteProjectServices(req: Request, res: Response) {
     try {
       const { id } = req.body;
-      const token = req.headers["authorization"]
-        .split(" ")[1]
-        .replace("Bearer ", "");
+      const token = AuthGuard(req)
       const deleteProject = await DeleteProject(id, token);
       return res.json(deleteProject);
     } catch {

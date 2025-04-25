@@ -1,12 +1,11 @@
 import type { Request, Response } from "express";
 import { Activate, TaskCalender } from "../../controllers/projects/ProjectAnalytics";
+import { AuthGuard } from "../../utils/middleware/authentication/AuthGuard";
 
 export class ProjectAnalyticsService {
   async ProjectActivate(req: Request, res: Response) {
     try {
-      const token = req.headers["authorization"]
-        .split(" ")[1]
-        .replace("Bearer ", "");
+      const token = AuthGuard(req)
       const result = await Activate(token);
       res.status(result.statusCode).json({
         message: result.message,

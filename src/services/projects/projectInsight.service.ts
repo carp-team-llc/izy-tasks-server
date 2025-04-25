@@ -6,14 +6,13 @@ import {
   TopInsight,
   TotalTaskChart,
 } from "../../controllers/projects/ProjectInsights";
+import { AuthGuard } from "../../utils/middleware/authentication/AuthGuard";
 
 export class ProjectInsightService {
   async TopInsightService(req: Request, res: Response) {
     try {
       const { projectId } = req.body;
-      const token = req.headers["authorization"]
-        .split(" ")[1]
-        .replace("Bearer ", "");
+      const token = AuthGuard(req)
       const topInsight = await TopInsight({ projectId }, token);
       res.status(topInsight.statusCode).json({
         message: topInsight.message,
@@ -27,9 +26,7 @@ export class ProjectInsightService {
   async TodayTasksService(req: Request, res: Response) {
     try {
       const { projectId, today } = req.body;
-      const token = req.headers["authorization"]
-        .split(" ")[1]
-        .replace("Bearer ", "");
+      const token = AuthGuard(req)
       const todayTasks = await TodayTasks({ projectId, today }, token);
       res.status(todayTasks.statusCode).json({
         message: todayTasks.message,
@@ -43,9 +40,7 @@ export class ProjectInsightService {
   async ActivityService(req: Request, res: Response) {
     try {
       const { projectId, where, skip, take } = req.body;
-      const token = req.headers["authorization"]
-        .split(" ")[1]
-        .replace("Bearer ", "");
+      const token = AuthGuard(req)
       const activity = await Activity({ where, skip, take }, projectId, token);
       res.status(activity.statusCode).json({
         message: activity.message,
@@ -59,9 +54,7 @@ export class ProjectInsightService {
   async TotalChartService(req: Request, res: Response) {
     try {
       const { projectId } = req.body;
-      const token = req.headers["authorization"]
-        .split(" ")[1]
-        .replace("Bearer ", "");
+      const token = AuthGuard(req)
       const totalChart = await TotalTaskChart(projectId, token);
       res.status(totalChart.statusCode).json({
         message: totalChart.message,
@@ -75,9 +68,7 @@ export class ProjectInsightService {
   async ProjectWorkloadService(req: Request, res: Response) {
     try {
       const { projectId, status, fromDate, toDate } = req.body;
-      const token = req.headers["authorization"]
-        .split(" ")[1]
-        .replace("Bearer ", "");
+      const token = AuthGuard(req)
       const projectWorkload = await ProjectWorkload(
         token,
         projectId,
