@@ -1,6 +1,6 @@
 
 import { Request, Response } from 'express';
-import { UserAuth, UserLogin, UserPagination } from '../../controllers/auth/dto/authInfo.dto';
+import { UserAuth, UserLogin } from '../../controllers/auth/dto/authInfo.dto';
 import userLogin from '../../controllers/auth/Login';
 import userRegister from '../../controllers/auth/Register';
 import VerifyAccount from '../../controllers/auth/VerifyAccount';
@@ -8,6 +8,7 @@ import { WelcomeNewUser } from '../../constant/MailForm';
 import { ResendVerificationEmail } from '../../controllers/auth/ResendMail';
 import { ChangePassword, ForgotPassword, HandleRessetPasswordRequest } from '../../controllers/auth/ForgotPassword';
 import { AuthGuard } from '../../utils/middleware/authentication/AuthGuard';
+import { LoadUserInfo } from '../../utils/middleware/permission/LoadUserInfo';
 
 export class AuthService{
 
@@ -16,8 +17,10 @@ export class AuthService{
         if (!token) {
             return res.status(401).json({ statusCode: 401, message: "Unauthorized", isLogin: false });
         }
+        const userInfo = LoadUserInfo(token);
         res.status(200).json({
             message: "User information",
+            userId: userInfo?.userId,
             isLogin: true,
         })
     }

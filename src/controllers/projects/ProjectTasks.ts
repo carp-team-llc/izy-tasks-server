@@ -273,7 +273,7 @@ const ChangeStatus = async (
     const task = await prisma.tasks.findUnique({
       where: { id },
     });
-    if (task.projectId !== projectId) {
+    if (task?.projectId !== projectId) {
       return {
         statusCode: 403,
         message: "Unauthorized to update task in this project.",

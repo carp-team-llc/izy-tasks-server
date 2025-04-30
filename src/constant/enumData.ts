@@ -8,6 +8,7 @@ export const EnumData = {
     Late: { code: "LATE", name: "Trễ hạn", engName: "Late", color: color.late},
     New: { code: "NEW", name: "Mới", engName: "New", color: color.new},
     Doing: { code: "DOING", name: "Đang làm", engName: "Doing", color: color.doing},
+    Review: { code: "REVIEW", name: "Đánh giá", engName: "Review", color: color.review},
   },
   PriorityType: {
     Low: { code: "LOW", name: "Thấp", engName: "Low", color: color.low },
