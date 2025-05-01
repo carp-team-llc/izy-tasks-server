@@ -78,8 +78,6 @@ const addMember = async (projectId: string, userId: string, token: string) => {
       projectId,
       token
     );
-
-    console.log("isProjectMember", isProjectMember.isMember);
     if (!isProjectMember?.isMember) {
       return {
         statusCode: 403,
