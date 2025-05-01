@@ -134,6 +134,7 @@ export class ProjectTaskService {
         authorId,
         priority,
         status,
+        name,
       }: {
         projectId: string;
         expirationDate?: string;
@@ -143,6 +144,7 @@ export class ProjectTaskService {
         authorId?: string;
         priority?: string;
         status?: string;
+        name?: string;
       } = req.body;
 
       const token = AuthGuard(req);
@@ -157,6 +159,7 @@ export class ProjectTaskService {
         authorId,
         priority,
         status,
+        name
       });
 
       res.status(projectTask.statusCode).json({

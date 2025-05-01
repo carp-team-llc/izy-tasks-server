@@ -37,6 +37,7 @@ interface ProjectTaskFilter {
   authorId?: string;
   priority?: string;
   status?: string;
+  name?: string;
 }
 
 const HandlePriority = ({ priority }) => {
@@ -92,7 +93,10 @@ const CreateTask = async (
       };
     }
 
-    const isProjectMember = await projectMemberInfo.IsProjectMember(projectId, token);
+    const isProjectMember = await projectMemberInfo.IsProjectMember(
+      projectId,
+      token
+    );
 
     if (!isProjectMember?.isMember) {
       return {
@@ -210,7 +214,10 @@ const UpdateTask = async (
       };
     }
 
-    const isProjectMember = await projectMemberInfo.IsProjectMember(projectId, token);
+    const isProjectMember = await projectMemberInfo.IsProjectMember(
+      projectId,
+      token
+    );
 
     if (!isProjectMember?.isMember) {
       return {
@@ -304,7 +311,10 @@ const ChangeStatus = async (
       return { statusCode: 401, message: "Unauthorized" };
     }
 
-    const isProjectMember = await projectMemberInfo.IsProjectMember(projectId, token);
+    const isProjectMember = await projectMemberInfo.IsProjectMember(
+      projectId,
+      token
+    );
 
     if (!isProjectMember?.isMember) {
       return {
@@ -418,6 +428,7 @@ const ProjectTaskList = async (params: ProjectTaskFilter) => {
     authorId,
     priority,
     status,
+    name,
   } = params;
 
   if (!projectId) {
@@ -425,9 +436,11 @@ const ProjectTaskList = async (params: ProjectTaskFilter) => {
   }
 
   try {
-
     // hàm này để kiểm tra xem là người gửi request có phải là thành viên của project không
-    const isProjectMember = await projectMemberInfo.IsProjectMember(projectId, token);
+    const isProjectMember = await projectMemberInfo.IsProjectMember(
+      projectId,
+      token
+    );
 
     if (!isProjectMember?.isMember) {
       return {
@@ -436,38 +449,36 @@ const ProjectTaskList = async (params: ProjectTaskFilter) => {
       };
     }
 
-    const orConditions: any[] = [];
+    const andConditions: any[] = [{ projectId }];
 
-    const optionalFilters = {
-      expirationDate,
-      isExpiration,
-      employeeId,
-      startTime,
-      authorId,
-      priority,
-      status,
-    };
-
-    // lặp qua các điều kiện, nếu biến nào có giá trị thì thêm vào mảng orConditions
-    for (const [key, value] of Object.entries(optionalFilters)) {
-      if (value !== undefined) {
-        orConditions.push({ [key]: value });
-      }
-    }
+    if (expirationDate !== undefined) andConditions.push({ expirationDate });
+    if (isExpiration !== undefined) andConditions.push({ isExpiration });
+    if (employeeId !== undefined) andConditions.push({ employeeId });
+    if (startTime !== undefined) andConditions.push({ startTime });
+    if (authorId !== undefined) andConditions.push({ authorId });
+    if (priority !== undefined) andConditions.push({ priority });
+    if (status !== undefined) andConditions.push({ status });
 
     const whereClause: any = {
-      projectId,
+      AND: andConditions,
     };
 
     // nếu như orConditions có giá trị thì tự động thêm điều kiện OR vào trong câu truy vấn
-    if (orConditions.length > 0) {
-      whereClause.OR = orConditions; // wherClause.OR có nghĩa là where: { OR: [] }
+    if (name !== undefined && name.trim() !== "") {
+      whereClause.AND.push({
+        name: {
+          startsWith: name,
+          mode: "insensitive",
+        },
+      });
     }
+
+    console.log("WHERE:", JSON.stringify(whereClause, null, 2));
 
     const taskList = await prisma.tasks.findMany({
       where: whereClause,
     });
-    
+
     return {
       statusCode: 201,
       message: "success!",
