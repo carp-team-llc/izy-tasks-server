@@ -78,23 +78,12 @@ const addMember = async (projectId: string, userId: string, token: string) => {
       projectId,
       token
     );
+
+    console.log("isProjectMember", isProjectMember.isMember);
     if (!isProjectMember?.isMember) {
       return {
         statusCode: 403,
         message: "Forbidden: You are not a member of this project",
-      };
-    }
-
-    // kiểm tra người sắp được thêm vào có phải là thành viên của project không
-    const isJoinedProject = await projectMemberInfo.IsProjectMember(
-      projectId,
-      undefined,
-      userId,
-    );
-    if (isJoinedProject?.isMember) {
-      return {
-        statusCode: 400,
-        message: "User is already a member of this project",
       };
     }
 
@@ -109,7 +98,20 @@ const addMember = async (projectId: string, userId: string, token: string) => {
     ) {
       return {
         statusCode: 403,
-        message: "Forbidden: You are not a member of this project",
+        message: "Forbidden: You are not authorized to add members",
+      };
+    }
+
+    // kiểm tra người sắp được thêm vào có phải là thành viên của project không
+    const isJoinedProject = await projectMemberInfo.IsProjectMember(
+      projectId,
+      undefined,
+      userId,
+    );
+    if (isJoinedProject?.isMember) {
+      return {
+        statusCode: 400,
+        message: "User is already a member of this project",
       };
     }
 
