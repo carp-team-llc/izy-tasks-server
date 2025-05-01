@@ -52,7 +52,8 @@ const userLogin = async ({email, password}: UserLogin) => {
             updatedAt: user.updatedAt,
             isAdmin: user.isAdmin,
             isVerify: user.isVerify,
-            haveProfile: user.haveProfile
+            haveProfile: user.haveProfile,
+            roleCode: user.role,
         }, process.env.ACCESS_TOKEN, { expiresIn: '365d' }); 
 
         return { 
