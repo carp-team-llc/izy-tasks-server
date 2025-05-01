@@ -26,7 +26,7 @@ export class ProjectTaskService {
         priority,
         progress,
       }: ProjectTask = req.body;
-      const token = AuthGuard(req)
+      const token = AuthGuard(req);
       const projectTask = await CreateTask(
         {
           name,
@@ -72,7 +72,7 @@ export class ProjectTaskService {
         priority,
         progress,
       }: ProjectTask = req.body;
-      const token = AuthGuard(req)
+      const token = AuthGuard(req);
       const projectTask = await UpdateTask(
         {
           name,
@@ -112,7 +112,7 @@ export class ProjectTaskService {
         statusKey: string;
         projectId: string;
       } = req.body;
-      const token = AuthGuard(req)
+      const token = AuthGuard(req);
       const projectTask = await ChangeStatus(id, projectId, statusKey, token);
       res.status(200).json({
         message: projectTask.message,
@@ -123,21 +123,48 @@ export class ProjectTaskService {
     }
   }
 
-  async ProjectTaskList(req: Request, res: Response) {
+  async TaskList(req: Request, res: Response) {
     try {
       const {
         projectId,
+        expirationDate,
+        isExpiration,
+        employeeId,
+        startTime,
+        authorId,
+        priority,
+        status,
       }: {
-        id: string;
         projectId: string;
+        expirationDate?: string;
+        isExpiration?: boolean;
+        employeeId?: string;
+        startTime?: string;
+        authorId?: string;
+        priority?: string;
+        status?: string;
       } = req.body;
-      const token = AuthGuard(req)
-      const projectTask = await ProjectTaskList(projectId, token);
-      res.status(200).json({
+
+      const token = AuthGuard(req);
+
+      const projectTask = await ProjectTaskList({
+        projectId,
+        token,
+        expirationDate,
+        isExpiration,
+        employeeId,
+        startTime,
+        authorId,
+        priority,
+        status,
+      });
+
+      res.status(projectTask.statusCode).json({
         message: projectTask.message,
-        data: projectTask.data,
+        data: projectTask.data ?? null,
       });
     } catch (err) {
+      console.error("TaskList error:", err);
       res.status(500).json({ message: "Internal Server Error" });
     }
   }

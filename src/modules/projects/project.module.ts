@@ -64,7 +64,7 @@ router.post("/change_status", async (req, res) => {
   await projectTaskServices.ChangeStatusTask(req, res);
 })
 router.post("/project_task_list", async (req, res) => {
-  await projectTaskServices.ProjectTaskList(req, res);
+  await projectTaskServices.TaskList(req, res);
 })
 // #endregion
 
@@ -89,6 +89,9 @@ router.post("/project_activity", async (req, res) => {
 // #region members
 router.post("/members", async (req, res) => {
   await projectMemberService.ProjectMemberList(req, res);
+})
+router.post("/addmember", async (req, res) => {
+  await projectMemberService.AddProjectMember(req, res);
 })
 // #endregion
 

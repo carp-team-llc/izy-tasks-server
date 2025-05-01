@@ -1,6 +1,7 @@
 import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
 import { EnumData } from "../../constant/enumData";
 import prisma from "../../utils/connection/connection";
+import { ProjectMemberInfo } from "./utils/ProjectMemberInfo";
 
 export interface ProjectTask {
   id?: string;
@@ -24,6 +25,18 @@ export interface ProjectTask {
   employee?: any;
   author?: any;
   estimatetime?: string;
+}
+
+interface ProjectTaskFilter {
+  projectId: string;
+  token: string;
+  expirationDate?: string;
+  isExpiration?: boolean;
+  employeeId?: string;
+  startTime?: string;
+  authorId?: string;
+  priority?: string;
+  status?: string;
 }
 
 const HandlePriority = ({ priority }) => {
@@ -64,6 +77,7 @@ const CreateTask = async (
   }: ProjectTask,
   token: string
 ) => {
+  const projectMemberInfo = new ProjectMemberInfo();
   try {
     const errors: string[] = [];
     if (!name) errors.push("name");
@@ -75,6 +89,15 @@ const CreateTask = async (
       return {
         statusCode: 400,
         message: `The following fields are empty: ${errors.join(", ")}`,
+      };
+    }
+
+    const isProjectMember = await projectMemberInfo.IsProjectMember(projectId, token);
+
+    if (!isProjectMember?.isMember) {
+      return {
+        statusCode: 403,
+        message: "Forbidden: You are not a member of this project",
       };
     }
 
@@ -172,6 +195,7 @@ const UpdateTask = async (
   id: string,
   token: string
 ) => {
+  const projectMemberInfo = new ProjectMemberInfo();
   try {
     if (!id) {
       return {
@@ -185,6 +209,16 @@ const UpdateTask = async (
         message: "Unauthorized",
       };
     }
+
+    const isProjectMember = await projectMemberInfo.IsProjectMember(projectId, token);
+
+    if (!isProjectMember?.isMember) {
+      return {
+        statusCode: 403,
+        message: "Forbidden: You are not a member of this project",
+      };
+    }
+
     const userInfo = LoadUserInfo(token);
     const updateTask = await prisma.tasks.update({
       where: { id },
@@ -261,6 +295,7 @@ const ChangeStatus = async (
   statusKey: string,
   token: string
 ) => {
+  const projectMemberInfo = new ProjectMemberInfo();
   try {
     if (!id) {
       return { statusCode: 400, message: "Missing required parameter: id" };
@@ -268,6 +303,16 @@ const ChangeStatus = async (
     if (!token) {
       return { statusCode: 401, message: "Unauthorized" };
     }
+
+    const isProjectMember = await projectMemberInfo.IsProjectMember(projectId, token);
+
+    if (!isProjectMember?.isMember) {
+      return {
+        statusCode: 403,
+        message: "Forbidden: You are not a member of this project",
+      };
+    }
+
     const userInfo = LoadUserInfo(token);
     const statusInfo = EnumData.StatusType[statusKey];
     const task = await prisma.tasks.findUnique({
@@ -361,21 +406,72 @@ const ChangeStatus = async (
   }
 };
 
-const ProjectTaskList = async (projectId, token) => {
+const ProjectTaskList = async (params: ProjectTaskFilter) => {
+  const projectMemberInfo = new ProjectMemberInfo();
+  const {
+    projectId,
+    token,
+    expirationDate,
+    isExpiration,
+    employeeId,
+    startTime,
+    authorId,
+    priority,
+    status,
+  } = params;
+
+  if (!projectId) {
+    return { statusCode: 400, message: "Task ID is required for tgh" };
+  }
+
   try {
-    if (!projectId) {
-      return { statusCode: 400, message: "Task ID is required for tgh" };
+
+    // hàm này để kiểm tra xem là người gửi request có phải là thành viên của project không
+    const isProjectMember = await projectMemberInfo.IsProjectMember(projectId, token);
+
+    if (!isProjectMember?.isMember) {
+      return {
+        statusCode: 403,
+        message: "Forbidden: You are not a member of this project",
+      };
     }
-    const userInfo = LoadUserInfo(token);
-    const tasklist = await prisma.tasks.findMany({
-      where: {
-        AND: [{ authorId: userInfo?.userId }, { projectId }],
-      },
+
+    const orConditions: any[] = [];
+
+    const optionalFilters = {
+      expirationDate,
+      isExpiration,
+      employeeId,
+      startTime,
+      authorId,
+      priority,
+      status,
+    };
+
+    // lặp qua các điều kiện, nếu biến nào có giá trị thì thêm vào mảng orConditions
+    for (const [key, value] of Object.entries(optionalFilters)) {
+      if (value !== undefined) {
+        orConditions.push({ [key]: value });
+      }
+    }
+
+    const whereClause: any = {
+      projectId,
+    };
+
+    // nếu như orConditions có giá trị thì tự động thêm điều kiện OR vào trong câu truy vấn
+    if (orConditions.length > 0) {
+      whereClause.OR = orConditions; // wherClause.OR có nghĩa là where: { OR: [] }
+    }
+
+    const taskList = await prisma.tasks.findMany({
+      where: whereClause,
     });
+    
     return {
       statusCode: 201,
       message: "success!",
-      data: tasklist,
+      data: taskList,
     };
   } catch (err) {
     console.error("Error: ", err);
