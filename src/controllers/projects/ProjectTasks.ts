@@ -3,6 +3,8 @@ import { EnumData } from "../../constant/enumData";
 import prisma from "../../utils/connection/connection";
 import { ProjectMemberInfo } from "./utils/ProjectMemberInfo";
 
+import { startOfDay, endOfDay } from "date-fns";
+
 export interface ProjectTask {
   id?: string;
   name: string;
@@ -32,12 +34,12 @@ interface ProjectTaskFilter {
   token: string;
   expirationDate?: string;
   isExpiration?: boolean;
-  employeeId?: string;
   startTime?: string;
-  authorId?: string;
-  priority?: string;
-  status?: string;
+  priority?: string | string[];
   name?: string;
+  authorId?: string | string[];
+  employeeId?: string | string[];
+  status?: string | string[];
 }
 
 const HandlePriority = ({ priority }) => {
@@ -451,13 +453,53 @@ const ProjectTaskList = async (params: ProjectTaskFilter) => {
 
     const andConditions: any[] = [{ projectId }];
 
-    if (expirationDate !== undefined) andConditions.push({ expirationDate });
+    if (Array.isArray(employeeId) && employeeId.length > 0) {
+      andConditions.push({ employeeId: { in: employeeId } });
+    } else if (typeof employeeId === "string") {
+      andConditions.push({ employeeId });
+    }
+    
+    if (Array.isArray(authorId) && authorId.length > 0) {
+      andConditions.push({ authorId: { in: authorId } });
+    } else if (typeof authorId === "string") {
+      andConditions.push({ authorId });
+    }
+    
+    if (Array.isArray(status) && status.length > 0) {
+      andConditions.push({ status: { in: status } });
+    } else if (typeof status === "string") {
+      andConditions.push({ status });
+    }
+
+    if (Array.isArray(priority) && priority.length > 0) {
+      andConditions.push({ status: { in: priority } });
+    } else if (typeof priority === "string") {
+      andConditions.push({ priority });
+    }
+
+    if (expirationDate !== undefined) {
+      const start = startOfDay(new Date(expirationDate));
+      const end = endOfDay(new Date(expirationDate));
+      andConditions.push({
+        expirationDate: {
+          gte: start,
+          lte: end,
+        },
+      });
+    }
+    
+    if (startTime !== undefined) {
+      const start = startOfDay(new Date(startTime));
+      const end = endOfDay(new Date(startTime));
+      andConditions.push({
+        startTime: {
+          gte: start,
+          lte: end,
+        },
+      });
+    }
+
     if (isExpiration !== undefined) andConditions.push({ isExpiration });
-    if (employeeId !== undefined) andConditions.push({ employeeId });
-    if (startTime !== undefined) andConditions.push({ startTime });
-    if (authorId !== undefined) andConditions.push({ authorId });
-    if (priority !== undefined) andConditions.push({ priority });
-    if (status !== undefined) andConditions.push({ status });
 
     const whereClause: any = {
       AND: andConditions,

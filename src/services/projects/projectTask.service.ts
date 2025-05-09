@@ -139,11 +139,11 @@ export class ProjectTaskService {
         projectId: string;
         expirationDate?: string;
         isExpiration?: boolean;
-        employeeId?: string;
         startTime?: string;
-        authorId?: string;
-        priority?: string;
-        status?: string;
+        authorId?: string | string[];
+        employeeId?: string | string[];
+        priority?: string | string[];
+        status?: string | string[];
         name?: string;
       } = req.body;
 
