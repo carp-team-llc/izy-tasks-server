@@ -13,7 +13,6 @@ export class ProjectMemberService {
         data: projectMembers.data
       });
     } catch (err) {
-      console.log(err);
       res.status(500).json({ message: "Internal Server Error" });
     }
   }
@@ -28,7 +27,6 @@ export class ProjectMemberService {
         data: add.data
       });
     } catch (err) {
-      console.log(err);
       res.status(500).json({ message: "Internal Server Error" });
     }
   }

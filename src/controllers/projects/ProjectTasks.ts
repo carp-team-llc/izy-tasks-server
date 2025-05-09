@@ -3,6 +3,8 @@ import { EnumData } from "../../constant/enumData";
 import prisma from "../../utils/connection/connection";
 import { ProjectMemberInfo } from "./utils/ProjectMemberInfo";
 
+import { startOfDay, endOfDay } from "date-fns";
+
 export interface ProjectTask {
   id?: string;
   name: string;
@@ -32,11 +34,12 @@ interface ProjectTaskFilter {
   token: string;
   expirationDate?: string;
   isExpiration?: boolean;
-  employeeId?: string;
   startTime?: string;
-  authorId?: string;
-  priority?: string;
-  status?: string;
+  priority?: string | string[];
+  name?: string;
+  authorId?: string | string[];
+  employeeId?: string | string[];
+  status?: string | string[];
 }
 
 const HandlePriority = ({ priority }) => {
@@ -92,7 +95,10 @@ const CreateTask = async (
       };
     }
 
-    const isProjectMember = await projectMemberInfo.IsProjectMember(projectId, token);
+    const isProjectMember = await projectMemberInfo.IsProjectMember(
+      projectId,
+      token
+    );
 
     if (!isProjectMember?.isMember) {
       return {
@@ -210,7 +216,10 @@ const UpdateTask = async (
       };
     }
 
-    const isProjectMember = await projectMemberInfo.IsProjectMember(projectId, token);
+    const isProjectMember = await projectMemberInfo.IsProjectMember(
+      projectId,
+      token
+    );
 
     if (!isProjectMember?.isMember) {
       return {
@@ -304,7 +313,10 @@ const ChangeStatus = async (
       return { statusCode: 401, message: "Unauthorized" };
     }
 
-    const isProjectMember = await projectMemberInfo.IsProjectMember(projectId, token);
+    const isProjectMember = await projectMemberInfo.IsProjectMember(
+      projectId,
+      token
+    );
 
     if (!isProjectMember?.isMember) {
       return {
@@ -418,6 +430,7 @@ const ProjectTaskList = async (params: ProjectTaskFilter) => {
     authorId,
     priority,
     status,
+    name,
   } = params;
 
   if (!projectId) {
@@ -425,9 +438,11 @@ const ProjectTaskList = async (params: ProjectTaskFilter) => {
   }
 
   try {
-
     // hàm này để kiểm tra xem là người gửi request có phải là thành viên của project không
-    const isProjectMember = await projectMemberInfo.IsProjectMember(projectId, token);
+    const isProjectMember = await projectMemberInfo.IsProjectMember(
+      projectId,
+      token
+    );
 
     if (!isProjectMember?.isMember) {
       return {
@@ -436,38 +451,76 @@ const ProjectTaskList = async (params: ProjectTaskFilter) => {
       };
     }
 
-    const orConditions: any[] = [];
+    const andConditions: any[] = [{ projectId }];
 
-    const optionalFilters = {
-      expirationDate,
-      isExpiration,
-      employeeId,
-      startTime,
-      authorId,
-      priority,
-      status,
-    };
-
-    // lặp qua các điều kiện, nếu biến nào có giá trị thì thêm vào mảng orConditions
-    for (const [key, value] of Object.entries(optionalFilters)) {
-      if (value !== undefined) {
-        orConditions.push({ [key]: value });
-      }
+    if (Array.isArray(employeeId) && employeeId.length > 0) {
+      andConditions.push({ employeeId: { in: employeeId } });
+    } else if (typeof employeeId === "string") {
+      andConditions.push({ employeeId });
+    }
+    
+    if (Array.isArray(authorId) && authorId.length > 0) {
+      andConditions.push({ authorId: { in: authorId } });
+    } else if (typeof authorId === "string") {
+      andConditions.push({ authorId });
+    }
+    
+    if (Array.isArray(status) && status.length > 0) {
+      andConditions.push({ status: { in: status } });
+    } else if (typeof status === "string") {
+      andConditions.push({ status });
     }
 
+    if (Array.isArray(priority) && priority.length > 0) {
+      andConditions.push({ status: { in: priority } });
+    } else if (typeof priority === "string") {
+      andConditions.push({ priority });
+    }
+
+    if (expirationDate !== undefined) {
+      const start = startOfDay(new Date(expirationDate));
+      const end = endOfDay(new Date(expirationDate));
+      andConditions.push({
+        expirationDate: {
+          gte: start,
+          lte: end,
+        },
+      });
+    }
+    
+    if (startTime !== undefined) {
+      const start = startOfDay(new Date(startTime));
+      const end = endOfDay(new Date(startTime));
+      andConditions.push({
+        startTime: {
+          gte: start,
+          lte: end,
+        },
+      });
+    }
+
+    if (isExpiration !== undefined) andConditions.push({ isExpiration });
+
     const whereClause: any = {
-      projectId,
+      AND: andConditions,
     };
 
     // nếu như orConditions có giá trị thì tự động thêm điều kiện OR vào trong câu truy vấn
-    if (orConditions.length > 0) {
-      whereClause.OR = orConditions; // wherClause.OR có nghĩa là where: { OR: [] }
+    if (name !== undefined && name.trim() !== "") {
+      whereClause.AND.push({
+        name: {
+          startsWith: name,
+          mode: "insensitive",
+        },
+      });
     }
+
+    console.log("WHERE:", JSON.stringify(whereClause, null, 2));
 
     const taskList = await prisma.tasks.findMany({
       where: whereClause,
     });
-    
+
     return {
       statusCode: 201,
       message: "success!",
