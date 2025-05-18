@@ -5,18 +5,19 @@ import moment from 'moment-timezone';
 import cookieParser from "cookie-parser";
 
 import authRouter from '../modules/auth/auth.module';
-import taskService from "../modules/tasks/tasks.module";
-import projectServices from '../modules/projects/project.module';
-import teamServices from '../modules/teams/team.module';
-import profileServices from '../modules/profile/profile.module';
+import taskModule from "../modules/tasks/tasks.module";
+import projectModule from '../modules/projects/project.module';
+import teamModule from '../modules/teams/team.module';
+import userModule from "../modules/users/user.module";
+import profileModule from '../modules/profile/profile.module';
 import authMiddleware from '../utils/middleware/authentication/authMiddleware';
-import mailSystemServices from '../modules/mail/mail.module';
+import mailSystemModule from '../modules/mail/mail.module';
 import AccountMiddleware from '../utils/middleware/authentication/AccountMiddleware';
-import SetupService from "../modules/setup/setup.module"
+import SetupModule from "../modules/setup/setup.module"
 import { upload } from '../utils/middleware/KeepFileMemory';
-import UploadFile from "../modules/upload/upload.module"
-import timeline from '../modules/timeline/time.module';
-import Comments from '../modules/comments/comments.module';
+import uploadFileModule from "../modules/upload/upload.module"
+import timelineModule from '../modules/timeline/time.module';
+import commentsModule from '../modules/comments/comments.module';
 import { logToFolder } from './logger';
 
 const api = express.Router();
@@ -49,15 +50,16 @@ const initApi = (app) => {
     app.use("/api/v1", api);
 
     api.use("/auth", authRouter);
-    api.use("/system/mailservice", mailSystemServices)
-    api.use("/task", authMiddleware, AccountMiddleware, taskService);
-    api.use("/project", authMiddleware, AccountMiddleware, projectServices);
-    api.use("/team", authMiddleware, AccountMiddleware, teamServices);
-    api.use("/user/profile", authMiddleware, AccountMiddleware, profileServices);
-    api.use("/setup", authMiddleware, AccountMiddleware, SetupService);
-    api.use("/storage", authMiddleware, AccountMiddleware, upload.single('file'), UploadFile);
-    api.use("/timeline", authMiddleware, AccountMiddleware, timeline);
-    api.use("/comments", authMiddleware, AccountMiddleware, Comments);
+    api.use("/system/mailservice", mailSystemModule)
+    api.use("/task", authMiddleware, AccountMiddleware, taskModule);
+    api.use("/project", authMiddleware, AccountMiddleware, projectModule);
+    api.use("/team", authMiddleware, AccountMiddleware, teamModule);
+    api.use("/user", authMiddleware, AccountMiddleware, userModule);
+    api.use("/user/profile", authMiddleware, AccountMiddleware, profileModule);
+    api.use("/setup", authMiddleware, AccountMiddleware, SetupModule);
+    api.use("/storage", authMiddleware, AccountMiddleware, upload.single('file'), uploadFileModule);
+    api.use("/timeline", authMiddleware, AccountMiddleware, timelineModule);
+    api.use("/comments", authMiddleware, AccountMiddleware, commentsModule);
 };
 
 export default initApi;
