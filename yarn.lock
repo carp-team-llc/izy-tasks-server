@@ -1424,6 +1424,11 @@ cross-spawn@^7.0.6:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
+date-fns-tz@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/date-fns-tz/-/date-fns-tz-3.2.0.tgz#647dc56d38ac33a3e37b65e9d5c4cda5af5e58e6"
+  integrity sha512-sg8HqoTEulcbbbVXeg84u5UnlsQa8GS5QXMqjjYIhS4abEVVKIUwe0/l/UhrZdKaL/W5eWZNlbTeEIiOXTcsBQ==
+
 date-fns@^4.1.0:
   version "4.1.0"
   resolved "https://registry.npmjs.org/date-fns/-/date-fns-4.1.0.tgz"
@@ -2239,6 +2244,7 @@ isomorphic-fetch@^3.0.0:
     "@types/uuid" "^9.0.8"
     bcrypt "^5.1.1"
     bull "^4.16.4"
+    cookie-parser "^1.4.7"
     cors "^2.8.5"
     cross-env "^7.0.3"
     date-fns "^4.1.0"
@@ -2248,7 +2254,7 @@ isomorphic-fetch@^3.0.0:
     firebase-admin "^12.6.0"
     google-auth-library "^9.14.1"
     isomorphic-fetch "^3.0.0"
-    izy_task_server "file:../../../../../../AppData/Local/Yarn/Cache/v6/npm-izy-task-server-1.0.0-02cb7622-0862-4213-aca4-65353d98ce20-1745506956114/node_modules/izy_task_server"
+    izy_task_server "file:../../../../../../AppData/Local/Yarn/Cache/v6/npm-izy-task-server-1.0.0-b4fe4eb0-57e0-45cd-90d8-8bb84df5693c-1747484679088/node_modules/izy_task_server"
     jsonwebtoken "^9.0.2"
     moment-timezone "^0.5.45"
     mongodb "^6.11.0"

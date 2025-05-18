@@ -3,6 +3,7 @@ import prisma from "../../utils/connection/connection";
 import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
 import Helper from "../../utils/helper";
 import { startOfDay, endOfDay } from "date-fns";
+import { fromZonedTime } from "date-fns-tz";
 
 interface GetTasksByStatusAndDateParams {
   status: string[];
@@ -42,8 +43,14 @@ const DailyChart = async (
       };
     }
 
+    // const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+
+    // const createdAtDate = new Date(Variables.createdAt);
+    // const userTime = fromZonedTime(createdAtDate, timezone);
+
     const startDate = startOfDay(new Date(Variables.createdAt));
     const endDate = endOfDay(new Date(Variables.createdAt));
+
     const userInfo = LoadUserInfo(token);
     const taskChart = await prisma.tasks.groupBy({
       by: ["status"],
@@ -92,7 +99,10 @@ const DailyChart = async (
     const loadTotalStatus: number[] = getStatusInfo.map((item: any) => {
       return item?.total;
     });
-    const totalTask = loadTotalStatus.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+    const totalTask = loadTotalStatus.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+      0
+    );
 
     return {
       statusCode: 200,
@@ -166,6 +176,9 @@ const WeeklyChart = async (
 
     const totalTask = await prisma.tasks.count({
       where: {
+        status: {
+          in: status,
+        },
         OR: [
           { authorId: userInfo?.userId },
           {
@@ -182,8 +195,8 @@ const WeeklyChart = async (
           gte: fromDate,
           lte: toDate,
         },
-      }
-    })
+      },
+    });
 
     const getStatusInfo = weeklyTotal?.map((task) => {
       return {
@@ -206,7 +219,7 @@ const WeeklyChart = async (
       message: "Success!",
       data: {
         taskChart: processedTaskChart,
-        totalTask: totalTask
+        totalTask: totalTask,
       },
     };
   } catch (err) {
