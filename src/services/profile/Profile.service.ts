@@ -5,13 +5,14 @@ import { AuthGuard } from "../../utils/middleware/authentication/AuthGuard";
 export class ProfileService {
   async CreateProfileService(req: Request, res: Response) {
     try {
-      const { fullName, bio, dateOfBirth, avatar, socials } = req.body;
+      const { fullName, bio, dateOfBirth, avatar, gender, socials } = req.body;
       const token = AuthGuard(req);
       const createProfile = await CreateProfile({
         fullName,
         bio,
         dateOfBirth,
         avatar,
+        gender,
         socials
       }, token);
       return res.status(createProfile.statusCode).json({

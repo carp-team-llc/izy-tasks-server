@@ -25,8 +25,21 @@ const ProfileDetail = async (id: string, token: string) => {
             url: true,
           },
         },
+        user: {
+          select: {
+            email: true
+          }
+        }
       },
     });
+
+    if (!ProfileDetail) {
+      return {
+        statusCode: 404,
+        message: "Profile not found!",
+        data: [],
+      }
+    }
 
     if (loadUserInfo.userId !== ProfileDetail.userId) {
       return {
