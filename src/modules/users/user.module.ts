@@ -20,6 +20,14 @@ router.post("/dashboard/infomation", async (req, res) => {
 router.post("/dashboard/current", async (req, res) => {
   await dashboardService.CurrentTasksService(req, res);
 });
+
+router.post("/dashboard/upcomming", async (req, res) => {
+  await dashboardService.UpcomingDeadlinesService(req, res);
+});
+
+router.post("/dashboard/project_progress", async (req, res) => {
+  await dashboardService.ProjectProgressService(req, res);
+});
 // #endregion
 
 export default router;

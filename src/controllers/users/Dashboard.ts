@@ -120,6 +120,107 @@ const CurrentTasks = async (token: string) => {
   };
 };
 
-const UpcomingDeadlines = async () => {};
+const UpcomingDeadlines = async (token: string) => {
+  const userInfo = LoadUserInfo(token);
+  const today = new Date();
+  const next7Days = addDays(today, 7);
 
-export { DashBoardInfomation, CurrentTasks };
+  const upcomingProjects = await prisma.project.findMany({
+    where: {
+      member: {
+        some: {
+          userId: userInfo?.userId,
+        },
+      },
+      deadline: {
+        gte: startOfDay(today),
+        lte: next7Days,
+      },
+    },
+    orderBy: {
+      deadline: "asc",
+    },
+  });
+
+  if (upcomingProjects.length === 0) {
+    return {
+      statusCode: 404,
+      message: "No data!",
+      data: [],
+    };
+  }
+
+  return {
+    message: "Success!",
+    data: upcomingProjects,
+  };
+};
+
+const ProjectProgress = async (token: string) => {
+  const userInfo = LoadUserInfo(token);
+
+  const getAllProject = await prisma.project.findMany({
+    where: {
+      member: {
+        some: {
+          userId: userInfo?.userId,
+        },
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      deadline: true,
+    },
+  });
+
+  if (getAllProject.length === 0) {
+    return {
+      statusCode: 404,
+      message: "No data!",
+      data: [],
+    };
+  }
+
+  const projectsWithProgress = await Promise.all(
+    getAllProject.map(async (project) => {
+      const totalTasks = await prisma.tasks.count({
+        where: { projectId: project.id },
+      });
+
+      if (totalTasks === 0) {
+        return {
+          statusCode: 404,
+          message: "Project has no tasks!",
+          data: [],
+        };
+      }
+
+      const completedTasks = await prisma.tasks.count({
+        where: {
+          projectId: project.id,
+          status: "COMPLETED",
+        },
+      });
+
+      const progress = totalTasks === 0 ? 0 : completedTasks / totalTasks;
+
+      return {
+        ...project,
+        progress,
+      };
+    })
+  );
+
+  return {
+    message: "Success!",
+    data: projectsWithProgress,
+  };
+};
+
+export {
+  DashBoardInfomation,
+  CurrentTasks,
+  UpcomingDeadlines,
+  ProjectProgress,
+};
