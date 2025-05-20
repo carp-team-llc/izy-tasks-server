@@ -458,13 +458,13 @@ const ProjectTaskList = async (params: ProjectTaskFilter) => {
     } else if (typeof employeeId === "string") {
       andConditions.push({ employeeId });
     }
-    
+
     if (Array.isArray(authorId) && authorId.length > 0) {
       andConditions.push({ authorId: { in: authorId } });
     } else if (typeof authorId === "string") {
       andConditions.push({ authorId });
     }
-    
+
     if (Array.isArray(status) && status.length > 0) {
       andConditions.push({ status: { in: status } });
     } else if (typeof status === "string") {
@@ -487,7 +487,7 @@ const ProjectTaskList = async (params: ProjectTaskFilter) => {
         },
       });
     }
-    
+
     if (startTime !== undefined) {
       const start = startOfDay(new Date(startTime));
       const end = endOfDay(new Date(startTime));
@@ -515,16 +515,44 @@ const ProjectTaskList = async (params: ProjectTaskFilter) => {
       });
     }
 
-    console.log("WHERE:", JSON.stringify(whereClause, null, 2));
-
     const taskList = await prisma.tasks.findMany({
       where: whereClause,
     });
 
+    const employeeIds = Array.from(
+      new Set(taskList.map((task) => task.employeeId).filter(Boolean))
+    );
+    const employee = await prisma.user.findMany({
+      where: {
+        id: { in: employeeIds },
+      },
+      select: {
+        id: true,
+        username: true,
+        profile: {
+          select: {
+            fullName: true,
+          },
+        },
+      },
+    });
+
+    const authorMap = new Map(
+      employee.map((employee) => [
+        employee.id,
+        employee.profile?.fullName || employee.username,
+      ])
+    );
+
+    const enrichedTasks = taskList.map((task) => ({
+      ...task,
+      employeeName: authorMap.get(task.authorId!) || "Unknown",
+    }));
+
     return {
       statusCode: 201,
       message: "success!",
-      data: taskList,
+      data: enrichedTasks,
     };
   } catch (err) {
     console.error("Error: ", err);
