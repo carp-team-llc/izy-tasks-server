@@ -517,6 +517,22 @@ const ProjectTaskList = async (params: ProjectTaskFilter) => {
 
     const taskList = await prisma.tasks.findMany({
       where: whereClause,
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        statusColor: true,
+        createdAt: true,
+        startTime: true,
+        expirationDate: true,
+        isExpiration: true,
+        projectId: true,
+        team: true,
+        taskListId: true,
+        priority: true,
+        employeeId: true,
+        authorId: true,
+      }
     });
 
     const employeeIds = Array.from(
@@ -532,21 +548,27 @@ const ProjectTaskList = async (params: ProjectTaskFilter) => {
         profile: {
           select: {
             fullName: true,
+            avatar: true,
           },
         },
       },
     });
 
-    const authorMap = new Map(
+    // Create a map from employeeId to employee info object
+    const employeeMap = new Map(
       employee.map((employee) => [
         employee.id,
-        employee.profile?.fullName || employee.username,
+        {
+          fullName: employee.profile?.fullName || employee.username,
+          avatar: employee.profile?.avatar || "",
+        },
       ])
     );
 
     const enrichedTasks = taskList.map((task) => ({
       ...task,
-      employeeName: authorMap.get(task.authorId!) || "Unknown",
+      employeeName: employeeMap.get(task.employeeId!)?.fullName || "Unknown",
+      employeeAvatar: employeeMap.get(task.employeeId!)?.avatar || "",
     }));
 
     return {
