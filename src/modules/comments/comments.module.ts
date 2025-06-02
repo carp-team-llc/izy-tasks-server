@@ -4,6 +4,10 @@ import { CommentsService } from '../../services/comments/comments.service';
 const router = express.Router();
 const commentsService = new CommentsService();
 
+router.post("/view_comments", async (req, res) => {
+  return await commentsService.ViewAllComments(req, res);
+})
+
 router.post("/create_comment", async (req, res) => {
   return await commentsService.CreateComment(req, res);
 })

@@ -1,6 +1,99 @@
 import { LoadUserInfo } from "../../utils/middleware/permission/LoadUserInfo";
 import prisma from "../../utils/connection/connection";
 import type { Comments } from "./dto/comments.dto";
+import { ProjectMemberInfo } from "../projects/utils/ProjectMemberInfo";
+
+const DetailComments = async (taskId: string, token: string) => {
+  const projectMemberInfo = new ProjectMemberInfo();
+  try {
+    if (!taskId) {
+      return { statusCode: 400, message: "Task ID is required", data: null };
+    }
+
+    const userInfo = LoadUserInfo(token);
+
+    const findTask = await prisma.tasks.findFirst({
+      where: {
+        id: taskId,
+      },
+      select: {
+        id: true,
+        projectId: true,
+        authorId: true,
+        employeeId: true,
+      },
+    });
+
+    if (!findTask) {
+      return { statusCode: 404, message: "Task not found", data: null };
+    }
+
+    const isRelatedToTask = [findTask.authorId, findTask.employeeId].includes(
+      userInfo.userId
+    );
+
+    if (!findTask?.projectId) {
+      if (!isRelatedToTask) {
+        return {
+          statusCode: 403,
+          message:
+            "Forbidden: You are not authorized to view this task's comments",
+          data: null,
+        };
+      }
+    } else {
+      const isProjectMember = await projectMemberInfo.IsProjectMember(
+        findTask.projectId,
+        token
+      );
+      if (!isProjectMember?.isMember) {
+        return {
+          statusCode: 403,
+          message: "Forbidden: You are not a member of this project",
+          data: null,
+        };
+      }
+    }
+
+    if (!isRelatedToTask) {
+      return {
+        statusCode: 403,
+        message:
+          "Forbidden: You are not authorized to view this task's comments",
+        data: null,
+      };
+    }
+
+    const comments = await prisma.comments.findMany({
+      where: { taskId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            phone: true,
+            createdAt: true,
+            profile: true,
+          },
+        },
+      },
+    });
+
+    return {
+      statusCode: 200,
+      message: "Comments retrieved successfully",
+      data: comments,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      statusCode: 500,
+      message: "Failed to retrieve comments",
+      data: null,
+    };
+  }
+};
 
 const CreateComments = async ({ content, taskId }: Comments, token: string) => {
   try {
@@ -16,7 +109,7 @@ const CreateComments = async ({ content, taskId }: Comments, token: string) => {
       };
     }
 
-    const userInfo = LoadUserInfo(token)
+    const userInfo = LoadUserInfo(token);
     const comments = await prisma.comments.create({
       data: {
         content,
@@ -54,7 +147,7 @@ const UpdateComment = async (id: string, content: string) => {
     const updateComment = await prisma.comments.update({
       where: { id },
       data: { content },
-    })
+    });
     return {
       statusCode: 200,
       message: "Comment updated successfully",
@@ -64,7 +157,7 @@ const UpdateComment = async (id: string, content: string) => {
     console.error(err);
     return { statusCode: 500, message: "Failed to update a comment" };
   }
-}
+};
 
 const DeleteComment = async (id: string) => {
   try {
@@ -77,6 +170,6 @@ const DeleteComment = async (id: string) => {
     console.error(err);
     return { statusCode: 500, message: "Failed to delete a comment" };
   }
-}
+};
 
-export { CreateComments, UpdateComment, DeleteComment }
+export { DetailComments, CreateComments, UpdateComment, DeleteComment };

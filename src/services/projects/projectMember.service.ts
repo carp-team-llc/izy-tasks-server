@@ -1,8 +1,23 @@
 import type { Request, Response } from "express";
-import { addMember, ShowMembersList } from "../../controllers/projects/ProjectMember";
+import { addMember, checkUserRole, ShowMembersList } from "../../controllers/projects/ProjectMember";
 import { AuthGuard } from "../../utils/middleware/authentication/AuthGuard";
 
 export class ProjectMemberService {
+
+  async CheckUserRole(req: Request, res: Response) {
+    try {
+      const { projectId } = req.body;
+      const token = AuthGuard(req);
+      const role = await checkUserRole(projectId, token);
+      res.status(role.statusCode).json({
+        message: role.message,
+        data: role.data
+      });
+    } catch (err) {
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+
   async ProjectMemberList(req: Request, res: Response) {
     try {
       const { projectId } = req.body;

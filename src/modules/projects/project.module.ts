@@ -87,6 +87,9 @@ router.post("/project_activity", async (req, res) => {
 // #endregion
 
 // #region members
+router.post("/check_user_role", async (req, res) => {
+  await projectMemberService.CheckUserRole(req, res);
+})
 router.post("/members", async (req, res) => {
   await projectMemberService.ProjectMemberList(req, res);
 })
