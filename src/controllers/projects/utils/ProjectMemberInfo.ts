@@ -59,6 +59,7 @@ export class ProjectMemberInfo {
       statusCode: 200,
       message: "Success",
       role: projectMember.role,
+      roleCode: projectMember.roleCode,
     };
   }
 }

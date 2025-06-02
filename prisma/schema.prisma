@@ -117,6 +117,7 @@ model ProjectMember {
   roleName              String?
   roleEngName           String?
   permission            String?
+  isOwner               Boolean?        @default(false)
 }
 
 model ProjectInsight {
